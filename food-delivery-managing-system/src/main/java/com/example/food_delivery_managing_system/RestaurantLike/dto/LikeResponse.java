@@ -9,13 +9,13 @@ import java.time.LocalDateTime;
 public class LikeResponse {
     private Long id;
     private LocalDateTime createdAt;
-    private int isLiked;
     private Long restaurantId;
+    private int likesCount;
 
     public LikeResponse(Like like) {
         this.id = like.getId();
         this.createdAt = like.getCreatedAt();
-        this.isLiked = like.getIsLiked();
         this.restaurantId = like.getRestaurant().getId();
+        this.likesCount = like.getRestaurant().getLikes().size();
     }
 }

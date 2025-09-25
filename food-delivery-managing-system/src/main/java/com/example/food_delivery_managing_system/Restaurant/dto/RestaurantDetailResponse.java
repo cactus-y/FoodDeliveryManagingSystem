@@ -16,6 +16,7 @@ public class RestaurantDetailResponse {
     private String additionalInfo;
     private Float restaurantRating;
     // private Long userId;
+    private int likesCount;
 
     public RestaurantDetailResponse(Restaurant restaurant) {
         this.id = restaurant.getId();
@@ -27,5 +28,6 @@ public class RestaurantDetailResponse {
         this.imageUrl = restaurant.getImageUrl();
         this.additionalInfo = restaurant.getAdditionalInfo();
         this.restaurantRating = restaurant.getRestaurantRating();
+        this.likesCount = restaurant.getLikes().size();
     }
 }

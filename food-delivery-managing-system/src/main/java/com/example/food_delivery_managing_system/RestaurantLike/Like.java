@@ -25,9 +25,6 @@ public class Like {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "is_liked")
-    private int isLiked;
-
     @ManyToOne
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
