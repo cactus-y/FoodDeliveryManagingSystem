@@ -1,0 +1,52 @@
+package com.example.food_delivery_managing_system.Restaurant;
+
+import com.example.food_delivery_managing_system.Restaurant.dto.AddRestaurantRequest;
+import com.example.food_delivery_managing_system.Restaurant.dto.UpdateRestaurantRequest;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class RestaurantService {
+    private final RestaurantRepository restaurantRepository;
+
+    // POST: 내 식당 추가
+    public Restaurant addRestaurant(AddRestaurantRequest request) {
+        return restaurantRepository.save(request.toEntity());
+    }
+
+    // GET: 동네 식당 목록 조회
+    public List<Restaurant> getListOfRestaurants() {
+        return  restaurantRepository.findAll();
+    }
+
+    // GET: 특정 식당 정보 조회
+    public Restaurant getRestaurantById(Long id) {
+        return restaurantRepository.findById(id).orElseGet(Restaurant::new);
+    }
+
+    // PUT: 내 식당 수정
+    @Transactional
+    public Restaurant updateRestaurant(Long id, UpdateRestaurantRequest request) {
+        Restaurant restaurant = restaurantRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Not Found: "+id));
+        restaurant.updateRestaurant(
+                request.getName(),
+                request.getRoadAddress(),
+                request.getDetailAddress(),
+                request.getOpenAt(),
+                request.getCloseAt(),
+                request.getImageUrl(),
+                request.getAdditionalInfo()
+        );
+        return restaurant;
+    }
+
+    // DELETE: 내 식당 삭제
+    public void deleteRestaurantById(Long id) {
+        restaurantRepository.deleteById(id);
+    }
+}
