@@ -32,10 +32,8 @@ public class Restaurant {
     @Column(name = "detail_address", nullable = false)
     private String detailAddress;
 
-
     @Column(name = "coordinates", nullable = false)
     private Point coordinates;
-
 
     @CreatedDate
     @Column(name = "created_at")

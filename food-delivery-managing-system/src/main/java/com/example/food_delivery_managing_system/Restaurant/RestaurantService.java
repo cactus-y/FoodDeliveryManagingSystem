@@ -1,11 +1,12 @@
 package com.example.food_delivery_managing_system.Restaurant;
 
 import com.example.food_delivery_managing_system.Restaurant.dto.AddRestaurantRequest;
+import com.example.food_delivery_managing_system.Restaurant.dto.RestaurantListResponse;
 import com.example.food_delivery_managing_system.Restaurant.dto.UpdateRestaurantRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.geo.Point;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -22,8 +23,11 @@ public class RestaurantService {
     }
 
     // GET: 동네 식당 목록 조회
-    public List<Restaurant> getListOfRestaurants() {
-        return  restaurantRepository.findAll();
+    public List<RestaurantListResponse> getListOfRestaurants(Point my) {
+        return restaurantRepository.findAll()
+                .stream().map(restaurant->new RestaurantListResponse(restaurant, my))
+                .filter(response -> response.getDistance() <= 2) // 내 좌표로부터 2km 이내
+                .toList();
     }
 
     // GET: 특정 식당 정보 조회

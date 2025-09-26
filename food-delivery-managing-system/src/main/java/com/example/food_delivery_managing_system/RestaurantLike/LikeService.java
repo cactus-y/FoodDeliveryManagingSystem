@@ -3,15 +3,11 @@ package com.example.food_delivery_managing_system.RestaurantLike;
 import com.example.food_delivery_managing_system.Restaurant.Restaurant;
 import com.example.food_delivery_managing_system.Restaurant.RestaurantRepository;
 import com.example.food_delivery_managing_system.RestaurantLike.dto.LikeResponse;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
