@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.geo.Point;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -14,7 +15,7 @@ import java.util.List;
 @Entity
 @Table(name = "restaurants")
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 public class Restaurant {
     @Id
@@ -31,10 +32,10 @@ public class Restaurant {
     @Column(name = "detail_address", nullable = false)
     private String detailAddress;
 
-    /*
-    @Column(name = "coordinates")
+
+    @Column(name = "coordinates", nullable = false)
     private Point coordinates;
-    */
+
 
     @CreatedDate
     @Column(name = "created_at")
@@ -59,7 +60,14 @@ public class Restaurant {
     @Column(name = "restaurant_rating")
     private Float restaurantRating = 0.0f;
 
-    // ManyToOne userId
+    @Column(name = "user_id")
+    private Long userId = 1L;
+
+    /*
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+     */
 
     @OneToMany(mappedBy = "restaurant")
     private List<Like> likes = new ArrayList<>();
@@ -69,7 +77,7 @@ public class Restaurant {
             String name,
             String roadAddress,
             String detailAddress,
-            // Point coordinates,
+            Point coordinates,
             String openAt,
             String closeAt,
             String imageUrl,
@@ -78,7 +86,7 @@ public class Restaurant {
         this.name = name;
         this.roadAddress = roadAddress;
         this.detailAddress = detailAddress;
-        // this.coordinates = coordinates;
+        this.coordinates = coordinates;
         this.openAt = openAt;
         this.closeAt = closeAt;
         this.imageUrl = imageUrl;
@@ -89,7 +97,7 @@ public class Restaurant {
             String name,
             String roadAddress,
             String detailAddress,
-            // Point coordinates,
+            Point coordinates,
             String openAt,
             String closeAt,
             String imageUrl,
@@ -98,7 +106,7 @@ public class Restaurant {
         this.name = name;
         this.roadAddress = roadAddress;
         this.detailAddress = detailAddress;
-        // this.coordinates = coordinates;
+        this.coordinates = coordinates;
         this.openAt = openAt;
         this.closeAt = closeAt;
         this.imageUrl = imageUrl;

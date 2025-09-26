@@ -2,6 +2,7 @@ package com.example.food_delivery_managing_system.Restaurant.dto;
 
 import com.example.food_delivery_managing_system.Restaurant.Restaurant;
 import lombok.Getter;
+import org.springframework.data.geo.Point;
 
 import java.time.LocalDateTime;
 
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
 public class RestaurantListResponse {
     private Long id;
     private String name;
-    // private Point coordinates;
+    private Point coordinates;
     private LocalDateTime createdAt;
     private String openAt;
     private String closeAt;
@@ -19,7 +20,7 @@ public class RestaurantListResponse {
     public RestaurantListResponse(Restaurant restaurant) {
         this.id = restaurant.getId();
         this.name = restaurant.getName();
-        // this.coordinates = restaurant.getCoordinates();
+        this.coordinates = restaurant.getCoordinates();
         this.createdAt = restaurant.getCreatedAt();
         this.openAt = restaurant.getOpenAt();
         this.closeAt = restaurant.getCloseAt();

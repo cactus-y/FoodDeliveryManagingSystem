@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 public class Like {
     @Id
@@ -28,4 +28,13 @@ public class Like {
     @ManyToOne
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
+
+    @Column(name = "user_id")
+    private Long userId = 1L;
+
+    /*
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+    */
 }

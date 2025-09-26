@@ -4,7 +4,10 @@ import com.example.food_delivery_managing_system.Restaurant.dto.AddRestaurantReq
 import com.example.food_delivery_managing_system.Restaurant.dto.UpdateRestaurantRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -25,18 +28,20 @@ public class RestaurantService {
 
     // GET: 특정 식당 정보 조회
     public Restaurant getRestaurantById(Long id) {
-        return restaurantRepository.findById(id).orElseGet(Restaurant::new);
+        return restaurantRepository.findById(id)
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     // PUT: 내 식당 수정
     @Transactional
     public Restaurant updateRestaurant(Long id, UpdateRestaurantRequest request) {
         Restaurant restaurant = restaurantRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Not Found: "+id));
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND));
         restaurant.updateRestaurant(
                 request.getName(),
                 request.getRoadAddress(),
                 request.getDetailAddress(),
+                request.getCoordinates(),
                 request.getOpenAt(),
                 request.getCloseAt(),
                 request.getImageUrl(),
