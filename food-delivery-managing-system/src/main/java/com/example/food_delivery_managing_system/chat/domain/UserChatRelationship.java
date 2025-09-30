@@ -1,0 +1,35 @@
+package com.example.food_delivery_managing_system.chat.domain;
+
+import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Entity
+@NoArgsConstructor
+public class UserChatRelationship {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long userChatRelationshipId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chat_id")
+    private Chat chat;
+
+    @Setter
+    @Enumerated(EnumType.STRING)
+    private RelationshipStatus status;
+
+    @Builder
+    public UserChatRelationship(User user, Chat chat, RelationshipStatus status) {
+        this.user = user;
+        this.chat = chat;
+        this.status = status;
+    }
+}
