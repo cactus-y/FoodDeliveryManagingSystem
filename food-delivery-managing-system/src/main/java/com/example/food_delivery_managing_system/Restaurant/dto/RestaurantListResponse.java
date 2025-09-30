@@ -21,7 +21,7 @@ public class RestaurantListResponse {
     public RestaurantListResponse(Restaurant restaurant, Point my) {
         this.id = restaurant.getId();
         this.name = restaurant.getName();
-        this.coordinates = restaurant.getCoordinates();
+        this.coordinates = new Point(restaurant.getCoordinates());
         this.distance = distanceOfTwoPoints(restaurant.getCoordinates(), my);
         this.createdAt = restaurant.getCreatedAt();
         this.openAt = restaurant.getOpenAt();

@@ -16,12 +16,14 @@ public class LikeService {
     private final RestaurantRepository restaurantRepository;
 
     // POST: 특정 식당 좋아요
-    public LikeResponse like(Long id) {
-        Restaurant restaurant = restaurantRepository.findById(id)
+    public LikeResponse like(Long restaurantId, Long userId) {
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND));
+        // User user = userRepository.findById(userId) ...
         Like like = new Like();
         like.setRestaurant(restaurant);
         // like.setUser(user);
+        // TODO: User 테이블과의 연계 후 like.setUser(user);
         return new LikeResponse(likeRepository.save(like));
     }
 

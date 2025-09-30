@@ -18,21 +18,22 @@ public class RestaurantService {
     private final RestaurantRepository restaurantRepository;
 
     // POST: 내 식당 추가
-    public Restaurant addRestaurant(AddRestaurantRequest request) {
-        return restaurantRepository.save(request.toEntity());
+    public Restaurant addRestaurant(AddRestaurantRequest request, Long userId) {
+        // User user = userRepository.findById(userId);
+        return restaurantRepository.save(request.toEntity(/* user */));
     }
 
     // GET: 동네 식당 목록 조회
     public List<RestaurantListResponse> getListOfRestaurants(Point my) {
         return restaurantRepository.findAll()
                 .stream().map(restaurant->new RestaurantListResponse(restaurant, my))
-                .filter(response -> response.getDistance() <= 2) // 내 좌표로부터 2km 이내
+                // .filter(response -> response.getDistance() <= 2) // 내 좌표로부터 2km 이내(추후반영)
                 .toList();
     }
 
     // GET: 특정 식당 정보 조회
-    public Restaurant getRestaurantById(Long id) {
-        return restaurantRepository.findById(id)
+    public Restaurant getRestaurantById(Long restaurantId) {
+        return restaurantRepository.findById(restaurantId)
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 

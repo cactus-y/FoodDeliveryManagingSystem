@@ -18,17 +18,19 @@ public class AddRestaurantRequest {
     private String closeAt;
     private String imageUrl;
     private String additionalInfo;
+    // private User user;
 
-    public Restaurant toEntity(){
+    public Restaurant toEntity(/* User user */){
         return Restaurant.builder()
                 .name(name)
                 .roadAddress(roadAddress)
                 .detailAddress(detailAddress)
-                .coordinates(coordinates)
+                .coordinates(new Point(coordinates))
                 .openAt(openAt)
                 .closeAt(closeAt)
                 .imageUrl(imageUrl)
                 .additionalInfo(additionalInfo)
+                // .user(user)
                 .build();
     }
 }

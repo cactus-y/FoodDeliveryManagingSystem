@@ -5,7 +5,7 @@ import lombok.Getter;
 import org.springframework.data.geo.Point;
 
 @Getter
-public class RestaurantDetailResponse {
+public class RestaurantAoMResponse {
     private Long id;
     private String name;
     private String roadAddress;
@@ -15,13 +15,10 @@ public class RestaurantDetailResponse {
     private String closeAt;
     private String imageUrl;
     private String additionalInfo;
-    private Float restaurantRating;
-    private Long userId;
-    // private Long userId;
-    private int likesCount;
-    private boolean liked;
 
-    public RestaurantDetailResponse(Restaurant restaurant, boolean liked) {
+    public RestaurantAoMResponse() {}
+
+    public RestaurantAoMResponse(Restaurant restaurant) {
         this.id = restaurant.getId();
         this.name = restaurant.getName();
         this.roadAddress = restaurant.getRoadAddress();
@@ -31,9 +28,5 @@ public class RestaurantDetailResponse {
         this.closeAt = restaurant.getCloseAt();
         this.imageUrl = restaurant.getImageUrl();
         this.additionalInfo = restaurant.getAdditionalInfo();
-        this.restaurantRating = restaurant.getRestaurantRating();
-        this.userId = restaurant.getUserId();
-        this.likesCount = restaurant.getLikes().size();
-        this.liked = liked;
     }
 }

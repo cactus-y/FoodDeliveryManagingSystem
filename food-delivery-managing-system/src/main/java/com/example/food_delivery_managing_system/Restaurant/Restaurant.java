@@ -84,7 +84,7 @@ public class Restaurant {
         this.name = name;
         this.roadAddress = roadAddress;
         this.detailAddress = detailAddress;
-        this.coordinates = coordinates;
+        this.coordinates = new Point(coordinates);
         this.openAt = openAt;
         this.closeAt = closeAt;
         this.imageUrl = imageUrl;
