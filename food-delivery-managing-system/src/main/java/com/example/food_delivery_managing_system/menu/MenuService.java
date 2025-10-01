@@ -52,10 +52,10 @@ public class MenuService {
     }
 
     //식당 메뉴 목록 조회
-    public List<MenuSummaryResponse> getMenusByRestaurant(Long restaurantId) {
-        List<Menu> menus = menuRepository.findByRestaurant_RestaurantIdx(restaurantId);
+    public Page<MenuSummaryResponse> getMenusByRestaurant(Long restaurantId, Pageable pageable) {
+        Page<Menu> menus = menuRepository.findByRestaurant_RestaurantIdx(restaurantId, pageable);
 
-        return menus.stream()
+        return menus
                 .map(menu -> MenuSummaryResponse.builder()
                         .menuIdx(menu.getMenuIdx())
                         .name(menu.getName())
@@ -63,8 +63,7 @@ public class MenuService {
                         .isSignature(menu.getIsSignature())
                         .imageUrl(menu.getImageUrl())
                         .createdAt(menu.getCreatedAt())
-                        .build())
-                .toList();
+                        .build());
     }
 
     //메뉴 단건 상세 조회
@@ -77,6 +76,7 @@ public class MenuService {
                 .name(menu.getName())
                 .price(menu.getPrice())
                 .description(menu.getDescription())
+                .isSignature(menu.getIsSignature())
                 .imageUrl(menu.getImageUrl())
                 .createdAt(menu.getCreatedAt())
                 .build();

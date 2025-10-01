@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface MenuRepository extends JpaRepository<Menu,Long> {
-    List<Menu> findByRestaurant_RestaurantIdx(Long restaurantId);
+    Page<Menu> findByRestaurant_RestaurantIdx(Long restaurantId, Pageable pageable);
     Page<Menu> findByNameContainingOrDescriptionContaining(
             String nameKeyword, String descKeyword, Pageable pageable);
 }

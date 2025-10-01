@@ -20,6 +20,7 @@ import java.util.List;
 public class MenuController {
     private final MenuService menuService;
 
+    //식당 메뉴 추가 페이지에서 메뉴 추가
     @PostMapping("/api/restaurants/{restaurantId}/menus")
     public ResponseEntity<MenuResponse> createMenu(
             @PathVariable Long restaurantId,
@@ -29,14 +30,17 @@ public class MenuController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    //식당 페이지에서 해당 식당의 메뉴 조회
     @GetMapping("/api/restaurants/{restaurantId}/menus")
-    public ResponseEntity<List<MenuSummaryResponse>> getMenusByRestaurant(
-            @PathVariable Long restaurantId
+    public ResponseEntity<Page<MenuSummaryResponse>> getMenusByRestaurant(
+            @PathVariable Long restaurantId,
+            @PageableDefault(size = 10, sort = "menuIdx", direction = Sort.Direction.ASC) Pageable pageable
     ) {
-        List<MenuSummaryResponse> responses = menuService.getMenusByRestaurant(restaurantId);
+        Page<MenuSummaryResponse> responses = menuService.getMenusByRestaurant(restaurantId, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
 
+    // 개별 메뉴 조회
     @GetMapping("/api/menu/{menuId}")
     public ResponseEntity<MenuResponse> getMenuById(
             @PathVariable Long menuId
@@ -45,6 +49,7 @@ public class MenuController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    //개별 메뉴 삭제
     @DeleteMapping("/api/menu/{menuId}")
     public ResponseEntity<Void> deleteMenuById(
             @PathVariable Long menuId
@@ -53,6 +58,7 @@ public class MenuController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    //개별 메뉴 수정
     @PutMapping("/api/menus/{menuId}")
     public ResponseEntity<MenuResponse> updateMenu(
             @PathVariable Long menuId,
@@ -62,6 +68,7 @@ public class MenuController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    //메뉴 검색
     @GetMapping("/api/menus/search")
     public ResponseEntity<Page<MenuSearchResponse>> searchMenus(
             @RequestParam String keyword,
