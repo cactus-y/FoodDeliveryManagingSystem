@@ -18,6 +18,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.locationtech.jts.geom.Point;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -57,8 +58,8 @@ public class User {
     @Column(name = "detail_address")
     private String detailAddress;
 
-    @Column(name = "coordinates")
-    private String coordinates;
+    @Column(columnDefinition = "geography(Point,4326)")
+    private Point coordinates;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -92,7 +93,7 @@ public class User {
         , String nickName
         , String roadAddress
         , String detailAddress
-        , String coordinates
+        , Point coordinates
         , LocalDateTime updatedAt
         , String profileUrl) {
 

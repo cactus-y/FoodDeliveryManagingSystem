@@ -7,37 +7,48 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/api/users/check-email")
+    @GetMapping("/check-email")
     @ResponseBody
     public boolean checkEmail(@RequestParam String email) {
         return userService.existsByEmail(email);
     }
 
-    @GetMapping("/api/users/nick-name")
+    @GetMapping("/nick-name")
     @ResponseBody
     public boolean checkNickName(@RequestParam String nickName) {
         return userService.existsByNickName(nickName);
     }
 
-//    @PostMapping("/api/users/signup")
-//    public ResponseEntity<UserResponse> addOwner(@RequestBody UserRequest userRequest) {
-//        UserResponse userResponse = userService.addOwner(userRequest);
-//        return ResponseEntity.status(HttpStatus.CREATED)
-//            .body(userResponse);
-//    }
+    // 각 Owner 정보 TEST
+    @GetMapping("/{userId}")
+    public String userLocation(@PathVariable Long userId) {
+       UserResponse user = userService.findUserById(userId);
+       System.out.println("위도 : " + user.getLatitude());
+       System.out.println("경도 : " + user.getLongitude());
+       return "redirect:/api/users/" + userId;
+    }
 
-    @PostMapping("/api/users/signup")
-    public String addOwner(@ModelAttribute UserRequest userRequest) {
+    @PostMapping("/signup")
+    public String addOwner(@ModelAttribute UserRequest userRequest, @RequestParam("profileImage") MultipartFile profileImage) {
+
+        // 아직 AWS s3 저장 경로를 모르기 때문에 대충 저장
+        String profileImageUrl = profileImage.getOriginalFilename(); // 나중에 s3 저장 경로로 변경
+        userRequest.setProfileUrl(profileImageUrl); // String 으로 변경
+
         userService.addOwner(userRequest);
         return "redirect:/user/login";
     }

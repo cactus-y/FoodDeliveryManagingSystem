@@ -3,9 +3,13 @@ package com.example.food_delivery_managing_system.user.dto;
 import com.example.food_delivery_managing_system.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
 
 @Getter
+@Setter
 @AllArgsConstructor
 public class UserRequest {
 
@@ -15,8 +19,10 @@ public class UserRequest {
     private final String nickName;
     private final String roadAddress;
     private final String detailAddress;
-    private final String coordinates;
-    private final String profileUrl;
+    private final double latitude;
+    private final double longitude;
+    private String profileUrl;
+    //private final String profileUrl;
 
     public User toEntity(String encodedPassword) {
         return User.builder()
@@ -26,7 +32,7 @@ public class UserRequest {
             .nickName(nickName)
             .roadAddress(roadAddress)
             .detailAddress(detailAddress)
-            .coordinates(coordinates)
+            .coordinates(new GeometryFactory().createPoint(new Coordinate(longitude, latitude)))
             .profileUrl(profileUrl)
             .build();
     }

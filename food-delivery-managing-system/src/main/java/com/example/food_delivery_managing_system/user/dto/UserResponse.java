@@ -2,7 +2,6 @@ package com.example.food_delivery_managing_system.user.dto;
 
 import com.example.food_delivery_managing_system.user.User;
 import com.example.food_delivery_managing_system.user.UserRole;
-import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -16,9 +15,8 @@ public class UserResponse {
     private final String nickName;
     private final String roadAddress;
     private final String detailAddress;
-    private final String coordinates;
-//    private final LocalDateTime createdAt;
-//    private final LocalDateTime updatedAt;
+    private final double latitude;
+    private final double longitude;
     private final String profileUrl;
 
     @Builder
@@ -29,9 +27,8 @@ public class UserResponse {
         , String nickName
         , String roadAddress
         , String detailAddress
-        , String coordinates
-//        , LocalDateTime createdAt
-//        , LocalDateTime updatedAt
+        , double latitude
+        , double longitude
         , String profileUrl) {
         this.userId = userId;
         this.email = email;
@@ -40,9 +37,8 @@ public class UserResponse {
         this.nickName = nickName;
         this.roadAddress = roadAddress;
         this.detailAddress = detailAddress;
-        this.coordinates = coordinates;
-//        this.createdAt = createdAt;
-//        this.updatedAt = updatedAt;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.profileUrl = profileUrl;
     }
 
@@ -55,9 +51,8 @@ public class UserResponse {
             .nickName(user.getNickName())
             .roadAddress(user.getRoadAddress())
             .detailAddress(user.getDetailAddress())
-            .coordinates(user.getCoordinates())
-//            .createdAt(user.getCreatedAt())
-//            .updatedAt(user.getUpdatedAt())
+            .latitude(user.getCoordinates().getY())
+            .longitude(user.getCoordinates().getX())
             .profileUrl(user.getProfileUrl())
             .build();
     }
