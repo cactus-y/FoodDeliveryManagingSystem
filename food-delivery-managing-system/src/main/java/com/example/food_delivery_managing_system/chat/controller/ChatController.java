@@ -47,7 +47,7 @@ public class ChatController {
     // ===== Security 적용 후 사용할 API =====
 
 /*
-    @GetMapping("/rooms")
+    @GetMapping("/me/chats")
     public ResponseEntity<List<ChatRoomResponse>> getChatRooms(
             @AuthenticationPrincipal Long userId) {
 
@@ -55,7 +55,7 @@ public class ChatController {
         return ResponseEntity.ok(chatRooms);
     }
 
-    @PostMapping("/rooms")
+    @PostMapping("/chats")
     public ResponseEntity<ChatRoomResponse> createChatRoom(
             @AuthenticationPrincipal Long userId,
             @RequestBody CreateChatRoomRequest request) {
@@ -64,7 +64,7 @@ public class ChatController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @DeleteMapping("/rooms/{chatRoomId}")
+    @DeleteMapping("/chats/{chatRoomId}")
     public ResponseEntity<Void> leaveChatRoomWithAuth(
             @AuthenticationPrincipal Long userId,
             @PathVariable Long chatRoomId) {
