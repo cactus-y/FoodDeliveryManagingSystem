@@ -1,6 +1,6 @@
-package com.example.food_delivery_managing_system.Restaurant;
+package com.example.food_delivery_managing_system.restaurant;
 
-import com.example.food_delivery_managing_system.RestaurantLike.Like;
+import com.example.food_delivery_managing_system.restaurantLike.Like;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;

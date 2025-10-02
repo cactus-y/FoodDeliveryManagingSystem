@@ -1,4 +1,4 @@
-package com.example.food_delivery_managing_system.Restaurant;
+package com.example.food_delivery_managing_system.restaurant;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

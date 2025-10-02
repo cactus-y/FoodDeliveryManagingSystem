@@ -1,4 +1,4 @@
-package com.example.food_delivery_managing_system.Restaurant.dto;
+package com.example.food_delivery_managing_system.restaurant.dto;
 
 import lombok.Getter;
 import org.springframework.data.geo.Point;

@@ -1,6 +1,6 @@
-package com.example.food_delivery_managing_system.RestaurantLike.dto;
+package com.example.food_delivery_managing_system.restaurantLike.dto;
 
-import com.example.food_delivery_managing_system.RestaurantLike.Like;
+import com.example.food_delivery_managing_system.restaurantLike.Like;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
