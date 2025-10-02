@@ -21,13 +21,12 @@ public class UserService {
 
     public boolean existsByEmail(String email) {
         boolean checkEmail = userRepository.existsByEmail(email);
-        System.out.println("★★★★★★★★★★ 이메일 체크 =" + checkEmail);
         return userRepository.existsByEmail(email);
     }
 
     public boolean existsByNickName(String nickName) {
         boolean checkNickName = userRepository.existsByNickName(nickName);
-        System.out.println("★★★★★★★★★★ 닉네임 체크 =" + checkNickName);
         return userRepository.existsByNickName(nickName);
     }
+
 }
