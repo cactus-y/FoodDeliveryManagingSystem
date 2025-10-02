@@ -2,12 +2,10 @@ package com.example.food_delivery_managing_system.user.controller;
 
 import com.example.food_delivery_managing_system.user.UserService;
 import com.example.food_delivery_managing_system.user.dto.UserRequest;
-import com.example.food_delivery_managing_system.user.dto.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,15 +29,6 @@ public class UserController {
     @ResponseBody
     public boolean checkNickName(@RequestParam String nickName) {
         return userService.existsByNickName(nickName);
-    }
-
-    // 각 Owner 정보 TEST
-    @GetMapping("/{userId}")
-    public String userLocation(@PathVariable Long userId) {
-       UserResponse user = userService.findUserById(userId);
-       System.out.println("위도 : " + user.getLatitude());
-       System.out.println("경도 : " + user.getLongitude());
-       return "redirect:/api/users/" + userId;
     }
 
     @PostMapping("/signup")
