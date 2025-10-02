@@ -1,7 +1,9 @@
-package com.example.food_delivery_managing_system.user;
+package com.example.food_delivery_managing_system.user.service;
 
 import com.example.food_delivery_managing_system.user.dto.UserRequest;
 import com.example.food_delivery_managing_system.user.dto.UserResponse;
+import com.example.food_delivery_managing_system.user.eneity.User;
+import com.example.food_delivery_managing_system.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;

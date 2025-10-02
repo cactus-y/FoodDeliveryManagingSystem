@@ -1,5 +1,6 @@
-package com.example.food_delivery_managing_system.user;
+package com.example.food_delivery_managing_system.user.repository;
 
+import com.example.food_delivery_managing_system.user.eneity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

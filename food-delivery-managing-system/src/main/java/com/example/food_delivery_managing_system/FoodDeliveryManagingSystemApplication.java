@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @EnableJpaAuditing
 @SpringBootApplication
+@EnableJpaAuditing
+
 public class FoodDeliveryManagingSystemApplication {
 
 	public static void main(String[] args) {

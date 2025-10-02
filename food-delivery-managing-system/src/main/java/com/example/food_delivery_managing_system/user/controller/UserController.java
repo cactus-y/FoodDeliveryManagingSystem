@@ -1,6 +1,6 @@
 package com.example.food_delivery_managing_system.user.controller;
 
-import com.example.food_delivery_managing_system.user.UserService;
+import com.example.food_delivery_managing_system.user.service.UserService;
 import com.example.food_delivery_managing_system.user.dto.UserRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
