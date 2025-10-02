@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 public class RestaurantListResponse {
-    private Long id;
+    private Long restaurantIdx;
     private String name;
     private Point coordinates;
     private Double distance;
@@ -19,7 +19,7 @@ public class RestaurantListResponse {
     private Float restaurantRating;
 
     public RestaurantListResponse(Restaurant restaurant, Point my) {
-        this.id = restaurant.getId();
+        this.restaurantIdx = restaurant.getRestaurantIdx();
         this.name = restaurant.getName();
         this.coordinates = new Point(restaurant.getCoordinates());
         this.distance = distanceOfTwoPoints(restaurant.getCoordinates(), my);

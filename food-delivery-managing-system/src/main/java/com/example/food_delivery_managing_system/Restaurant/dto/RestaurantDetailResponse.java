@@ -6,7 +6,7 @@ import org.springframework.data.geo.Point;
 
 @Getter
 public class RestaurantDetailResponse {
-    private Long id;
+    private Long restaurantIdx;
     private String name;
     private String roadAddress;
     private String detailAddress;
@@ -22,7 +22,7 @@ public class RestaurantDetailResponse {
     private boolean liked;
 
     public RestaurantDetailResponse(Restaurant restaurant, boolean liked) {
-        this.id = restaurant.getId();
+        this.restaurantIdx = restaurant.getRestaurantIdx();
         this.name = restaurant.getName();
         this.roadAddress = restaurant.getRoadAddress();
         this.detailAddress = restaurant.getDetailAddress();

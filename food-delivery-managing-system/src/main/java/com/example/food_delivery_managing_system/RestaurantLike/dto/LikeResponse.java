@@ -7,16 +7,16 @@ import java.time.LocalDateTime;
 
 @Getter
 public class LikeResponse {
-    private Long id;
+    private Long likeIdx;
     private LocalDateTime createdAt;
     private Long restaurantId;
     private Long userId;
     private int likesCount;
 
     public LikeResponse(Like like) {
-        this.id = like.getId();
+        this.likeIdx= like.getLikeIdx();
         this.createdAt = like.getCreatedAt();
-        this.restaurantId = like.getRestaurant().getId();
+        this.restaurantId = like.getRestaurant().getRestaurantIdx();
         this.userId = like.getUserId();
         this.likesCount = like.getRestaurant().getLikes().size();
     }

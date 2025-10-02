@@ -32,7 +32,7 @@ public class LikeService {
         try{
             Like like = likeRepository.findAll()
                     .stream().filter(L ->
-                            L.getRestaurant().getId().equals(restaurantId)
+                            L.getRestaurant().getRestaurantIdx().equals(restaurantId)
                             &&
                             // L.getUser().getId().equals(userId)
                             L.getUserId().equals(userId)
@@ -49,13 +49,13 @@ public class LikeService {
         try{
             Like like = likeRepository.findAll()
                     .stream().filter(L ->
-                            L.getRestaurant().getId().equals(restaurantId)
+                            L.getRestaurant().getRestaurantIdx().equals(restaurantId)
                                     &&
                                     // L.getUser().getId().equals(userId)
                                     L.getUserId().equals(userId)
                     )
                     .toList().get(0);
-            likeRepository.deleteById(like.getId());
+            likeRepository.deleteById(like.getLikeIdx());
         } catch (ArrayIndexOutOfBoundsException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
