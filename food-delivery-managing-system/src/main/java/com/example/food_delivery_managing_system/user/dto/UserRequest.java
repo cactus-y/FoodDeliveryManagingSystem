@@ -22,7 +22,6 @@ public class UserRequest {
     private final double latitude;
     private final double longitude;
     private String profileUrl;
-    //private final String profileUrl;
 
     public User toEntity(String encodedPassword) {
         return User.builder()

@@ -6,11 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class UserViewController {
 
-    @GetMapping("/main")
-    public String mainView() {
-        return "/user/main";
-    }
-
     @GetMapping("/login")
     public String login() {
         return "/user/login";
