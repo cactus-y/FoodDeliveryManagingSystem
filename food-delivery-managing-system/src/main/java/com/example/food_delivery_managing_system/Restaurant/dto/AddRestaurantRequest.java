@@ -1,6 +1,6 @@
-package com.example.food_delivery_managing_system.Restaurant.dto;
+package com.example.food_delivery_managing_system.restaurant.dto;
 
-import com.example.food_delivery_managing_system.Restaurant.Restaurant;
+import com.example.food_delivery_managing_system.restaurant.Restaurant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

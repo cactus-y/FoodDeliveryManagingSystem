@@ -1,9 +1,9 @@
-package com.example.food_delivery_managing_system.Restaurant;
+package com.example.food_delivery_managing_system.restaurant;
 
-import com.example.food_delivery_managing_system.Restaurant.dto.RestaurantAoMResponse;
-import com.example.food_delivery_managing_system.Restaurant.dto.RestaurantDetailResponse;
-import com.example.food_delivery_managing_system.Restaurant.dto.RestaurantListResponse;
-import com.example.food_delivery_managing_system.RestaurantLike.LikeService;
+import com.example.food_delivery_managing_system.restaurant.dto.RestaurantAoMResponse;
+import com.example.food_delivery_managing_system.restaurant.dto.RestaurantDetailResponse;
+import com.example.food_delivery_managing_system.restaurant.dto.RestaurantListResponse;
+import com.example.food_delivery_managing_system.restaurantLike.LikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Controller;

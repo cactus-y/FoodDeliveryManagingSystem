@@ -1,6 +1,6 @@
-package com.example.food_delivery_managing_system.Restaurant.dto;
+package com.example.food_delivery_managing_system.restaurant.dto;
 
-import com.example.food_delivery_managing_system.Restaurant.Restaurant;
+import com.example.food_delivery_managing_system.restaurant.Restaurant;
 import lombok.Getter;
 import org.springframework.data.geo.Point;
 
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 public class RestaurantListResponse {
-    private Long id;
+    private Long restaurantIdx;
     private String name;
     private Point coordinates;
     private Double distance;
@@ -19,7 +19,7 @@ public class RestaurantListResponse {
     private Float restaurantRating;
 
     public RestaurantListResponse(Restaurant restaurant, Point my) {
-        this.id = restaurant.getId();
+        this.restaurantIdx = restaurant.getRestaurantIdx();
         this.name = restaurant.getName();
         this.coordinates = new Point(restaurant.getCoordinates());
         this.distance = distanceOfTwoPoints(restaurant.getCoordinates(), my);

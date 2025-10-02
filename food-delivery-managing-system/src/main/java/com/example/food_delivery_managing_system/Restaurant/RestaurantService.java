@@ -1,8 +1,8 @@
-package com.example.food_delivery_managing_system.Restaurant;
+package com.example.food_delivery_managing_system.restaurant;
 
-import com.example.food_delivery_managing_system.Restaurant.dto.AddRestaurantRequest;
-import com.example.food_delivery_managing_system.Restaurant.dto.RestaurantListResponse;
-import com.example.food_delivery_managing_system.Restaurant.dto.UpdateRestaurantRequest;
+import com.example.food_delivery_managing_system.restaurant.dto.AddRestaurantRequest;
+import com.example.food_delivery_managing_system.restaurant.dto.RestaurantListResponse;
+import com.example.food_delivery_managing_system.restaurant.dto.UpdateRestaurantRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.geo.Point;
