@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div class="container">
+        <a href="/restaurants">뒤로</a>
+        <p id="restaurant-id-det" th:text="${restaurant.id}"></p>
+        <p th:text="|name: ${restaurant.name}|"></p>
+        <p th:text="|roadAddress: ${restaurant.roadAddress}|"></p>
+        <p th:text="|detailAddress: ${restaurant.detailAddress}|"></p>
+        <p th:text="|coordinates: ${restaurant.coordinates}|"></p>
+        <p th:text="|openAt: ${restaurant.openAt}|"></p>
+        <p th:text="|closeAt: ${restaurant.closeAt}|"></p>
+        <p th:text="|imageUrl: ${restaurant.imageUrl}|"></p>
+        <p th:text="|additionalInfo: ${restaurant.additionalInfo}|"></p>
+        <p th:text="|restaurantRating: ${restaurant.restaurantRating}|"></p>
+        <p th:text="|userId: ${restaurant.userId}|"></p>
+        <button id="like-btn" th:text="${restaurant.likesCount}" th:value="${restaurant.liked ? 'true' : 'false'}"
+                th:style="${restaurant.liked ? 'color: red' : 'color: black'}">
+        </button>
+        <button th:onclick="|location.href='@{/restaurantsAddOrModify?restaurantId={id}(id=${restaurant.id})}'|">수정</button>
+        <button id="delete-btn">삭제</button>
+    </div>
+
+    <script>
+        const likeButton = document.getElementById("like-btn");
+
+        if(likeButton){
+            likeButton.addEventListener('click', function() {
+                let restaurantId = Number(document.getElementById("restaurant-id-det").textContent);
+                if(likeButton.value === 'true'){
+                    fetch(`/api/restaurants/${restaurantId}/likes`, {
+                        method: 'DELETE'
+                    }).then(() => {
+                        likeButton.textContent = String(Number(likeButton.textContent)-1);
+                        likeButton.style.color = "black";
+                        likeButton.value = 'false';
+                    })
+                }
+                else{
+                    fetch(`/api/restaurants/${restaurantId}/likes`, {
+                        method: 'POST'
+                    }).then(() => {
+                        likeButton.textContent = String(Number(likeButton.textContent)+1);
+                        likeButton.style.color = "red";
+                        likeButton.value = 'true';
+                    })
+                }
+            })
+        }
+
+        const deleteButton = document.getElementById("delete-btn");
+
+        if(deleteButton){
+            deleteButton.addEventListener('click', function() {
+                let restaurantId = Number(document.getElementById("restaurant-id-det").textContent);
+                fetch(`/api/restaurants/${restaurantId}`, {
+                    method: 'DELETE'
+                }).then(() => {
+                    alert("삭제 완료");
+                    location.replace("/restaurants");
+                })
+            })
+        }
+    </script>
+</body>
+</html>
