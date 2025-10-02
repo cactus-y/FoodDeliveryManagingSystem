@@ -106,6 +106,7 @@ public class MenuService {
                 .name(menu.getName())
                 .price(menu.getPrice())
                 .description(menu.getDescription())
+                .isSignature(menu.getIsSignature())
                 .imageUrl(menu.getImageUrl())
                 .createdAt(menu.getCreatedAt())
                 .updatedAt(menu.getUpdatedAt())
