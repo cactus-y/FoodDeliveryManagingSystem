@@ -18,7 +18,7 @@ public class UserChatRelationship {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "chat_id")
     private Chat chat;
 
@@ -31,5 +31,15 @@ public class UserChatRelationship {
         this.user = user;
         this.chat = chat;
         this.status = status;
+    }
+
+    // 채팅방 나가기
+    public void leave() {
+        this.status = RelationshipStatus.LEFT;
+    }
+
+    // 채팅방 재입장
+    public void rejoin() {
+        this.status = RelationshipStatus.ACTIVE;
     }
 }

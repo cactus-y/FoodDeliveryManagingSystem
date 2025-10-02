@@ -25,4 +25,9 @@ public class Chat {
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    // 메시지 전송 시 updatedAt 갱신
+    public void updateLastMessageTime() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }

@@ -39,6 +39,7 @@ public class Message {
     public Message(String content, User sender, Chat chat) {
         this.content = content;
         this.sender = sender;
+        this.createdAt = LocalDateTime.now();
         this.chat = chat;
     }
 }
