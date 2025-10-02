@@ -1,9 +1,8 @@
 package com.example.food_delivery_managing_system.user.dto;
 
-import com.example.food_delivery_managing_system.user.User;
+import com.example.food_delivery_managing_system.user.eneity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;

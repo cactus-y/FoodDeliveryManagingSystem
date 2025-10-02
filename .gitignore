@@ -176,3 +176,12 @@ Temporary Items
 # End of https://www.toptal.com/developers/gitignore/api/java,intellij,macos
 
 .env
+.idea/
+*.iml
+*.yml
+*.sql
+*.http
+*.gradle
+
+
+
