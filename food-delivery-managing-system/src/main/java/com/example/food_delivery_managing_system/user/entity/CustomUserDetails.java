@@ -1,4 +1,4 @@
-package com.example.food_delivery_managing_system.user.eneity;
+package com.example.food_delivery_managing_system.user.entity;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
