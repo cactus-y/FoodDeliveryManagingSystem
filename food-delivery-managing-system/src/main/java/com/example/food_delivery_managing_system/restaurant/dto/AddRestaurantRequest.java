@@ -4,7 +4,11 @@ import com.example.food_delivery_managing_system.restaurant.Restaurant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.geo.Point;
+import lombok.Setter;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
 
 @Getter
 @AllArgsConstructor
@@ -13,7 +17,8 @@ public class AddRestaurantRequest {
     private String name;
     private String roadAddress;
     private String detailAddress;
-    private Point coordinates;
+    private double longitude;
+    private double latitude;
     private String openAt;
     private String closeAt;
     private String imageUrl;
@@ -25,7 +30,7 @@ public class AddRestaurantRequest {
                 .name(name)
                 .roadAddress(roadAddress)
                 .detailAddress(detailAddress)
-                .coordinates(new Point(coordinates))
+                .coordinates(new GeometryFactory(new PrecisionModel(), 4326).createPoint(new Coordinate(longitude, latitude)))
                 .openAt(openAt)
                 .closeAt(closeAt)
                 .imageUrl(imageUrl)

@@ -2,7 +2,7 @@ package com.example.food_delivery_managing_system.restaurant.dto;
 
 import com.example.food_delivery_managing_system.restaurant.Restaurant;
 import lombok.Getter;
-import org.springframework.data.geo.Point;
+import org.locationtech.jts.geom.Point;
 
 @Getter
 public class RestaurantAoMResponse {
@@ -23,7 +23,7 @@ public class RestaurantAoMResponse {
         this.name = restaurant.getName();
         this.roadAddress = restaurant.getRoadAddress();
         this.detailAddress = restaurant.getDetailAddress();
-        this.coordinates = new Point(restaurant.getCoordinates());
+        this.coordinates = restaurant.getCoordinates();
         this.openAt = restaurant.getOpenAt();
         this.closeAt = restaurant.getCloseAt();
         this.imageUrl = restaurant.getImageUrl();

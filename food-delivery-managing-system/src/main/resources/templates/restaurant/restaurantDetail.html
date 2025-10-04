@@ -2,12 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>동네 식당 상세</title>
 </head>
 <body>
     <div class="container">
         <a href="/restaurants">뒤로</a>
-        <p id="restaurant-id-det" th:text="${restaurant.id}"></p>
+        <p id="restaurant-id-det" th:text="${restaurant.restaurantIdx}"></p>
         <p th:text="|name: ${restaurant.name}|"></p>
         <p th:text="|roadAddress: ${restaurant.roadAddress}|"></p>
         <p th:text="|detailAddress: ${restaurant.detailAddress}|"></p>
@@ -21,7 +21,7 @@
         <button id="like-btn" th:text="${restaurant.likesCount}" th:value="${restaurant.liked ? 'true' : 'false'}"
                 th:style="${restaurant.liked ? 'color: red' : 'color: black'}">
         </button>
-        <button th:onclick="|location.href='@{/restaurantsAddOrModify?restaurantId={id}(id=${restaurant.id})}'|">수정</button>
+        <button th:onclick="|location.href='@{/restaurantsAddOrModify?restaurantId={id}(id=${restaurant.restaurantIdx})}'|">수정</button>
         <button id="delete-btn">삭제</button>
     </div>
 

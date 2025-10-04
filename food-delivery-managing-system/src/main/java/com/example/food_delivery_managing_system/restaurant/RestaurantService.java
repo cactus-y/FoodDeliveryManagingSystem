@@ -3,9 +3,10 @@ package com.example.food_delivery_managing_system.restaurant;
 import com.example.food_delivery_managing_system.restaurant.dto.AddRestaurantRequest;
 import com.example.food_delivery_managing_system.restaurant.dto.RestaurantListResponse;
 import com.example.food_delivery_managing_system.restaurant.dto.UpdateRestaurantRequest;
+import com.example.food_delivery_managing_system.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.geo.Point;
+import org.locationtech.jts.geom.Point;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -16,9 +17,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RestaurantService {
     private final RestaurantRepository restaurantRepository;
+    private final UserRepository userRepository;
 
     // POST: 내 식당 추가
     public Restaurant addRestaurant(AddRestaurantRequest request, Long userId) {
+        System.out.println("name: "+request.getName());
         // User user = userRepository.findById(userId);
         return restaurantRepository.save(request.toEntity(/* user */));
     }
@@ -46,7 +49,8 @@ public class RestaurantService {
                 request.getName(),
                 request.getRoadAddress(),
                 request.getDetailAddress(),
-                request.getCoordinates(),
+                request.getLongitude(),
+                request.getLatitude(),
                 request.getOpenAt(),
                 request.getCloseAt(),
                 request.getImageUrl(),

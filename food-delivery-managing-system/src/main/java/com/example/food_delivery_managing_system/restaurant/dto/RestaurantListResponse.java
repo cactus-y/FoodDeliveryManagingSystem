@@ -2,7 +2,7 @@ package com.example.food_delivery_managing_system.restaurant.dto;
 
 import com.example.food_delivery_managing_system.restaurant.Restaurant;
 import lombok.Getter;
-import org.springframework.data.geo.Point;
+import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
 
@@ -21,7 +21,7 @@ public class RestaurantListResponse {
     public RestaurantListResponse(Restaurant restaurant, Point my) {
         this.restaurantIdx = restaurant.getRestaurantIdx();
         this.name = restaurant.getName();
-        this.coordinates = new Point(restaurant.getCoordinates());
+        this.coordinates = restaurant.getCoordinates();
         this.distance = distanceOfTwoPoints(restaurant.getCoordinates(), my);
         this.createdAt = restaurant.getCreatedAt();
         this.openAt = restaurant.getOpenAt();
@@ -31,10 +31,10 @@ public class RestaurantListResponse {
     }
 
     public Double distanceOfTwoPoints(Point a, Point b){
-        double x1 = Math.toRadians(a.getX());
-        double y1 = Math.toRadians(a.getY());
-        double x2 = Math.toRadians(b.getX());
-        double y2 = Math.toRadians(b.getY());
+        double x1 = Math.toRadians(a.getCoordinate().getX());
+        double y1 = Math.toRadians(a.getCoordinate().getY());
+        double x2 = Math.toRadians(b.getCoordinate().getX());
+        double y2 = Math.toRadians(b.getCoordinate().getY());
 
         double dlon = x2 - x1;
         double dlat = y2 - y1;

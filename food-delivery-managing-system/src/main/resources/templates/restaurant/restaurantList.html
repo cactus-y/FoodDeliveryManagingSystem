@@ -2,14 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>동네 식당 목록</title>
 </head>
 <body>
     <div class="container">
         <a href="/restaurantsAddOrModify">식당 추가</a>
         <div th:each="item:${restaurants}">
-            <button th:onclick="|location.href='@{/restaurants/{id}(id=${item.id})}'|">
-                <p th:text="|restaurantId: ${item.id}|"></p>
+            <button th:onclick="|location.href='@{/restaurants/{id}(id=${item.restaurantIdx})}'|">
+                <p th:text="|restaurantId: ${item.restaurantIdx}|"></p>
                 <p th:text="|name: ${item.name}|"></p>
                 <p th:text="|coordinates: ${item.coordinates}|"></p>
                 <p th:text="|distance: ${item.distance}|"></p>
