@@ -1,22 +1,23 @@
 package com.example.food_delivery_managing_system.restaurant;
 
+import com.example.food_delivery_managing_system.restaurant.dto.AddRestaurantRequest;
 import com.example.food_delivery_managing_system.restaurant.dto.RestaurantAoMResponse;
 import com.example.food_delivery_managing_system.restaurant.dto.RestaurantDetailResponse;
 import com.example.food_delivery_managing_system.restaurant.dto.RestaurantListResponse;
 import com.example.food_delivery_managing_system.restaurantLike.LikeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.geo.Point;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-public class RestaurantTestPageController {
+public class RestaurantPageController {
     private final RestaurantService restaurantService;
     private final LikeService likeService;
 
@@ -29,15 +30,15 @@ public class RestaurantTestPageController {
             Restaurant restaurant = restaurantService.getRestaurantById(restaurantId);
             model.addAttribute("restaurant", new RestaurantAoMResponse(restaurant));
         }
-        return "restaurantAddOrModify";
+        return "restaurant/restaurantAddOrModify";
     }
 
     @GetMapping("/restaurants")
     public String getRestaurantList(Model model){
-        Point my = new Point(126,37);
+        Point my = new GeometryFactory().createPoint(new Coordinate(126,37)); // 임시 좌표값
         List<RestaurantListResponse> list = restaurantService.getListOfRestaurants(my);
         model.addAttribute("restaurants",list);
-        return "restaurantList";
+        return "restaurant/restaurantList";
     }
 
     @GetMapping("/restaurants/{restaurantId}")
@@ -52,7 +53,7 @@ public class RestaurantTestPageController {
         } finally {
             Restaurant restaurant = restaurantService.getRestaurantById(restaurantId);
             model.addAttribute("restaurant",new RestaurantDetailResponse(restaurant, liked));
-            return "restaurantDetail";
+            return "restaurant/restaurantDetail";
         }
     }
 }

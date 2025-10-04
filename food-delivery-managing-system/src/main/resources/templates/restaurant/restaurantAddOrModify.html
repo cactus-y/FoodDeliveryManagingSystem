@@ -7,18 +7,18 @@
 <body>
     <div class="container">
         <a href="/restaurants">뒤로</a>
-        <input type="hidden" id="restaurant-id-aom" th:value="${restaurant.id}">
+        <input type="hidden" id="restaurant-id-aom" th:value="${restaurant.restaurantIdx}">
         <input type="text" id="name" placeholder="이름" th:value="${restaurant.name}">
         <input type="text" id="road-address" placeholder="도로명 주소" th:value="${restaurant.roadAddress}">
         <input type="text" id="detail-address" placeholder="상세 주소" th:value="${restaurant.detailAddress}">
-        <input type="number" id="coordinates-x" placeholder="경도" th:value="${restaurant.coordinates?.x}">
-        <input type="number" id="coordinates-y" placeholder="위도" th:value="${restaurant.coordinates?.y}">
+        <input type="number" id="longitude" placeholder="경도" th:value="${restaurant.coordinates?.x}">
+        <input type="number" id="latitude" placeholder="위도" th:value="${restaurant.coordinates?.y}">
         <input type="text" id="open-at" placeholder="오픈 시간" th:value="${restaurant.openAt}">
         <input type="text" id="close-at" placeholder="폐점 시간" th:value="${restaurant.closeAt}">
         <input type="text" id="image-url" placeholder="이미지 url" th:value="${restaurant.imageUrl}">
         <textarea type="text" id="additional-info" placeholder="추가 정보" th:text="${restaurant.additionalInfo}"></textarea>
-        <button th:if="${restaurant.id != null}" type="button" id="modify-btn">수정</button>
-        <button th:if="${restaurant.id == null}" type="button" id="create-btn">등록</button>
+        <button th:if="${restaurant.restaurantIdx != null}" type="button" id="modify-btn">수정</button>
+        <button th:if="${restaurant.restaurantIdx == null}" type="button" id="create-btn">등록</button>
     </div>
     <script>
         const modifyButton = document.getElementById("modify-btn");
