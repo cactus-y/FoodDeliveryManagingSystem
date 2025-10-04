@@ -6,14 +6,15 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class SendMessageRequest {
-
-    private Long chatRoomId;
+public class ChatMessageRequest {
+    private Long chatId;
+    private Long userId;
     private String content;
 
     @Builder
-    public SendMessageRequest(Long chatRoomId, String content) {
-        this.chatRoomId = chatRoomId;
+    public ChatMessageRequest(Long chatId, Long userId, String content) {
+        this.chatId = chatId;
+        this.userId = userId;
         this.content = content;
     }
 }
