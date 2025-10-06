@@ -1,6 +1,7 @@
 package com.example.food_delivery_managing_system.restaurant;
 
 import com.example.food_delivery_managing_system.restaurantLike.Like;
+import com.example.food_delivery_managing_system.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.locationtech.jts.geom.Coordinate;
@@ -61,14 +62,9 @@ public class Restaurant {
     @Column(name = "restaurant_rating")
     private Float restaurantRating = 0.0f;
 
-    @Column(name = "user_id")
-    private Long userId = 1L;
-
-    /*
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-     */
 
     @OneToMany(mappedBy = "restaurant")
     private List<Like> likes = new ArrayList<>();
@@ -82,7 +78,8 @@ public class Restaurant {
             String openAt,
             String closeAt,
             String imageUrl,
-            String additionalInfo
+            String additionalInfo,
+            User user
     ) {
         this.name = name;
         this.roadAddress = roadAddress;
@@ -92,6 +89,7 @@ public class Restaurant {
         this.closeAt = closeAt;
         this.imageUrl = imageUrl;
         this.additionalInfo = additionalInfo;
+        this.user = user;
     }
 
     public void updateRestaurant(

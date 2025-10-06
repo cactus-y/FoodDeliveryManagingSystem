@@ -3,6 +3,7 @@ package com.example.food_delivery_managing_system.restaurant;
 import com.example.food_delivery_managing_system.restaurant.dto.AddRestaurantRequest;
 import com.example.food_delivery_managing_system.restaurant.dto.RestaurantListResponse;
 import com.example.food_delivery_managing_system.restaurant.dto.UpdateRestaurantRequest;
+import com.example.food_delivery_managing_system.user.entity.User;
 import com.example.food_delivery_managing_system.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,10 +21,9 @@ public class RestaurantService {
     private final UserRepository userRepository;
 
     // POST: 내 식당 추가
-    public Restaurant addRestaurant(AddRestaurantRequest request, Long myUserId) {
-        System.out.println("name: "+request.getName());
-        // User user = userRepository.findById(userId);
-        return restaurantRepository.save(request.toEntity(/* user */));
+    public Restaurant addRestaurant(AddRestaurantRequest request) {
+        User user = userRepository.findByEmail(request.getUsername()).get();
+        return restaurantRepository.save(request.toEntity(user));
     }
 
     // GET: 동네 식당 목록 조회

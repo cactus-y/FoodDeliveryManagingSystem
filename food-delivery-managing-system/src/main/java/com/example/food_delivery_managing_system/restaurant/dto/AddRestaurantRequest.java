@@ -1,6 +1,7 @@
 package com.example.food_delivery_managing_system.restaurant.dto;
 
 import com.example.food_delivery_managing_system.restaurant.Restaurant;
+import com.example.food_delivery_managing_system.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,9 +24,9 @@ public class AddRestaurantRequest {
     private String closeAt;
     private String imageUrl;
     private String additionalInfo;
-    // private User user;
+    private String username;
 
-    public Restaurant toEntity(/* User user */){
+    public Restaurant toEntity(User user){
         return Restaurant.builder()
                 .name(name)
                 .roadAddress(roadAddress)
@@ -35,7 +36,7 @@ public class AddRestaurantRequest {
                 .closeAt(closeAt)
                 .imageUrl(imageUrl)
                 .additionalInfo(additionalInfo)
-                // .user(user)
+                .user(user)
                 .build();
     }
 }

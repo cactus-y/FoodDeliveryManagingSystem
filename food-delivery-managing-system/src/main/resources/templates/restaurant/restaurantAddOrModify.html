@@ -17,6 +17,7 @@
         <input type="text" id="close-at" placeholder="폐점 시간" th:value="${restaurant.closeAt}">
         <input type="text" id="image-url" placeholder="이미지 url" th:value="${restaurant.imageUrl}">
         <textarea type="text" id="additional-info" placeholder="추가 정보" th:text="${restaurant.additionalInfo}"></textarea>
+        <input type="hidden" id="my-username" th:value="${restaurant.username}">
         <button th:if="${restaurant.restaurantIdx != null}" type="button" id="modify-btn">수정</button>
         <button th:if="${restaurant.restaurantIdx == null}" type="button" id="create-btn">등록</button>
     </div>
@@ -70,7 +71,8 @@
                         openAt: document.getElementById("open-at").value,
                         closeAt: document.getElementById("close-at").value,
                         imageUrl: document.getElementById("image-url").value,
-                        additionalInfo: document.getElementById("additional-info").value
+                        additionalInfo: document.getElementById("additional-info").value,
+                        username: document.getElementById("my-username").value
                     })
                 }).then((response) => {
                     if(response.ok){

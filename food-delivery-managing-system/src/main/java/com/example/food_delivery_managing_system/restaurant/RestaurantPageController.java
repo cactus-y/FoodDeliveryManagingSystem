@@ -23,12 +23,13 @@ public class RestaurantPageController {
 
     @GetMapping("/restaurantsAddOrModify")
     public String addOrModifyRestaurant(@RequestParam(required = false) Long restaurantId, Model model, Principal principal) {
+        String myUsername = principal.getName();
         if(restaurantId == null){
-            model.addAttribute("restaurant", new RestaurantAoMResponse());
+            model.addAttribute("restaurant", new RestaurantAoMResponse(myUsername));
         }
         else{
             Restaurant restaurant = restaurantService.getRestaurantById(restaurantId);
-            model.addAttribute("restaurant", new RestaurantAoMResponse(restaurant));
+            model.addAttribute("restaurant", new RestaurantAoMResponse(restaurant, myUsername));
         }
         return "restaurant/restaurantAddOrModify";
     }
@@ -36,7 +37,6 @@ public class RestaurantPageController {
     @GetMapping("/restaurants")
     public String getRestaurantList(Model model, Principal principal) {
         Point myCoordinates = userRepository.findByEmail(principal.getName()).get().getCoordinates();
-        // Point my = new GeometryFactory().createPoint(new Coordinate(126,37)); // 임시 좌표값
         List<RestaurantListResponse> list = restaurantService.getListOfRestaurants(myCoordinates);
         model.addAttribute("restaurants",list);
         return "restaurant/restaurantList";
@@ -44,12 +44,10 @@ public class RestaurantPageController {
 
     @GetMapping("/restaurants/{restaurantId}")
     public String getRestaurantDetail(@PathVariable Long restaurantId, Model model, Principal principal){
-        Long myUserId = userRepository.findByEmail(principal.getName()).get().getUserId();
-        // Long userId = 1L; // 임시 userId
-        // TODO: 헤더나 파라미터로부터 내 userId값을 받아옴
+        String myUsername = principal.getName();
         boolean liked = false;
         try{
-            if(likeService.getLiked(restaurantId, myUserId) != null) liked = true;
+            if(likeService.getLiked(restaurantId, myUsername) != null) liked = true;
         } catch(ArrayIndexOutOfBoundsException e) {
             liked = false;
         } finally {
