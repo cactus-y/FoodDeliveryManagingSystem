@@ -20,7 +20,7 @@ public class RestaurantService {
     private final UserRepository userRepository;
 
     // POST: 내 식당 추가
-    public Restaurant addRestaurant(AddRestaurantRequest request, Long userId) {
+    public Restaurant addRestaurant(AddRestaurantRequest request, Long myUserId) {
         System.out.println("name: "+request.getName());
         // User user = userRepository.findById(userId);
         return restaurantRepository.save(request.toEntity(/* user */));
