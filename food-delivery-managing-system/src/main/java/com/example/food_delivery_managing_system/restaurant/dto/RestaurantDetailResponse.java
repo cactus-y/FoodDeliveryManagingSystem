@@ -16,11 +16,12 @@ public class RestaurantDetailResponse {
     private String imageUrl;
     private String additionalInfo;
     private Float restaurantRating;
-    private Long userId;
+    private String ownerUsername;
+    private String myUsername;
     private int likesCount;
     private boolean liked;
 
-    public RestaurantDetailResponse(Restaurant restaurant, boolean liked) {
+    public RestaurantDetailResponse(Restaurant restaurant, String myUsername, boolean liked) {
         this.restaurantIdx = restaurant.getRestaurantIdx();
         this.name = restaurant.getName();
         this.roadAddress = restaurant.getRoadAddress();
@@ -31,7 +32,8 @@ public class RestaurantDetailResponse {
         this.imageUrl = restaurant.getImageUrl();
         this.additionalInfo = restaurant.getAdditionalInfo();
         this.restaurantRating = restaurant.getRestaurantRating();
-        this.userId = restaurant.getUser().getUserId();
+        this.ownerUsername = restaurant.getUser().getEmail();
+        this.myUsername = myUsername;
         this.likesCount = restaurant.getLikes().size();
         this.liked = liked;
     }

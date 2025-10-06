@@ -17,12 +17,14 @@
         <p th:text="|imageUrl: ${restaurant.imageUrl}|"></p>
         <p th:text="|additionalInfo: ${restaurant.additionalInfo}|"></p>
         <p th:text="|restaurantRating: ${restaurant.restaurantRating}|"></p>
-        <p th:text="|userId: ${restaurant.userId}|"></p>
+        <p th:text="|ownerUsername: ${restaurant.ownerUsername}|"></p>
         <button id="like-btn" th:text="${restaurant.likesCount}" th:value="${restaurant.liked ? 'true' : 'false'}"
                 th:style="${restaurant.liked ? 'color: red' : 'color: black'}">
         </button>
-        <button th:onclick="|location.href='@{/restaurantsAddOrModify?restaurantId={id}(id=${restaurant.restaurantIdx})}'|">수정</button>
-        <button id="delete-btn">삭제</button>
+        <div th:if="${restaurant.ownerUsername == restaurant.myUsername}">
+            <button th:onclick="|location.href='@{/restaurantsAddOrModify?restaurantId={id}(id=${restaurant.restaurantIdx})}'|">수정</button>
+            <button id="delete-btn">삭제</button>
+        </div>
     </div>
 
     <script>

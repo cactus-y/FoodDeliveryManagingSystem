@@ -52,7 +52,7 @@ public class RestaurantPageController {
             liked = false;
         } finally {
             Restaurant restaurant = restaurantService.getRestaurantById(restaurantId);
-            model.addAttribute("restaurant",new RestaurantDetailResponse(restaurant, liked));
+            model.addAttribute("restaurant",new RestaurantDetailResponse(restaurant, myUsername, liked));
             return "restaurant/restaurantDetail";
         }
     }
