@@ -7,21 +7,25 @@
 <body>
     <div class="container">
         <a href="/restaurants">뒤로</a>
-        <p id="restaurant-id-det" th:text="${restaurant.restaurantIdx}"></p>
-        <p th:text="|name: ${restaurant.name}|"></p>
-        <p th:text="|roadAddress: ${restaurant.roadAddress}|"></p>
-        <p th:text="|detailAddress: ${restaurant.detailAddress}|"></p>
-        <p th:text="|coordinates: ${restaurant.coordinates}|"></p>
-        <p th:text="|openAt: ${restaurant.openAt}|"></p>
-        <p th:text="|closeAt: ${restaurant.closeAt}|"></p>
-        <p th:text="|imageUrl: ${restaurant.imageUrl}|"></p>
-        <p th:text="|additionalInfo: ${restaurant.additionalInfo}|"></p>
-        <p th:text="|restaurantRating: ${restaurant.restaurantRating}|"></p>
-        <p th:text="|ownerUsername: ${restaurant.ownerUsername}|"></p>
+        <div style="
+            background-color: lightgray;
+            height: 500px;
+        ">
+            image
+            <!-- image -->
+        </div>
+        <h1 th:text="${restaurant.name}"></h1>
+        <div hidden id="restaurant-id-det" th:text="${restaurant.restaurantIdx}"></div>
+        <div th:text="|${restaurant.roadAddress}, ${restaurant.detailAddress}|"></div>
+        <div th:text="|영업 시간: ${restaurant.openAt} ~ ${restaurant.closeAt}|"></div>
+        <div th:text="|★${restaurant.restaurantRating}|"></div>
+        <div th:text="|점주 이메일: ${restaurant.ownerUsername}|"></div>
+        <div th:text="${restaurant.additionalInfo}"></div>
+        <label>좋아요</label>
         <button id="like-btn" th:text="${restaurant.likesCount}" th:value="${restaurant.liked ? 'true' : 'false'}"
                 th:style="${restaurant.liked ? 'color: red' : 'color: black'}">
         </button>
-        <div th:if="${restaurant.ownerUsername == restaurant.myUsername}">
+        <div th:if="${restaurant.isMyRestaurant}">
             <button th:onclick="|location.href='@{/restaurantsAddOrModify?restaurantId={id}(id=${restaurant.restaurantIdx})}'|">수정</button>
             <button id="delete-btn">삭제</button>
         </div>
@@ -58,13 +62,15 @@
 
         if(deleteButton){
             deleteButton.addEventListener('click', function() {
-                let restaurantId = Number(document.getElementById("restaurant-id-det").textContent);
-                fetch(`/api/restaurants/${restaurantId}`, {
-                    method: 'DELETE'
-                }).then(() => {
-                    alert("삭제 완료");
-                    location.replace("/restaurants");
-                })
+                if(confirm("삭제하시겠습니까?")){
+                    let restaurantId = Number(document.getElementById("restaurant-id-det").textContent);
+                    fetch(`/api/restaurants/${restaurantId}`, {
+                        method: 'DELETE'
+                    }).then(() => {
+                        alert("삭제 완료");
+                        location.replace("/restaurants");
+                    })
+                }
             })
         }
     </script>

@@ -17,17 +17,19 @@ public class RestaurantListResponse {
     private String closeAt;
     private String imageUrl;
     private Float restaurantRating;
+    private boolean isMyRestaurant;
 
-    public RestaurantListResponse(Restaurant restaurant, Point my) {
+    public RestaurantListResponse(Restaurant restaurant, Point myCoordinates, String myUsername) {
         this.restaurantIdx = restaurant.getRestaurantIdx();
         this.name = restaurant.getName();
         this.coordinates = restaurant.getCoordinates();
-        this.distance = distanceOfTwoPoints(restaurant.getCoordinates(), my);
+        this.distance = distanceOfTwoPoints(restaurant.getCoordinates(), myCoordinates);
         this.createdAt = restaurant.getCreatedAt();
         this.openAt = restaurant.getOpenAt();
         this.closeAt = restaurant.getCloseAt();
         this.imageUrl = restaurant.getImageUrl();
         this.restaurantRating = restaurant.getRestaurantRating();
+        this.isMyRestaurant = restaurant.getUser().getEmail().equals(myUsername);
     }
 
     public Double distanceOfTwoPoints(Point a, Point b){
@@ -44,6 +46,6 @@ public class RestaurantListResponse {
 
         double radius = 6371; // 지구 반지름(km)
 
-        return radius * c;
+        return Math.floor(radius * c * 10) / 10.0; // 소수점 첫재짜리까지만
     }
 }

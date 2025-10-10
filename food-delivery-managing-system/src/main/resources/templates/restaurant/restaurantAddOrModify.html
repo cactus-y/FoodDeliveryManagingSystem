@@ -7,25 +7,47 @@
 <body>
     <div class="container">
         <a href="/restaurants">뒤로</a>
+        <h1 th:if="${restaurant.restaurantIdx != null}">식당 수정</h1>
+        <h1 th:if="${restaurant.restaurantIdx == null}">식당 등록</h1>
         <input type="hidden" id="restaurant-id-aom" th:value="${restaurant.restaurantIdx}">
-        <input type="text" id="name" placeholder="이름" th:value="${restaurant.name}">
-        <input type="text" id="road-address" placeholder="도로명 주소" th:value="${restaurant.roadAddress}">
-        <input type="text" id="detail-address" placeholder="상세 주소" th:value="${restaurant.detailAddress}">
-        <input type="number" id="longitude" placeholder="경도" th:value="${restaurant.coordinates?.x}">
-        <input type="number" id="latitude" placeholder="위도" th:value="${restaurant.coordinates?.y}">
-        <input type="text" id="open-at" placeholder="오픈 시간" th:value="${restaurant.openAt}">
-        <input type="text" id="close-at" placeholder="폐점 시간" th:value="${restaurant.closeAt}">
-        <input type="text" id="image-url" placeholder="이미지 url" th:value="${restaurant.imageUrl}">
-        <textarea type="text" id="additional-info" placeholder="추가 정보" th:text="${restaurant.additionalInfo}"></textarea>
-        <input type="hidden" id="my-username" th:value="${restaurant.username}">
-        <button th:if="${restaurant.restaurantIdx != null}" type="button" id="modify-btn">수정</button>
-        <button th:if="${restaurant.restaurantIdx == null}" type="button" id="create-btn">등록</button>
-    </div>
+        <form>
+            <div>식당 이름  <span style="color:#ef4444">*</span></div>
+            <input type="text" id="name" placeholder="이름" th:value="${restaurant.name}" required>
+            <div>도로명 주소  <span style="color:#ef4444">*</span></div>
+            <input type="text" id="road-address" placeholder="도로명 주소" th:value="${restaurant.roadAddress}" required>
+            <div>상세 주소  <span style="color:#ef4444">*</span></div>
+            <input type="text" id="detail-address" placeholder="상세 주소" th:value="${restaurant.detailAddress}" required>
+            <div>좌표  <span style="color:#ef4444">*</span></div>
+            <input type="number" id="longitude" placeholder="경도(-180~180)" th:value="${restaurant.coordinates?.x}" required>
+            <input type="number" id="latitude" placeholder="위도(-90~90)" th:value="${restaurant.coordinates?.y}" required>
+            <div>오픈 시간  <span style="color:#ef4444">*</span></div>
+            <input type="time" id="open-at" th:value="${restaurant.openAt}" required>
+            <div>폐점 시간  <span style="color:#ef4444">*</span></div>
+            <input type="time" id="close-at" th:value="${restaurant.closeAt}" required>
+            <div>대표 사진</div>
+            <input type="file" id="image-url" placeholder="이미지 url"  accept="image/*" th:value="${restaurant.imageUrl}">
+            <div>추가 정보</div>
+            <textarea type="text" id="additional-info" placeholder="추가 정보" th:text="${restaurant.additionalInfo}"></textarea>
+            <input type="hidden" id="my-username" th:value="${restaurant.username}">
+            <br>
+            <input th:if="${restaurant.restaurantIdx != null}" type="submit" id="modify-btn" value="수정">
+            <input th:if="${restaurant.restaurantIdx == null}" type="submit" id="create-btn" value="등록">
+        </form>
     <script>
         const modifyButton = document.getElementById("modify-btn");
 
         if(modifyButton){
-            modifyButton.addEventListener('click', function() {
+            modifyButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                const requiredFields = ["name", "road-address", "detail-address", "longitude", "latitude", "open-at", "close-at"];
+                for (let id of requiredFields) {
+                    const input = document.getElementById(id);
+                    if (!input.value.trim()) {
+                        alert("빈 값이 있습니다.");
+                        input.focus();
+                        return;
+                    }
+                }
                 let restaurantId = Number(document.getElementById("restaurant-id-aom").value);
                 fetch(`/api/restaurants/${restaurantId}`, {
                     method: 'PUT',
@@ -56,7 +78,17 @@
         const createButton = document.getElementById("create-btn");
 
         if(createButton){
-            createButton.addEventListener('click', function() {
+            createButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                const requiredFields = ["name", "road-address", "detail-address", "longitude", "latitude", "open-at", "close-at"];
+                for (let id of requiredFields) {
+                    const input = document.getElementById(id);
+                    if (!input.value.trim()) {
+                        alert("빈 값이 있습니다.");
+                        input.focus();
+                        return;
+                    }
+                }
                 fetch(`/api/restaurants`, {
                     method: 'POST',
                     headers: {

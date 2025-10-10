@@ -17,7 +17,7 @@ public class RestaurantDetailResponse {
     private String additionalInfo;
     private Float restaurantRating;
     private String ownerUsername;
-    private String myUsername;
+    private boolean isMyRestaurant;
     private int likesCount;
     private boolean liked;
 
@@ -33,7 +33,7 @@ public class RestaurantDetailResponse {
         this.additionalInfo = restaurant.getAdditionalInfo();
         this.restaurantRating = restaurant.getRestaurantRating();
         this.ownerUsername = restaurant.getUser().getEmail();
-        this.myUsername = myUsername;
+        this.isMyRestaurant = restaurant.getUser().getEmail().equals(myUsername);
         this.likesCount = restaurant.getLikes().size();
         this.liked = liked;
     }

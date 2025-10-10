@@ -27,9 +27,10 @@ public class RestaurantService {
     }
 
     // GET: 동네 식당 목록 조회
-    public List<RestaurantListResponse> getListOfRestaurants(Point my) {
+    public List<RestaurantListResponse> getListOfRestaurants(String myUsername) {
+        Point myCoordinates = userRepository.findByEmail(myUsername).get().getCoordinates();
         return restaurantRepository.findAll()
-                .stream().map(restaurant->new RestaurantListResponse(restaurant, my))
+                .stream().map(restaurant->new RestaurantListResponse(restaurant, myCoordinates, myUsername))
                 // .filter(response -> response.getDistance() <= 2) // 내 좌표로부터 2km 이내(추후반영)
                 .toList();
     }

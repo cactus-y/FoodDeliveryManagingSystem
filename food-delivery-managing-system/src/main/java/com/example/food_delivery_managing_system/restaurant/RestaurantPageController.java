@@ -36,8 +36,8 @@ public class RestaurantPageController {
 
     @GetMapping("/restaurants")
     public String getRestaurantList(Model model, Principal principal) {
-        Point myCoordinates = userRepository.findByEmail(principal.getName()).get().getCoordinates();
-        List<RestaurantListResponse> list = restaurantService.getListOfRestaurants(myCoordinates);
+        String myUsername = principal.getName();
+        List<RestaurantListResponse> list = restaurantService.getListOfRestaurants(myUsername);
         model.addAttribute("restaurants",list);
         return "restaurant/restaurantList";
     }
