@@ -1,6 +1,6 @@
 package com.example.food_delivery_managing_system.user.eneity;
 
-import jakarta.persistence.Column;
+import  jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;

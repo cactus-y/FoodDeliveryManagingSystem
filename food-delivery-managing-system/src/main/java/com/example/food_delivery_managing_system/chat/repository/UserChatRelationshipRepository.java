@@ -67,7 +67,7 @@ public interface UserChatRelationshipRepository extends JpaRepository<UserChatRe
 
     // 특정 사용자의 특정 채팅방 관계 조회
     @Query("SELECT ucr FROM UserChatRelationship ucr " +
-            "WHERE ucr.user.id = :userId " +
+            "WHERE ucr.user.userId = :userId " +
             "AND ucr.chat.chatId = :chatId")
     Optional<UserChatRelationship> findByUserIdAndChatId(
             @Param("userId") Long userId,
@@ -82,7 +82,7 @@ public interface UserChatRelationshipRepository extends JpaRepository<UserChatRe
     // 특정 유저가 속한 모든 관계 조회
     @Query("SELECT ucr FROM UserChatRelationship ucr " +
            "JOIN FETCH ucr.chat c " +
-           "WHERE ucr.user.id = :userId AND ucr.status = :status")
+           "WHERE ucr.user.userId = :userId AND ucr.status = :status")
     List<UserChatRelationship> findAllByUserIdWithChat(@Param("userId") Long userId,
                                                        @Param("status") RelationshipStatus status);
 
@@ -98,8 +98,8 @@ public interface UserChatRelationshipRepository extends JpaRepository<UserChatRe
     @Query("SELECT ucr1.chat.chatId " +
            "FROM UserChatRelationship ucr1 " +
            "JOIN UserChatRelationship ucr2 ON ucr1.chat.chatId = ucr2.chat.chatId " +
-           "WHERE ucr1.user.id = :userId1 " +
-           "AND ucr2.user.id = :userId2 " +
+           "WHERE ucr1.user.userId = :userId1 " +
+           "AND ucr2.user.userId = :userId2 " +
            "AND (ucr1.status = :status OR ucr1.status = :status) " +
            // 이 아래 쿼리는 해당 채팅방이 1대1 채팅방인 것을 확인하는 절차
            "AND ucr1.chat.chatId IN (" +

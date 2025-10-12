@@ -11,7 +11,6 @@ import java.util.List;
 
 @Getter
 @Setter
-@AllArgsConstructor
 public class CreateChatResponse {
     private Chat chat;
     private List<ChatUserDto> participants;

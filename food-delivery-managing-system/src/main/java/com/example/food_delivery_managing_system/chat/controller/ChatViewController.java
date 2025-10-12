@@ -4,6 +4,7 @@ import com.example.food_delivery_managing_system.chat.dto.ChatMessageResponse;
 import com.example.food_delivery_managing_system.chat.dto.ChatResponse;
 import com.example.food_delivery_managing_system.chat.dto.ChatUserDto;
 import com.example.food_delivery_managing_system.chat.service.ChatService;
+import com.example.food_delivery_managing_system.user.eneity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -23,8 +24,8 @@ public class ChatViewController {
     public String getChatListView(Model model, @AuthenticationPrincipal User user) {
         ChatUserDto currentUser = ChatUserDto.builder()
                 .userId(user.getUserId())
-                .nickname(user.getNickname())
-                .profileImageUrl(user.getProfileImageUrl())
+                .nickname(user.getNickName())
+                .profileImageUrl(user.getProfileUrl())
                 .build();
 
         model.addAttribute("currentUser", currentUser);
@@ -35,8 +36,8 @@ public class ChatViewController {
     public String getChatView(@PathVariable("chatId") Long chatId, Model model, @AuthenticationPrincipal User user) {
         ChatUserDto currentUser = ChatUserDto.builder()
                 .userId(user.getUserId())
-                .nickname(user.getNickname())
-                .profileImageUrl(user.getProfileImageUrl())
+                .nickname(user.getNickName())
+                .profileImageUrl(user.getProfileUrl())
                 .build();
         model.addAttribute("chatId", chatId);
         model.addAttribute("currentUser", currentUser);

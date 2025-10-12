@@ -5,6 +5,8 @@ import com.example.food_delivery_managing_system.chat.dto.*;
 import com.example.food_delivery_managing_system.chat.repository.ChatRepository;
 import com.example.food_delivery_managing_system.chat.repository.MessageRepository;
 import com.example.food_delivery_managing_system.chat.repository.UserChatRelationshipRepository;
+import com.example.food_delivery_managing_system.user.eneity.User;
+import com.example.food_delivery_managing_system.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,8 +41,8 @@ public class ChatService {
                         ucr -> ucr.getChat().getChatId(),
                         Collectors.mapping(ucr -> ChatUserDto.builder()
                                 .userId(ucr.getUser().getUserId())
-                                .nickname(ucr.getUser().getNickname())
-                                .profileImageUrl(ucr.getUser().getProfileImageUrl())
+                                .nickname(ucr.getUser().getNickName())
+                                .profileImageUrl(ucr.getUser().getProfileUrl())
                                 .build(), Collectors.toList())
                 ));
 
@@ -81,18 +83,18 @@ public class ChatService {
             // 먼저 유저의 유효성 검사
             User me = userRepository.findById(myUserId)
                     .orElseThrow(() -> new IllegalArgumentException("해당하는 유저가 없습니다"));
-            User anotherUser = serRepository.findById(request.getParticipantIds().get(0))
+            User anotherUser = userRepository.findById(request.getParticipantIds().get(0))
                     .orElseThrow(() -> new IllegalArgumentException("해당하는 유저가 없습니다"));
             List<ChatUserDto> participants = new ArrayList<>();
             participants.add(ChatUserDto.builder()
                     .userId(me.getUserId())
-                    .nickname(me.getNickname())
-                    .profileImageUrl(me.getProfileImageUrl())
+                    .nickname(me.getNickName())
+                    .profileImageUrl(me.getProfileUrl())
                     .build());
             participants.add(ChatUserDto.builder()
                     .userId(anotherUser.getUserId())
-                    .nickname(anotherUser.getNickname())
-                    .profileImageUrl(anotherUser.getProfileImageUrl())
+                    .nickname(anotherUser.getNickName())
+                    .profileImageUrl(anotherUser.getProfileUrl())
                     .build());
 
             // 중복 체팅방 채크 (ACTIVE가 한 명이라도 있으면 생성하지 않고 기존 채팅방 리턴)
@@ -264,8 +266,8 @@ public class ChatService {
                 .chatId(request.getChatId())
                 .sender(ChatUserDto.builder()
                         .userId(sender.getUserId())
-                        .nickname(sender.getNickname())
-                        .profileImageUrl(sender.getProfileImageUrl()))
+                        .nickname(sender.getNickName())
+                        .profileImageUrl(sender.getProfileUrl()).build())
                 .content(savedMessage.getContent())
                 .sentAt(savedMessage.getCreatedAt())
                 .build();

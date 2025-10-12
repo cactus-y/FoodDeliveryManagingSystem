@@ -2,6 +2,7 @@ package com.example.food_delivery_managing_system.chat.controller;
 
 import com.example.food_delivery_managing_system.chat.dto.*;
 import com.example.food_delivery_managing_system.chat.service.ChatService;
+import com.example.food_delivery_managing_system.user.eneity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +33,8 @@ public class ChatController {
         // 초기 메시지를 보내는 사람은 채팅방을 만든 사람이기 때문에 creator는 본인
         ChatUserDto creator = ChatUserDto.builder()
                 .userId(user.getUserId())
-                .nickname(user.getNickname())
-                .profileImageUrl(user.getProfileImageUrl())
+                .nickname(user.getNickName())
+                .profileImageUrl(user.getProfileUrl())
                 .build();
 
         // 초기 메시지 저장 후 전파

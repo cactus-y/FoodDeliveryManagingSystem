@@ -29,7 +29,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     @Query("SELECT new com.example.food_delivery_managing_system.chat.dto.ChatMessageResponse(" +
            "    m.chat.chatId, " +
            "    new com.example.food_delivery_managing_system.chat.dto.ChatUserDto(" +
-           "        m.sender.id, m.sender.nickname, m.sender.profileImageUrl" +
+           "        m.sender.userId, m.sender.nickName, m.sender.profileUrl" +
            "    ), " +
            "    m.content, " +
            "    m.createdAt" +
