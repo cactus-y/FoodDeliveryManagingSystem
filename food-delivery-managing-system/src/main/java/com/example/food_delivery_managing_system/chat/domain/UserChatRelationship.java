@@ -1,6 +1,6 @@
 package com.example.food_delivery_managing_system.chat.domain;
 
-import com.example.food_delivery_managing_system.user.eneity.User;
+import com.example.food_delivery_managing_system.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

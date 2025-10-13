@@ -2,7 +2,7 @@ package com.example.food_delivery_managing_system.restaurant.dto;
 
 import com.example.food_delivery_managing_system.restaurant.Restaurant;
 import lombok.Getter;
-import org.springframework.data.geo.Point;
+import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
 
@@ -17,24 +17,26 @@ public class RestaurantListResponse {
     private String closeAt;
     private String imageUrl;
     private Float restaurantRating;
+    private boolean isMyRestaurant;
 
-    public RestaurantListResponse(Restaurant restaurant, Point my) {
+    public RestaurantListResponse(Restaurant restaurant, Point myCoordinates, String myUsername) {
         this.restaurantIdx = restaurant.getRestaurantIdx();
         this.name = restaurant.getName();
-        this.coordinates = new Point(restaurant.getCoordinates());
-        this.distance = distanceOfTwoPoints(restaurant.getCoordinates(), my);
+        this.coordinates = restaurant.getCoordinates();
+        this.distance = distanceOfTwoPoints(restaurant.getCoordinates(), myCoordinates);
         this.createdAt = restaurant.getCreatedAt();
         this.openAt = restaurant.getOpenAt();
         this.closeAt = restaurant.getCloseAt();
         this.imageUrl = restaurant.getImageUrl();
         this.restaurantRating = restaurant.getRestaurantRating();
+        this.isMyRestaurant = restaurant.getUser().getEmail().equals(myUsername);
     }
 
     public Double distanceOfTwoPoints(Point a, Point b){
-        double x1 = Math.toRadians(a.getX());
-        double y1 = Math.toRadians(a.getY());
-        double x2 = Math.toRadians(b.getX());
-        double y2 = Math.toRadians(b.getY());
+        double x1 = Math.toRadians(a.getCoordinate().getX());
+        double y1 = Math.toRadians(a.getCoordinate().getY());
+        double x2 = Math.toRadians(b.getCoordinate().getX());
+        double y2 = Math.toRadians(b.getCoordinate().getY());
 
         double dlon = x2 - x1;
         double dlat = y2 - y1;
@@ -44,6 +46,6 @@ public class RestaurantListResponse {
 
         double radius = 6371; // 지구 반지름(km)
 
-        return radius * c;
+        return Math.floor(radius * c * 10) / 10.0; // 소수점 첫재짜리까지만
     }
 }

@@ -2,10 +2,10 @@ package com.example.food_delivery_managing_system.restaurant.dto;
 
 import com.example.food_delivery_managing_system.restaurant.Restaurant;
 import lombok.Getter;
-import org.springframework.data.geo.Point;
+import org.locationtech.jts.geom.Point;
 
 @Getter
-public class RestaurantDetailResponse {
+public class RestaurantAoMResponse {
     private Long restaurantIdx;
     private String name;
     private String roadAddress;
@@ -15,25 +15,22 @@ public class RestaurantDetailResponse {
     private String closeAt;
     private String imageUrl;
     private String additionalInfo;
-    private Float restaurantRating;
-    private Long userId;
-    // private Long userId;
-    private int likesCount;
-    private boolean liked;
+    private String username;
 
-    public RestaurantDetailResponse(Restaurant restaurant, boolean liked) {
+    public RestaurantAoMResponse(String myUsername) {
+        this.username = myUsername;
+    }
+
+    public RestaurantAoMResponse(Restaurant restaurant, String myUsername) {
         this.restaurantIdx = restaurant.getRestaurantIdx();
         this.name = restaurant.getName();
         this.roadAddress = restaurant.getRoadAddress();
         this.detailAddress = restaurant.getDetailAddress();
-        this.coordinates = new Point(restaurant.getCoordinates());
+        this.coordinates = restaurant.getCoordinates();
         this.openAt = restaurant.getOpenAt();
         this.closeAt = restaurant.getCloseAt();
         this.imageUrl = restaurant.getImageUrl();
         this.additionalInfo = restaurant.getAdditionalInfo();
-        this.restaurantRating = restaurant.getRestaurantRating();
-        this.userId = restaurant.getUserId();
-        this.likesCount = restaurant.getLikes().size();
-        this.liked = liked;
+        this.username = myUsername;
     }
 }

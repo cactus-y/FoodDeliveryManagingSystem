@@ -1,10 +1,7 @@
 package com.example.food_delivery_managing_system.chat.controller;
 
-import com.example.food_delivery_managing_system.chat.dto.ChatMessageResponse;
-import com.example.food_delivery_managing_system.chat.dto.ChatResponse;
 import com.example.food_delivery_managing_system.chat.dto.ChatUserDto;
-import com.example.food_delivery_managing_system.chat.service.ChatService;
-import com.example.food_delivery_managing_system.user.eneity.User;
+import com.example.food_delivery_managing_system.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -12,8 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor

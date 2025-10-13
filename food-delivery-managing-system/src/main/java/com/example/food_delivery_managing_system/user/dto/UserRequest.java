@@ -1,6 +1,6 @@
 package com.example.food_delivery_managing_system.user.dto;
 
-import com.example.food_delivery_managing_system.user.eneity.User;
+import com.example.food_delivery_managing_system.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

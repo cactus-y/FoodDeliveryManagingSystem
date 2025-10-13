@@ -2,7 +2,7 @@ package com.example.food_delivery_managing_system.chat.controller;
 
 import com.example.food_delivery_managing_system.chat.dto.*;
 import com.example.food_delivery_managing_system.chat.service.ChatService;
-import com.example.food_delivery_managing_system.user.eneity.User;
+import com.example.food_delivery_managing_system.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

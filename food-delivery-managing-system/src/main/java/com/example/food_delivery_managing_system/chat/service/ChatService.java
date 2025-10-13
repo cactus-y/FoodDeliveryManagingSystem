@@ -5,7 +5,7 @@ import com.example.food_delivery_managing_system.chat.dto.*;
 import com.example.food_delivery_managing_system.chat.repository.ChatRepository;
 import com.example.food_delivery_managing_system.chat.repository.MessageRepository;
 import com.example.food_delivery_managing_system.chat.repository.UserChatRelationshipRepository;
-import com.example.food_delivery_managing_system.user.eneity.User;
+import com.example.food_delivery_managing_system.user.entity.User;
 import com.example.food_delivery_managing_system.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -2,15 +2,16 @@ package com.example.food_delivery_managing_system.user.service;
 
 import com.example.food_delivery_managing_system.user.dto.UserRequest;
 import com.example.food_delivery_managing_system.user.dto.UserResponse;
-import com.example.food_delivery_managing_system.user.eneity.User;
+import com.example.food_delivery_managing_system.user.entity.User;
 import com.example.food_delivery_managing_system.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserService {
 
     private final UserRepository userRepository;

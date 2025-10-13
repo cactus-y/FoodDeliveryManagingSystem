@@ -1,4 +1,4 @@
-package com.example.food_delivery_managing_system.user.eneity;
+package com.example.food_delivery_managing_system.user.entity;
 
 import  jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -67,6 +67,10 @@ public class User {
 
     @Column(name = "profile_image_url")
     private String profileUrl;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_status")
+    private UserStatus userStatus = UserStatus.ACTIVE;
 
     @Builder
     public User (Long userId
