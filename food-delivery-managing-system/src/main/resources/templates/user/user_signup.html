@@ -157,7 +157,7 @@
     });
   }
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgFyfXNg6WeeFuDJIh7PrGoRL-d0D0GxU&libraries=places&callback=initAutocomplete"></script>
+<script async th:src="@{'https://maps.googleapis.com/maps/api/js?key=' + ${@environment.getProperty('google.maps.api.key')} + '&libraries=places&callback=initAutocomplete'}"></script>
 <script src="/user/js/user_signup.js"></script>
 
 </body>

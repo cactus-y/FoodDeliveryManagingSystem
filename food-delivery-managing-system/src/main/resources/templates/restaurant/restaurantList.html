@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div class="container">
+        <a href="/restaurantsAddOrModify">식당 추가</a>
+        <div th:each="item:${restaurants}">
+            <button th:onclick="|location.href='@{/restaurants/{id}(id=${item.id})}'|">
+                <p th:text="|restaurantId: ${item.id}|"></p>
+                <p th:text="|name: ${item.name}|"></p>
+                <p th:text="|coordinates: ${item.coordinates}|"></p>
+                <p th:text="|distance: ${item.distance}|"></p>
+                <p th:text="|createdAt: ${item.createdAt}|"></p>
+                <p th:text="|openAt: ${item.openAt}|"></p>
+                <p th:text="|closeAt: ${item.closeAt}|"></p>
+                <p th:text="|imageUrl: ${item.imageUrl}|"></p>
+                <p th:text="|restaurantRating: ${item.restaurantRating}|"></p>
+            </button>
+        </div>
+    </div>
+</body>
+</html>
