@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface AdminRepository extends JpaRepository<User, Long> {
     @Query("SELECT new com.example.food_delivery_managing_system.admin.dto.UserListResponse("
+            + "    u.userId, "
             + "    u.email, "
             + "    r.name, "
             + "    u.createdAt, "
