@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,5 +45,9 @@ public class AdminRestController {
         return ResponseEntity.ok(response);
     }
 
-
+    @GetMapping("/api/statistics")
+    public ResponseEntity<Map<String, Integer>> getRestaurantsByRegion() {
+        Map<String, Integer> response = adminService.getRestaurantsByRegion();
+        return ResponseEntity.ok(response);
+    }
 }
