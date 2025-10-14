@@ -118,5 +118,8 @@ public class Restaurant {
         this.additionalInfo = additionalInfo;
     }
 
+    public void update(RestaurantStatus restaurantStatus) {
+        this.restaurantStatus = restaurantStatus;
+    }
 
 }

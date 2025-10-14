@@ -98,4 +98,7 @@ public class User {
         this.profileUrl = profileUrl;
     }
 
+    public void update(UserStatus userStatus) {
+        this.userStatus = userStatus;
+    }
 }

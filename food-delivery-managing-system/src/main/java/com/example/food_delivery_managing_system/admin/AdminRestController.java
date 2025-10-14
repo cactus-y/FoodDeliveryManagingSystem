@@ -1,10 +1,12 @@
 package com.example.food_delivery_managing_system.admin;
 
 import com.example.food_delivery_managing_system.admin.dto.AdminRestaurantListResponse;
+import com.example.food_delivery_managing_system.admin.dto.RestaurantStatusResponse;
 import com.example.food_delivery_managing_system.admin.dto.UserListResponse;
+import com.example.food_delivery_managing_system.admin.dto.UserStatusResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,14 +30,19 @@ public class AdminRestController {
         return adminService.getAllRestaurants();
     }
 
-    // user 상태 수정
-/*    @PutMapping("/api/admin/users")
-    public UserListResponse updateUsers(@RequestBody UserListResponse users) {
-        return adminService.updateUserStatus();
-    }*/
+    // 사용자 상태 update
+    @PutMapping("/api/users/{email}/status")  // 식별을 위한 eamil 은 js 에서 추출해 url 경로에 포함하는 방식으로
+    public ResponseEntity<UserStatusResponse> toggleUserStatus(@PathVariable String email) {
+        UserStatusResponse response = adminService.updateUserStatus(email);
+        return ResponseEntity.ok(response);
+    }
 
-    // post 상태 수정
-    // @PutMapping("/api/admin/posts")
+    // 레스토랑 상태 update
+    @PutMapping("/api/restaurants/{email}/{name}/status")
+    public ResponseEntity<RestaurantStatusResponse> toggleRestaurantStatus(@PathVariable String email, @PathVariable String name) {
+        RestaurantStatusResponse response = adminService.updateRestaurantStatus(email, name);
+        return ResponseEntity.ok(response);
+    }
 
 
 }

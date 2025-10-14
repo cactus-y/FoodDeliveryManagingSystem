@@ -2,12 +2,20 @@ package com.example.food_delivery_managing_system.admin;
 
 
 import com.example.food_delivery_managing_system.admin.dto.AdminRestaurantListResponse;
+import com.example.food_delivery_managing_system.admin.dto.RestaurantStatusResponse;
 import com.example.food_delivery_managing_system.admin.dto.UserListResponse;
+import com.example.food_delivery_managing_system.admin.dto.UserStatusResponse;
 import com.example.food_delivery_managing_system.admin.repository.AdminRestaurantRepository;
 import com.example.food_delivery_managing_system.admin.repository.AdminRepository;
 import com.example.food_delivery_managing_system.menu.MenuRepository;
 import com.example.food_delivery_managing_system.restaurant.Restaurant;
 import com.example.food_delivery_managing_system.menu.Menu;
+import com.example.food_delivery_managing_system.restaurant.RestaurantRepository;
+import com.example.food_delivery_managing_system.restaurant.dto.RestaurantStatus;
+import com.example.food_delivery_managing_system.user.entity.User;
+import com.example.food_delivery_managing_system.user.entity.UserStatus;
+import com.example.food_delivery_managing_system.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,13 +27,16 @@ public class AdminService {
     private final AdminRepository adminRepository;
     private final AdminRestaurantRepository adminRestaurantRepository;
     private final MenuRepository menuRepository;
-
+    private final UserRepository userRepository;
+    private final RestaurantRepository restaurantRepository;
     // Users 조회
     public List<UserListResponse> getUsers() {
         return adminRepository.findAllUserListWithRestaurantName();
     }
 
     // User Status 변경(회원, 탈퇴)
+
+
 
     // Posts 조회
     public List<AdminRestaurantListResponse> getAllRestaurants() {
@@ -56,11 +67,50 @@ public class AdminService {
                 .toList();
     }
     // User Status 변경(회원, 탈퇴)
-/*    public UserListResponse updateUserStatus(UserListResponse users) {
+    @Transactional
+    public UserStatusResponse updateUserStatus(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다: " + email));
 
-    }*/
+        UserStatus currentStatus = user.getUserStatus();
+        UserStatus newStatus = currentStatus == UserStatus.ACTIVE
+                ? UserStatus.INACTIVE
+                : UserStatus.ACTIVE;
+
+        user.update(newStatus);
+        userRepository.save(user);
+
+        return UserStatusResponse.builder()
+                .email(email)
+                .name(user.getName())
+                .currentStatus(newStatus.toString())
+                .message(user.getName() + " 사용자 상태가 " + newStatus + "로 변경되었습니다.")
+                .build();
+    }
 
 
     // Post Status 변경(공개, 비공개)
+    public RestaurantStatusResponse updateRestaurantStatus(String email, String name) {
+        Restaurant restaurant = restaurantRepository.findByUserEmailAndName(email, name)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "레스토랑을 찾을 수 없습니다: " + email + ", " + name));
 
+        RestaurantStatus previousStatus = restaurant.getRestaurantStatus();
+        RestaurantStatus newStatus = previousStatus == RestaurantStatus.ACTIVE
+                ? RestaurantStatus.INACTIVE
+                : RestaurantStatus.ACTIVE;
+
+        // Entity의 toggleStatus 메서드 호출
+        restaurant.update(newStatus);
+        restaurantRepository.save(restaurant);
+
+        return RestaurantStatusResponse.builder()
+                .email(email)
+                .restaurantName(restaurant.getName())
+                .previousStatus(previousStatus.toString())
+                .currentStatus(restaurant.getRestaurantStatus().toString())
+                .message(restaurant.getName() + " 레스토랑 상태가 "
+                        + restaurant.getRestaurantStatus() + "로 변경되었습니다.")
+                .build();
+    }
 }
