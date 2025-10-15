@@ -1,46 +1,12 @@
-# application.yml  (공통 + 프로덕션 기본)
-server:
-  # EB에선 PORT 환경변수가 주입됨(예: 5000), 로컬은 8080 사용
-  port: ${PORT:8080}
-  # ALB/Nginx 뒤에서 HTTPS/호스트 헤더를 신뢰 (리다이렉트/쿠키 이슈 방지)
-  forward-headers-strategy: framework
-
 spring:
+  config:
+    import: optional:file:.env[.properties]
+  application:
+    name: food-delivery-managing-system-menu
   profiles:
-    active: ${SPRING_PROFILES_ACTIVE:prod}
+    active: local
 
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    # EB 콘솔(Environment properties)에 넣은 값이 주입됨
-    url: ${SPRING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
-
-  jpa:
-    open-in-view: false
-    hibernate:
-      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
-    properties:
-      hibernate:
-        format_sql: true
-
-
-  sql:
-    init:
-      mode: never
-
-  servlet:
-    multipart:
-      # 업로드 파일 한도
-      max-file-size: 20MB
-      max-request-size: 20MB
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info
-  endpoint:
-    health:
-      probes:
-        enabled: true
+aws:
+  region: ap-northeast-2
+  s3:
+    bucket-name: ${BUCKET_NAME}

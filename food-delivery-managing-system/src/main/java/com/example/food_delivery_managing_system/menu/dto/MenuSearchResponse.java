@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 public class MenuSearchResponse {
     private Long menuIdx;
     private Long restaurantIdx;
+    private String restaurantName;
     private String name;
     private BigDecimal price;
     private String isSignature;

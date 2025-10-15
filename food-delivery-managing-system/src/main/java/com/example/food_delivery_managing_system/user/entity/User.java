@@ -1,4 +1,4 @@
-package com.example.food_delivery_managing_system.user.eneity;
+package com.example.food_delivery_managing_system.user.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -96,4 +96,6 @@ public class User {
         this.updatedAt = updatedAt;
         this.profileUrl = profileUrl;
     }
+
+
 }

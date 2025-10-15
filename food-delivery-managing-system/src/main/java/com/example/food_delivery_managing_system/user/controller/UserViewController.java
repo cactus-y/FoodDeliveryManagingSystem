@@ -16,6 +16,11 @@ public class UserViewController {
         return "/user/user_signup";
     }
 
+    @GetMapping("/map")
+    public String mapView() {
+        return "/user/map";
+    }
+
     @GetMapping("/users/profile/edit")
     public String editProfile() {
         return "/user/profile_edit";

@@ -1,11 +1,15 @@
 package com.example.food_delivery_managing_system.restaurant;
 
 import com.example.food_delivery_managing_system.restaurantLike.Like;
+import com.example.food_delivery_managing_system.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.geo.Point;
+import org.locationtech.jts.geom.Point;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -32,7 +36,7 @@ public class Restaurant {
     @Column(name = "detail_address", nullable = false)
     private String detailAddress;
 
-    @Column(name = "coordinates", nullable = false)
+    @Column(name = "coordinates", columnDefinition = "geography(Point,4326)", nullable = false)
     private Point coordinates;
 
     @CreatedDate
@@ -58,16 +62,11 @@ public class Restaurant {
     @Column(name = "restaurant_rating")
     private Float restaurantRating = 0.0f;
 
-    @Column(name = "user_id")
-    private Long userId = 1L;
-
-    /*
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-     */
 
-    @OneToMany(mappedBy = "restaurant")
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.REMOVE)
     private List<Like> likes = new ArrayList<>();
 
     @Builder
@@ -79,23 +78,26 @@ public class Restaurant {
             String openAt,
             String closeAt,
             String imageUrl,
-            String additionalInfo
+            String additionalInfo,
+            User user
     ) {
         this.name = name;
         this.roadAddress = roadAddress;
         this.detailAddress = detailAddress;
-        this.coordinates = new Point(coordinates);
+        this.coordinates = coordinates;
         this.openAt = openAt;
         this.closeAt = closeAt;
         this.imageUrl = imageUrl;
         this.additionalInfo = additionalInfo;
+        this.user = user;
     }
 
     public void updateRestaurant(
             String name,
             String roadAddress,
             String detailAddress,
-            Point coordinates,
+            double longitude,
+            double latitude,
             String openAt,
             String closeAt,
             String imageUrl,
@@ -104,7 +106,7 @@ public class Restaurant {
         this.name = name;
         this.roadAddress = roadAddress;
         this.detailAddress = detailAddress;
-        this.coordinates = coordinates;
+        this.coordinates = new GeometryFactory(new PrecisionModel(), 4326).createPoint(new Coordinate(longitude, latitude));
         this.openAt = openAt;
         this.closeAt = closeAt;
         this.imageUrl = imageUrl;

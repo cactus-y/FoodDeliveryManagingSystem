@@ -15,4 +15,5 @@ public class UserPatchRequest {
     private String detailAddress;
     private Point coordinates;
     private String profileUrl;
+
 }

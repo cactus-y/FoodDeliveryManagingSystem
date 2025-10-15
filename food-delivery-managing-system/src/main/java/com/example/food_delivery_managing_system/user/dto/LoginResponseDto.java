@@ -1,7 +1,7 @@
 package com.example.food_delivery_managing_system.user.dto;
 
-import com.example.food_delivery_managing_system.user.eneity.User;
-import com.example.food_delivery_managing_system.user.eneity.UserRole;
+import com.example.food_delivery_managing_system.user.entity.User;
+import com.example.food_delivery_managing_system.user.entity.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
