@@ -35,8 +35,8 @@ public class LikeService {
             Like like = likeRepository.findAll()
                     .stream().filter(L ->
                             L.getRestaurant().getRestaurantIdx().equals(restaurantId)
-                                    &&
-                                    L.getUser().getEmail().equals(myUsername)
+                            &&
+                            L.getUser().getEmail().equals(myUsername)
                     )
                     .toList().get(0);
             return like;
@@ -51,8 +51,8 @@ public class LikeService {
             Like like = likeRepository.findAll()
                     .stream().filter(L ->
                             L.getRestaurant().getRestaurantIdx().equals(restaurantId)
-                                    &&
-                                    L.getUser().getEmail().equals(myUsername)
+                            &&
+                            L.getUser().getEmail().equals(myUsername)
                     )
                     .toList().get(0);
             likeRepository.deleteById(like.getLikeIdx());

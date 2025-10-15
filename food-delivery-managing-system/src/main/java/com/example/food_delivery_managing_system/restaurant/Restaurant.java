@@ -1,8 +1,8 @@
 package com.example.food_delivery_managing_system.restaurant;
 
 import com.example.food_delivery_managing_system.RestaurantLike.Like;
-import com.example.food_delivery_managing_system.restaurant.dto.RestaurantStatus;
 import com.example.food_delivery_managing_system.user.entity.User;
+import com.example.food_delivery_managing_system.restaurant.dto.RestaurantStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.locationtech.jts.geom.Coordinate;
@@ -121,5 +121,4 @@ public class Restaurant {
     public void update(RestaurantStatus restaurantStatus) {
         this.restaurantStatus = restaurantStatus;
     }
-
 }

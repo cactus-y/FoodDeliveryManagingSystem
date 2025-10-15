@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>메뉴 등록</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f5f6f8;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        .form-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+            padding: 30px;
+            max-width: 600px;
+            margin: 50px auto;
+        }
+        .form-title {
+            font-weight: 700;
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .upload-box {
+            border: 2px dashed #d0d0d0;
+            border-radius: 10px;
+            text-align: center;
+            padding: 40px 0;
+            color: #999;
+            cursor: pointer;
+            transition: border-color 0.2s;
+            position: relative;
+            overflow: hidden;  /* 이미지가 박스 밖으로 나가지 않게 */
+            height: 220px;     /* 박스 높이 고정 */
+        }
+        .upload-box:hover {
+            border-color: #2ca6a4;
+        }
+        /*.upload-box img {*/
+        /*    width: 64px;*/
+        /*    opacity: 0.5;*/
+        /*    margin-bottom: 10px;*/
+        /*}*/
+
+        /* 업로드 전 아이콘/텍스트 */
+        .upload-icon {
+            width: 64px;
+            opacity: 0.6;
+            margin-bottom: 10px;
+            transition: opacity 0.2s;
+        }
+        .upload-text {
+            font-size: 0.95rem;
+        }
+
+        /* 업로드 후 이미지가 박스를 채움 */
+        .upload-box.uploaded img.preview-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-radius: 10px;
+        }
+
+        /* 업로드 후에는 아이콘과 텍스트 숨김 */
+        .upload-box.uploaded .upload-icon,
+        .upload-box.uploaded .upload-text {
+            display: none;
+        }
+
+        input, textarea {
+            border-radius: 8px !important;
+        }
+        textarea {
+            resize: none;
+            height: 120px;
+        }
+        .btn-primary {
+            background-color: #2ca6a4;
+            border: none;
+            width: 100%;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            background-color: #23908f;
+        }
+        .form-label {
+            font-weight: 600;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+<div th:replace="fragments/navbar :: navbar"></div>
+
+<div class="form-card">
+    <div class="form-title" th:text="${mode == 'edit'} ? '메뉴 수정' : '메뉴 등록'">메뉴 등록</div>
+
+    <!-- 이미지 업로드 -->
+    <!--    <div class="upload-box" onclick="document.getElementById('imageInput').click()">-->
+    <!--        <img id="preview" src="https://cdn-icons-png.flaticon.com/512/685/685655.png"-->
+    <!--             alt="upload icon" class="upload-icon">-->
+    <!--        <p class="upload-text">이미지를 업로드하세요</p>-->
+    <!--        <input type="file" id="imageInput" accept="image/*" style="display:none" onchange="uploadAndPreviewImage(event)">-->
+    <!--    </div>-->
+    <div class="upload-box"
+         onclick="document.getElementById('imageInput').click()"
+         th:classappend="${menuResponse != null and menuResponse.imageUrl != null} ? ' uploaded'">
+        <img th:if="${menuResponse != null and menuResponse.imageUrl != null}"
+             th:src="${menuResponse.imageUrl}"
+             class="preview-image"
+             alt="menu image">
+        <img th:if="${menuResponse == null or menuResponse.imageUrl == null}"
+             id="preview"
+             src="https://cdn-icons-png.flaticon.com/512/685/685655.png"
+             alt="upload icon" class="upload-icon">
+        <p class="upload-text">이미지를 업로드하세요</p>
+        <input type="file" id="imageInput" accept="image/*" style="display:none" onchange="uploadAndPreviewImage(event)">
+    </div>
+
+    <label class="form-label">메뉴 이름</label>
+    <input type="text" class="form-control" id="name" placeholder="메뉴 이름을 입력해주세요"
+           th:value="${menuResponse != null} ? ${menuResponse.name} : ''"/>
+
+    <label class="form-label">가격</label>
+    <input type="number" class="form-control" id="price" placeholder="가격을 입력해주세요"
+           th:value="${menuResponse != null} ? ${menuResponse.price} : ''"/>
+
+    <label class="form-label">메뉴 설명</label>
+    <textarea id="description" class="form-control" placeholder="메뉴에 대한 설명을 입력해주세요."
+              th:text="${menuResponse != null} ? ${menuResponse.description} : ''"></textarea>
+
+    <label class="form-label">대표 메뉴 여부</label>
+    <select id="isSignature" class="form-control">
+        <option value="N" th:selected="${menuResponse != null and menuResponse.isSignature == 'N'}">일반 메뉴</option>
+        <option value="Y" th:selected="${menuResponse != null and menuResponse.isSignature == 'Y'}">대표 메뉴</option>
+    </select>
+
+    <button class="btn btn-primary mt-4" onclick="submitMenu()"
+            th:text="${mode == 'edit'} ? '수정 완료' : '등록 완료'">등록 완료</button>
+</div>
+
+<script th:inline="javascript">
+    const baseUrl = "http://localhost:8080";
+
+    async function submitMenu() {
+        const mode = /*[[${mode}]]*/ 'create';
+        const menuId = /*[[${menuId}]]*/ null;
+        const restaurantId = /*[[${restaurantId}]]*/ null;
+
+
+        const body = {
+            name: document.getElementById("name").value,
+            price: parseFloat(document.getElementById("price").value),
+            description: document.getElementById("description").value,
+            isSignature: document.getElementById("isSignature").value,
+            imageUrl: newImageUrl
+        };
+
+        let url, method;
+        if (mode === 'edit' && menuId) {
+            url = `${baseUrl}/api/menus/${menuId}`;
+            method = "PUT";
+        } else {
+            url = `${baseUrl}/api/restaurants/${restaurantId}/menus`;
+            method = "POST";
+        }
+
+        const res = await fetch(url, {
+            method: method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+
+        if (res.ok) {
+            // 기존 이미지와 새 이미지가 다를 경우 이전 이미지 삭제 요청
+            if (mode === 'edit' && oldImageUrl && oldImageUrl !== newImageUrl) {
+                await fetch(`${baseUrl}/api/files/delete`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ imageUrl: oldImageUrl })
+                });
+            }
+
+            alert(mode === 'edit' ? "메뉴 수정 완료!" : "메뉴 등록 완료!");
+            window.location.href = `/restaurants/${restaurantId}/menus`;
+        } else {
+            const errorText = await res.text();
+            alert("오류 발생: " + errorText);
+        }
+    }
+
+    async function uploadAndPreviewImage(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        // S3 업로드 요청
+        const res = await fetch("http://localhost:8080/api/files/upload", {
+            method: "POST",
+            body: formData
+        });
+
+        if (!res.ok) {
+            alert("이미지 업로드 실패!");
+            return;
+        }
+
+        const imageUrl = await res.text();
+
+        // 업로드 후 미리보기 표시
+        const box = document.querySelector('.upload-box');
+        const oldPreview = box.querySelector('.preview-image');
+        if (oldPreview) oldPreview.remove();
+
+        const img = document.createElement('img');
+        img.src = imageUrl;
+        img.classList.add('preview-image');
+        box.appendChild(img);
+        box.classList.add('uploaded');
+
+        // hidden 이미지 경로 저장 (submitMenu에서 쓰임)
+        document.getElementById("preview").setAttribute("src", imageUrl);
+    }
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

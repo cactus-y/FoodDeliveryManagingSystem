@@ -9,6 +9,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -78,7 +79,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/api/auth/login", "/api/auth/logout")
+                        .ignoringRequestMatchers("/api/auth/login", "/api/auth/logout", "/api/**")
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login"
@@ -89,12 +90,8 @@ public class SecurityConfig {
                                 , "/api/users/check-email"
                                 , "/api/users/nick-name"
                                 , "/user/css/*"
-                                // ----- 테스트를 위한 api
-                                //, "/api/restaurants" // 식당 추가
-                                //, "/api/restaurants/*/menus" // 메뉴 추가
-                                // -----
-                                , "/user/js/*")
-                        .permitAll()
+                                , "/user/js/*").permitAll()
+                        .requestMatchers("/ws-stomp", "/pub/**", "/sub/**").authenticated()
                         .requestMatchers(
                                 "/api/admin/**"
                                 , "/api/users/*/status"
@@ -108,7 +105,7 @@ public class SecurityConfig {
                         .loginPage("/login")           // 커스텀 로그인 페이지 경로
                         .usernameParameter("email")         // "email" 필드 사용
                         .passwordParameter("password")      // "password" 필드 사용
-                        .defaultSuccessUrl("/main", true)   // 성공 후 이동할 경로
+                        .defaultSuccessUrl("/restaurants", true)   // 성공 후 이동할 경로
                         .permitAll()
                 )
                 .sessionManagement(sm -> sm.sessionFixation(sess -> sess.migrateSession()));

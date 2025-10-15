@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Entity
 @NoArgsConstructor
@@ -27,11 +29,19 @@ public class UserChatRelationship {
     @Enumerated(EnumType.STRING)
     private RelationshipStatus status;
 
+    private LocalDateTime lastReadAt;
+
     @Builder
     public UserChatRelationship(User user, Chat chat, RelationshipStatus status) {
         this.user = user;
         this.chat = chat;
         this.status = status;
+        updateLastReadAt();
+    }
+
+    // 마지막으로 채팅을 읽은 시간 업데이트
+    public void updateLastReadAt() {
+        this.lastReadAt = LocalDateTime.now();
     }
 
     // 채팅방 나가기

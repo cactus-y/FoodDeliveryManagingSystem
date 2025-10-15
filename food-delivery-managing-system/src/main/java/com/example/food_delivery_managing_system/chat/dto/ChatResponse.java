@@ -3,6 +3,7 @@ package com.example.food_delivery_managing_system.chat.dto;
 import com.example.food_delivery_managing_system.chat.domain.Message;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,14 +14,19 @@ import java.util.List;
 public class ChatResponse {
     private Long chatId;
     private List<ChatUserDto> chatUsers;
+    private String chatTitle;
     private String lastMessage;
     private LocalDateTime lastMessageSentAt;
+    @Setter
+    private Long unreadCount;
 
     @Builder
-    public ChatResponse(Long chatId, List<ChatUserDto> chatUsers, String lastMessage, LocalDateTime lastMessageSentAt) {
+    public ChatResponse(Long chatId, List<ChatUserDto> chatUsers, String chatTitle, String lastMessage, LocalDateTime lastMessageSentAt, Long unreadCount) {
         this.chatId = chatId;
         this.chatUsers = chatUsers;
+        this.chatTitle = chatTitle;
         this.lastMessage = lastMessage;
         this.lastMessageSentAt = lastMessageSentAt;
+        this.unreadCount = unreadCount;
     }
 }

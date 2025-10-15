@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.awt.print.Pageable;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,8 +43,8 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     // 여러 채팅방의 마지막 메시지 한 번에 조회
     @Query(value = "SELECT m.* FROM (" +
                    "    SELECT m.*, ROW_NUMBER() OVER(PARTITION BY m.chat_id ORDER BY m.created_at DESC) as rn " +
-                   "    FROM message m " +
-                   "    WHERE m.chat.chatId IN :chatIds" +
+                   "    FROM messages m " +
+                   "    WHERE m.chat_id IN :chatIds" +
                    ") m WHERE m.rn = 1", nativeQuery = true)
     List<Message> findLastMessagesByChatIds(@Param("chatIds") List<Long> chatIds);
 
@@ -52,4 +53,9 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     @Modifying
     @Query("DELETE FROM Message m WHERE m.chat.chatId = :chatId")
     void deleteAllByChatId(@Param("chatId") Long chatId);
+
+    // 특정 시간 이후 생성된 메시지 세기
+    @Query("SELECT count(m) FROM Message m " +
+           "WHERE m.chat.chatId = :chatId AND m.createdAt > :lastReadAt")
+    Long countUnreadMessagesAfter(@Param("chatId") Long chatId, @Param("lastReadAt") LocalDateTime lastReadAt);
 }

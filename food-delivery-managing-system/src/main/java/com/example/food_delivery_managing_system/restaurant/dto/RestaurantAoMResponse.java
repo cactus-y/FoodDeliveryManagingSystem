@@ -1,6 +1,7 @@
 package com.example.food_delivery_managing_system.restaurant.dto;
 
 import com.example.food_delivery_managing_system.restaurant.Restaurant;
+import com.example.food_delivery_managing_system.user.entity.User;
 import lombok.Getter;
 import org.locationtech.jts.geom.Point;
 

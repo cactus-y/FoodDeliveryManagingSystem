@@ -22,7 +22,8 @@ public class Message {
     @Column(name = "message_id")
     private Long messageId;
 
-    @Column(name = "content")
+    // VARCHAR(255)가 디폴트인데, 채팅 내용이 길면 저장이 안됨
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     @CreatedDate

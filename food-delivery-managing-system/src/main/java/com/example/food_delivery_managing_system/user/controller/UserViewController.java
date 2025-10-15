@@ -16,4 +16,9 @@ public class UserViewController {
         return "/user/user_signup";
     }
 
+    @GetMapping("/map")
+    public String mapView() {
+        return "/user/map";
+    }
+
 }

@@ -10,11 +10,7 @@
 <main class="card" role="main" aria-labelledby="signupTitle">
   <section class="signup-form" aria-labelledby="signupTitle">
     <div class="brand" aria-hidden="true">
-      <div class="dot"></div>
-      <div>
-        <div style="font-weight:800;font-size:15px">CouPang Eats</div>
-        <div style="font-size:12px;color:var(--muted)">쿠팡잇츠 회원가입 폼</div>
-      </div>
+      <img class="logo" alt="coupang-eats" src="/user/image/coupang-eats-logo.png">
     </div>
 
     <h1 id="signupTitle">회원가입</h1>
@@ -89,21 +85,14 @@
 
         <!-- 좌표 (위도/경도) -->
         <!-- 위도/경도는 테스트할 때만 보이게 해놓고 실제 구현할 때는 hidden 으로 타을 바꿀 예정 -->
-        <div>
-          <label for="latitude">좌표 — 위도 (latitude)</label>
-          <input id="latitude" name="latitude" type="number" step="0.000001" placeholder="37.123456" />
-        </div>
-
-        <div>
-          <label for="longitude">좌표 — 경도 (longitude)</label>
-          <input id="longitude" name="longitude" type="number" step="0.000001" placeholder="127.123456" />
-        </div>
+        <input id="latitude" name="latitude" type="hidden" step="0.000001" placeholder="37.123456" />
+        <input id="longitude" name="longitude" type="hidden" step="0.000001" placeholder="127.123456" />
 
         <!-- 프로필 이미지 -->
         <div class="col-1">
           <label for="profile">프로필 이미지</label>
           <input id="profile" name="profileImage" type="file" accept="image/*" />
-          <div class="hint">선택 사항 — JPG/PNG 권장 (서버에서 리사이즈/검증 필요)</div>
+          <div class="hint">선택 사항 — JPG/PNG 권장</div>
         </div>
 
         <!-- 버튼 -->
@@ -118,7 +107,7 @@
   <aside class="aside" aria-hidden="true">
     <div style="text-align:center">
       <div style="font-size:28px;font-weight:700">환영합니다 👋</div>
-      <div class="small">간단한 회원가입으로 시작해 보세요. 개인정보는 서버에서 안전하게 처리하시기 바랍니다.</div>
+      <div class="small">간단한 회원가입으로 시작해 보세요.</div>
     </div>
 
     <div style="margin-top:18px;font-size:13px;color:var(--muted);text-align:center">
