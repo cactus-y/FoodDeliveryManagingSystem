@@ -150,10 +150,13 @@
         #create-chat-form input, #create-chat-form textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 1rem; background-color: var(--bg-secondary); color: var(--text-primary); }
         #create-chat-form .invite-btn { flex-shrink: 0; padding: 8px 12px; border: none; border-radius: 5px; background-color: #555; color: white; cursor: pointer; }
         #invited-users-list {
-            list-style: none;
+            list-style: none; padding: 0; margin: 10px 0;
             border: 1px solid var(--border-color); border-radius: 5px;
-            max-height: 105px;
+            max-height: 125px;
             overflow-y: auto;
+        }
+        #invited-users-list:empty {
+            display: none;
         }
         .invited-user-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-bottom: 1px solid var(--border-color); }
         .invited-user-item:last-child { border-bottom: none; }
