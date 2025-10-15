@@ -1,7 +1,7 @@
 package com.example.food_delivery_managing_system.user.service;
 
-import com.example.food_delivery_managing_system.user.eneity.CustomUserDetails;
-import com.example.food_delivery_managing_system.user.eneity.User;
+import com.example.food_delivery_managing_system.user.entity.CustomUserDetails;
+import com.example.food_delivery_managing_system.user.entity.User;
 import com.example.food_delivery_managing_system.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

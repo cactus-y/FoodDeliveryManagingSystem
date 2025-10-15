@@ -4,4 +4,4 @@ spring:
   application:
     name: food-delivery-managing-system-menu
   profiles:
-    active: local
+    active: dev

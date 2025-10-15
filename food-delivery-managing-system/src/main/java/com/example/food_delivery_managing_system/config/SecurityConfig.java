@@ -8,6 +8,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -38,8 +39,26 @@ public class SecurityConfig {
                         .ignoringRequestMatchers("/api/auth/login", "/api/auth/logout")
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login", "/api/auth/logout").permitAll()
+                        .requestMatchers(
+                                "/api/auth/login",
+                                "/api/auth/logout",
+                                "/login",
+                                "/api/users/nick-name",
+                                "/api/users/signup",
+                                "/api/users/check-email",
+                                "/user/user_signup",
+                                "/user/css/*",
+                                "/user/js/*"
+                                ).permitAll()
+                        .requestMatchers("/ws-stomp", "/pub/**", "/sub/**").authenticated()
                         .anyRequest().authenticated()
+                )
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .usernameParameter("email")
+                        .passwordParameter("password")
+                        .defaultSuccessUrl("/chats", true)
+                        .permitAll()
                 )
                 .sessionManagement(sm -> sm.sessionFixation(sess -> sess.migrateSession()));
 

@@ -1,5 +1,6 @@
-package com.example.food_delivery_managing_system.user.eneity;
+package com.example.food_delivery_managing_system.user.entity;
 
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,6 +16,8 @@ public class CustomUserDetails implements UserDetails {
     private final String password;
     private final UserRole role;
     private final boolean enabled;
+    @Getter
+    private final User user;
 
     public CustomUserDetails(User user) {
         this.id = user.getUserId();
@@ -22,6 +25,7 @@ public class CustomUserDetails implements UserDetails {
         this.password = user.getPassword();
         this.role = user.getUserRole();
         this.enabled = true; // 엔티티에 enabled 없으므로 기본 true
+        this.user = user;
     }
 
     public Long getId() { return id; }

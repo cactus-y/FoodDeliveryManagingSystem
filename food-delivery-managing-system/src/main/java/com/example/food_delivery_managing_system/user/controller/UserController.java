@@ -1,8 +1,10 @@
 package com.example.food_delivery_managing_system.user.controller;
 
+import com.example.food_delivery_managing_system.chat.dto.ChatUserDto;
 import com.example.food_delivery_managing_system.user.service.UserService;
 import com.example.food_delivery_managing_system.user.dto.UserRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -40,5 +42,12 @@ public class UserController {
 
         userService.addOwner(userRequest);
         return "redirect:/user/login";
+    }
+
+    // 유저 검색을 쓸 일이 생겨서 추가합니다..
+    @GetMapping
+    public ResponseEntity<ChatUserDto> findUserByEmail(@RequestParam("email") String email) {
+        ChatUserDto response = userService.findUserByEmail(email);
+        return ResponseEntity.ok(response);
     }
 }
