@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class UserListResponse {
     private Long userId;
     private String email;
-    private String restaurantName;
+    private String name;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime createdAt;
     private UserStatus userStatus;
@@ -18,13 +18,13 @@ public class UserListResponse {
     public UserListResponse(
             Long userId,
             String email,
-            String restaurantName,
+            String name,
             LocalDateTime createdAt,
             UserStatus userStatus
     ) {
         this.userId = userId;
         this.email = email;
-        this.restaurantName = restaurantName;
+        this.name = name;
         this.createdAt = createdAt;
         this.userStatus = userStatus;
     }

@@ -16,6 +16,8 @@ public class AdminRestaurantListResponse {
      private RestaurantStatus restaurantStatus;
      private Double latitude;
      private Double longitude;
+     private String email;
+     private String roadAddress;
 
      public AdminRestaurantListResponse(
              Long restaurantId,
@@ -24,7 +26,9 @@ public class AdminRestaurantListResponse {
              LocalDateTime createdAt,
              RestaurantStatus restaurantStatus,
              Double latitude,
-             Double longitude
+             Double longitude,
+             String email,
+             String roadAddress
      ) {
           this.restaurantId = restaurantId;
           this.restaurantName = restaurantName;
@@ -33,5 +37,7 @@ public class AdminRestaurantListResponse {
           this.restaurantStatus = restaurantStatus;
           this.latitude = latitude;
           this.longitude = longitude;
+          this.email = email;
+          this.roadAddress = roadAddress;
      }
 }

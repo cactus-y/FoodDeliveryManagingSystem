@@ -59,7 +59,9 @@ public class AdminService {
                             r.getCreatedAt(),
                             r.getRestaurantStatus(),
                             latitude,
-                            longitude
+                            longitude,
+                            r.getUser().getEmail(),
+                            r.getRoadAddress()
                     );
                 })
                 .toList();
@@ -111,6 +113,7 @@ public class AdminService {
                 .build();
     }
 
+    // 통계
     public Map<String, Integer> getRestaurantsByRegion() {
         List<Restaurant> restaurants = restaurantRepository.findAll();
         Map<String, Integer> regionCount = new LinkedHashMap<>();

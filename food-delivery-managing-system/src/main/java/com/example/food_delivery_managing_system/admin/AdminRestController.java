@@ -45,6 +45,7 @@ public class AdminRestController {
         return ResponseEntity.ok(response);
     }
 
+    // 통계
     @GetMapping("/api/statistics")
     public ResponseEntity<Map<String, Integer>> getRestaurantsByRegion() {
         Map<String, Integer> response = adminService.getRestaurantsByRegion();
