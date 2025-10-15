@@ -1,106 +1,127 @@
 package com.example.food_delivery_managing_system.S3;
 
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class S3Service {
 
     private final S3Client s3Client;
-    private final String bucketName;
-    private final String region;
+    private final String bucketName;       // APP_S3_BUCKET
+    private final String keyPrefix;        // APP_S3_PREFIX (예: uploads/)
+    private final String publicBaseUrl;    // APP_S3_PUBLIC_BASE_URL (예: https://bucket.s3.ap-northeast-2.amazonaws.com)
 
-    public S3Service(@Value("${aws.access-key-id}") String accessKey,
-                     @Value("${aws.secret-access-key}") String secretKey,
-                     @Value("${aws.region}") String region,
-                     @Value("${aws.s3.bucket-name}") String bucketName) {
+    public S3Service(
+            @Value("${APP_S3_BUCKET}") String bucketName,
+            @Value("${APP_S3_PREFIX:uploads/}") String keyPrefix,
+            @Value("${APP_S3_PUBLIC_BASE_URL}") String publicBaseUrl,
+            @Value("${AWS_REGION:}") String awsRegion // 있으면 사용
+    ) {
+        if (bucketName == null || bucketName.isBlank()) {
+            throw new IllegalStateException("APP_S3_BUCKET is required.");
+        }
+        if (publicBaseUrl == null || publicBaseUrl.isBlank()) {
+            throw new IllegalStateException("APP_S3_PUBLIC_BASE_URL is required.");
+        }
 
         this.bucketName = bucketName;
-        this.region = region;
+        this.keyPrefix  = normalizePrefix(keyPrefix);
+        this.publicBaseUrl = stripTrailingSlash(publicBaseUrl);
 
-        // 인증 정보를 담은 credentials 객체 생성
-        AwsBasicCredentials credentials = AwsBasicCredentials.create(accessKey, secretKey);
+        String regionStr = !awsRegion.isBlank() ? awsRegion : inferRegionFromBaseUrl(this.publicBaseUrl);
+        Region region = Region.of(regionStr);
 
-        // AWS S3와 통신할 클라이언트 객체 생성
         this.s3Client = S3Client.builder()
-                .region(Region.of(region))
-                .credentialsProvider(StaticCredentialsProvider.create(credentials))
+                .region(region)
+                .credentialsProvider(DefaultCredentialsProvider.create())
                 .build();
     }
 
-    /**
-     * 파일 업로드
-     */
+    /** 파일 업로드: 업로드 후 공개 URL 반환 */
     public String uploadFile(MultipartFile file) throws IOException {
-        String fileName = generateFileName(file.getOriginalFilename());
+        String key = buildObjectKey(file.getOriginalFilename());
 
-        PutObjectRequest request = PutObjectRequest.builder()
+        PutObjectRequest req = PutObjectRequest.builder()
                 .bucket(bucketName)
-                .key(fileName)
+                .key(key)
                 .contentType(file.getContentType())
                 .build();
 
-        // S3에 파일 업로드 수행
-        s3Client.putObject(request, RequestBody.fromBytes(file.getBytes()));
-
-        return getFileUrl(fileName);
+        s3Client.putObject(req, RequestBody.fromBytes(file.getBytes()));
+        return publicBaseUrl + "/" + key;
     }
 
-    /**
-     * 고유한 파일명 생성
-     */
-    private String generateFileName(String originalFilename) {
-        return UUID.randomUUID().toString() + "-" + originalFilename;
-    }
-
-    /**
-     * 파일 다운로드 URL 생성
-     */
-    public String getFileUrl(String fileName) {
-        GetObjectRequest request = GetObjectRequest.builder()
+    /** 삭제 */
+    public void deleteFile(String fileKeyOrUrl) {
+        String key = extractKey(fileKeyOrUrl);
+        DeleteObjectRequest req = DeleteObjectRequest.builder()
                 .bucket(bucketName)
-                .key(fileName)
+                .key(key)
                 .build();
-
-        // 공개 URL (버킷이 public일 경우)
-        return String.format("https://%s.s3.%s.amazonaws.com/%s",
-                bucketName, region, fileName);
+        s3Client.deleteObject(req);
     }
 
-    /**
-     * 파일 삭제
-     */
-    public void deleteFile(String fileName) {
-        DeleteObjectRequest request = DeleteObjectRequest.builder()
-                .bucket(bucketName)
-                .key(fileName)
-                .build();
-
-        s3Client.deleteObject(request);
-    }
-
-    /**
-     * 버킷의 모든 파일 목록 조회
-     */
+    /** 리스트 */
     public List<String> listFiles() {
-        ListObjectsV2Request request = ListObjectsV2Request.builder()
+        ListObjectsV2Response res = s3Client.listObjectsV2(ListObjectsV2Request.builder()
                 .bucket(bucketName)
-                .build();
+                .prefix(keyPrefix)
+                .build());
+        return res.contents().stream().map(S3Object::key).toList();
+    }
 
-        ListObjectsV2Response response = s3Client.listObjectsV2(request);
+    // ----------------- helpers -----------------
 
-        return response.contents().stream()
-                .map(S3Object::key)
-                .toList();
+    private String buildObjectKey(String originalFilename) {
+        String safeName = (originalFilename == null || originalFilename.isBlank()) ? "file" : originalFilename;
+        String unique = UUID.randomUUID() + "-" + safeName;
+        return keyPrefix + unique;
+    }
+
+    private static String normalizePrefix(String p) {
+        if (p == null || p.isBlank()) return "";
+        String v = p.trim();
+        // "uploads", "uploads/" → "uploads/"
+        return v.endsWith("/") ? v : (v + "/");
+    }
+
+    private static String stripTrailingSlash(String url) {
+        return url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
+    }
+
+    /** URL 또는 key를 받아 key만 뽑아내기 */
+    private String extractKey(String fileKeyOrUrl) {
+        if (fileKeyOrUrl == null) return "";
+        if (fileKeyOrUrl.startsWith("http://") || fileKeyOrUrl.startsWith("https://")) {
+            // publicBaseUrl 뒤의 path만 key로 사용
+            String base = publicBaseUrl + "/";
+            if (fileKeyOrUrl.startsWith(base)) {
+                return fileKeyOrUrl.substring(base.length());
+            }
+            // 다른 도메인이라면 대략적으로 host 이후만 파싱
+            int idx = fileKeyOrUrl.indexOf(".amazonaws.com/");
+            return (idx > 0) ? fileKeyOrUrl.substring(idx + ".amazonaws.com/".length()) : fileKeyOrUrl;
+        }
+        return fileKeyOrUrl;
+    }
+
+    /** public base url에서 리전 추론 (s3.ap-northeast-2.amazonaws.com) */
+    private static String inferRegionFromBaseUrl(String baseUrl) {
+        Pattern p = Pattern.compile("s3\\.(.*?)\\.amazonaws\\.com");
+        Matcher m = p.matcher(baseUrl);
+        if (m.find()) return m.group(1);
+        return "ap-northeast-2";
     }
 }
