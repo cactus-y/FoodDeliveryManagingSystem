@@ -1,5 +1,8 @@
 package com.example.food_delivery_managing_system.menu;
 
+import com.example.food_delivery_managing_system.S3.S3Service;
+import com.example.food_delivery_managing_system.exception.MenuNotFoundException;
+import com.example.food_delivery_managing_system.exception.RestaurantNotFoundException;
 import com.example.food_delivery_managing_system.menu.dto.AddMenuRequest;
 import com.example.food_delivery_managing_system.menu.dto.MenuResponse;
 import com.example.food_delivery_managing_system.menu.dto.MenuSearchResponse;
@@ -20,11 +23,14 @@ import java.time.LocalDateTime;
 public class MenuService {
     private final MenuRepository menuRepository;
     private final RestaurantRepository restaurantRepository;
+    private final S3Service s3Service;
 
     //식당에 메뉴 신규 등록
     public MenuResponse createMenu(Long restaurantId, AddMenuRequest request) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new EntityNotFoundException("Restaurant not found"));
+                .orElseThrow(() -> new RestaurantNotFoundException(restaurantId));
+
+//                .orElseThrow(() -> new EntityNotFoundException("Restaurant not found"));
 
         Menu menu = Menu.builder()
                 .name(request.getName())
@@ -65,13 +71,47 @@ public class MenuService {
                         .build());
     }
 
+    //오버로딩: 페이지 컨트롤러용 메서드 (식당 내 검색 지원을 위해)
+    public Page<MenuSummaryResponse> getMenusByRestaurant(Long restaurantId, String keyword, Pageable pageable) {
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new RestaurantNotFoundException(restaurantId));
+
+        Page<Menu> menus;
+
+        if (keyword == null || keyword.trim().isEmpty()) {
+            // 검색어가 없으면: 전체 메뉴 조회
+            menus = menuRepository.findByRestaurant_RestaurantIdx(restaurantId, pageable);
+        } else {
+            // 검색어가 있으면: 식당 내 필터링 검색
+            menus = menuRepository
+                    .findByRestaurantAndNameContainingIgnoreCaseOrRestaurantAndDescriptionContainingIgnoreCase(
+                            restaurant, keyword,
+                            restaurant, keyword,
+                            pageable);
+        }
+
+        return menus
+                .map(menu -> MenuSummaryResponse.builder()
+                        .menuIdx(menu.getMenuIdx())
+                        .name(menu.getName())
+                        .price(menu.getPrice())
+                        .isSignature(menu.getIsSignature())
+                        .imageUrl(menu.getImageUrl())
+                        .createdAt(menu.getCreatedAt())
+                        .build());
+    }
+
+
     //메뉴 단건 상세 조회
     public MenuResponse getMenuById(Long id) {
-        Menu menu = menuRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+//        Menu menu = menuRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Menu menu = menuRepository.findById(id)
+                .orElseThrow(() -> new MenuNotFoundException(id));
 
         return MenuResponse.builder()
                 .menuIdx(menu.getMenuIdx())
                 .restaurantIdx(menu.getRestaurant().getRestaurantIdx())
+                .restaurantName(menu.getRestaurant().getName())
                 .name(menu.getName())
                 .price(menu.getPrice())
                 .description(menu.getDescription())
@@ -81,15 +121,44 @@ public class MenuService {
                 .build();
     }
 
+    //메뉴 삭제
+    @Transactional
     public void deleteMenuById(Long id) {
-        menuRepository.deleteById(id);
+//        try {
+//            menuRepository.deleteById(id);
+//        } catch (EmptyResultDataAccessException e) {
+//            throw new MenuNotFoundException(id);
+//        }
+        Menu menu = menuRepository.findById(id)
+                .orElseThrow(() -> new MenuNotFoundException(id));
+
+        //이미지 URL이 존재하면 S3에서 삭제
+        String imageUrl = menu.getImageUrl();
+        if (imageUrl != null && !imageUrl.isBlank()) {
+            try {
+                String key = extractKeyFromUrl(imageUrl);
+                s3Service.deleteFile(key);
+            } catch (Exception e) {
+                System.err.println("S3 이미지 삭제 실패: " + e.getMessage());
+            }
+        }
+        //DB에서 메뉴 삭제
+        menuRepository.delete(menu);
+    }
+
+    private String extractKeyFromUrl(String imageUrl) {
+        // S3 key 추출: 버킷 이름 뒤의 경로 부분만 남김
+        int index = imageUrl.indexOf(".amazonaws.com/");
+        if (index == -1) return imageUrl; // URL 형식이 다르면 그대로 반환
+        return imageUrl.substring(index + ".amazonaws.com/".length());
     }
 
     //메뉴 정보 수정
     @Transactional
     public MenuResponse updateMenu(Long menuId, AddMenuRequest request) {
         Menu menu = menuRepository.findById(menuId)
-                .orElseThrow(() -> new EntityNotFoundException("메뉴 없음"));
+                .orElseThrow(() -> new MenuNotFoundException(menuId));
+//                .orElseThrow(() -> new EntityNotFoundException("메뉴 없음"));
 
         if (request.getName() != null) menu.setName(request.getName());
         if (request.getPrice() != null) menu.setPrice(request.getPrice());
@@ -117,16 +186,19 @@ public class MenuService {
         Page<Menu> menus = menuRepository.findByNameContainingOrDescriptionContaining(keyword, keyword, pageable);
 
         return menus.map(menu -> MenuSearchResponse.builder()
-                        .menuIdx(menu.getMenuIdx())
-                        .restaurantIdx(menu.getRestaurant().getRestaurantIdx())
-                        .name(menu.getName())
-                        .price(menu.getPrice())
-                        .isSignature(menu.getIsSignature())
-                        .imageUrl(menu.getImageUrl())
-                        .build());
+                .menuIdx(menu.getMenuIdx())
+                .restaurantIdx(menu.getRestaurant().getRestaurantIdx())
+                .restaurantName(menu.getRestaurant().getName())
+                .name(menu.getName())
+                .price(menu.getPrice())
+                .isSignature(menu.getIsSignature())
+                .imageUrl(menu.getImageUrl())
+                .build());
 
     }
 
 }
+
+
 
 
