@@ -160,7 +160,6 @@
             price: parseFloat(document.getElementById("price").value),
             description: document.getElementById("description").value,
             isSignature: document.getElementById("isSignature").value,
-            // imageUrl: document.getElementById("preview").src || ""
             imageUrl: newImageUrl
         };
 
@@ -190,7 +189,7 @@
             }
 
             alert(mode === 'edit' ? "메뉴 수정 완료!" : "메뉴 등록 완료!");
-            window.location.href = `/test/restaurants/${restaurantId}/menus`;
+            window.location.href = `/restaurants/${restaurantId}/menus`;
         } else {
             const errorText = await res.text();
             alert("오류 발생: " + errorText);

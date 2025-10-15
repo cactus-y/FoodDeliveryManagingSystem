@@ -121,7 +121,7 @@
              th:src="${menuResponse.imageUrl}"
              class="menu-image"
              alt="menu image"
-             onerror="this.src='https://via.placeholder.com/600x400?text=No+Image'">
+             onerror="this.src='https://placehold.co/600x400?text=No+Image'">
         <img th:if="${menuResponse.imageUrl == null or #strings.isEmpty(menuResponse.imageUrl)}"
              src="https://via.placeholder.com/600x400?text=No+Image"
              class="menu-image"
@@ -150,10 +150,6 @@
         </p>
 
         <ul class="list-unstyled small text-muted mb-0">
-            <!--            <li><span class="info-label">메뉴 ID:</span> <span th:text="${menuResponse.menuIdx}">0</span></li>-->
-            <!--            <li>-->
-            <!--                <span th:text="${menuResponse.restaurantName}">식당명</span>-->
-            <!--            </li>-->
             <li><span class="info-label">등록일:</span>
                 <span th:text="${#temporals.format(menuResponse.createdAt, 'yyyy-MM-dd HH:mm')}">2025-01-01 12:00</span>
             </li>
@@ -166,12 +162,12 @@
     <!-- 버튼 영역 -->
     <div class="action-buttons">
         <a class="btn btn-outline-primary mr-2"
-           th:href="@{|/test/restaurants/${menuResponse.restaurantIdx}/menus|}">
+           th:href="@{|/restaurants/${menuResponse.restaurantIdx}/menus|}">
             목록으로
         </a>
 
         <a class="btn btn-outline-primary mr-2"
-           th:href="@{|/test/restaurant/${menuResponse.restaurantIdx}/menu/${menuResponse.menuIdx}/edit|}">
+           th:href="@{|/restaurant/${menuResponse.restaurantIdx}/menus/${menuResponse.menuIdx}/edit|}">
             수정
         </a>
 
@@ -193,7 +189,7 @@
         const res = await fetch(`${baseUrl}/api/menu/${menuId}`, { method: "DELETE" });
 
         if (res.status === 204) {
-            window.location.href = `${baseUrl}/test/restaurants/${restaurantId}/menus`;
+            window.location.href = `${baseUrl}/restaurants/${restaurantId}/menus`;
         } else {
             alert("삭제 실패: " + res.status);
         }

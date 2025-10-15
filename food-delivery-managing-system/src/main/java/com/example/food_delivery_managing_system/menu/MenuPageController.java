@@ -18,7 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class MenuPageController {
     private final MenuService menuService;
 
-    @GetMapping({"/test/restaurant/{restaurantId}/menu", "/test/restaurant/{restaurantId}/menu/{menuId}/edit"})
+    //식당의 메뉴 추가/수정 페이지로 매핑
+    @GetMapping({"/restaurant/{restaurantId}/menus/new", "/restaurant/{restaurantId}/menus/{menuId}/edit"})
     public String menuTestPage(@PathVariable Long restaurantId,
                                @PathVariable(required = false) Long menuId,
                                Model model) {
@@ -37,7 +38,8 @@ public class MenuPageController {
         return "menu/menu-form";
     }
 
-    @GetMapping("/test/restaurants/{restaurantId}/menus")
+    //식당의 메뉴 목록으로
+    @GetMapping("/restaurants/{restaurantId}/menus")
     public String getMenusByRestaurant(
             @PathVariable Long restaurantId,
             @RequestParam(name = "restaurantKeyword",required = false) String keyword,
@@ -51,7 +53,7 @@ public class MenuPageController {
         int current = page.getNumber();
         int start = (current / blockSize) * blockSize;
         int end = Math.min(start + blockSize, page.getTotalPages() - 1);
-//        model.addAttribute("page", page);
+
         model.addAttribute("start", start);
         model.addAttribute("end", end);
 
@@ -62,7 +64,8 @@ public class MenuPageController {
         return "menu/restaurant-menu-list";
     }
 
-    @GetMapping("/test/menus/{menuId}")
+    //각 메뉴 상세 페이지로
+    @GetMapping("/menus/{menuId}")
     public String getMenusByMenuId(
             @PathVariable Long menuId,
             Model model
@@ -75,7 +78,8 @@ public class MenuPageController {
     }
 
 
-    @GetMapping("/test/menus/search")
+    //메뉴 전역 검색 페이지로
+    @GetMapping("/menus/search")
     public String searchMenus(
             @RequestParam(required = false) String keyword,
             @PageableDefault(size = 10) Pageable pageable,
@@ -87,7 +91,7 @@ public class MenuPageController {
         int current = page.getNumber();
         int start = (current / blockSize) * blockSize;
         int end = Math.min(start + blockSize, page.getTotalPages() - 1);
-//        model.addAttribute("page", page);
+
         model.addAttribute("start", start);
         model.addAttribute("end", end);
 

@@ -10,7 +10,7 @@
     <a class="navbar-brand" href="/">[메인 링크]</a>
 
     <!-- 전체 메뉴 검색 -->
-    <form class="form-inline ml-3" th:action="@{/test/menus/search}" method="get">
+    <form class="form-inline ml-3" th:action="@{/menus/search}" method="get">
         <input type="text" name="keyword" class="form-control mr-2" placeholder="메뉴 검색"
                th:value="${param.keyword}">
         <button type="submit" class="btn btn-outline-success">검색</button>
@@ -18,7 +18,8 @@
 
     <div class="ml-auto">
         <a href="/restaurants" class="btn btn-outline-primary mr-2">식당 목록</a>
-        <a href="/users/profile" class="btn btn-outline-secondary">내 정보</a>
+        <a href="/chats" class="btn btn-outline-secondary">채팅</a>
+        <a href="/users/me" class="btn btn-outline-secondary">내 정보</a>
     </div>
 </nav>
 
