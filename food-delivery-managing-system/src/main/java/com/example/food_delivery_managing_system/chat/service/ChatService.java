@@ -156,8 +156,9 @@ public class ChatService {
     private Chat createChatEntity(ArrayList<User> chatUsers, String chatTitle) {
         Chat newChat = chatRepository.save(new Chat());
         // 그룹 채팅방이면 타이틀 지정 가능
-        if (chatUsers.size() > 2 && (chatTitle != null && !chatTitle.isEmpty())) {
-            newChat.setChatTitle(chatTitle);
+        if (chatUsers.size() > 2) {
+            if (chatTitle == null || chatTitle.isEmpty()) newChat.setChatTitle(String.format("그룹채팅방 %d", newChat.getChatId()));
+            else newChat.setChatTitle(chatTitle);
         }
         chatUsers.forEach(user -> {
             relationshipRepository.save(UserChatRelationship.builder()
@@ -183,10 +184,10 @@ public class ChatService {
         // 채팅방 구독
         String chatUrl = "/sub/chats/" + chat.getChatId();
         ChatUserDto senderDto = ChatUserDto.builder()
-                        .userId(message.getSender().getUserId())
-                        .nickname(message.getSender().getNickName())
-                        .profileImageUrl(message.getSender().getProfileUrl())
-                        .build();
+                .userId(message.getSender().getUserId())
+                .nickname(message.getSender().getNickName())
+                .profileImageUrl(message.getSender().getProfileUrl())
+                .build();
 
         messagingTemplate.convertAndSend(chatUrl, ChatMessageResponse.builder()
                 .chatId(chat.getChatId())
@@ -296,11 +297,11 @@ public class ChatService {
         }
 
         List<ChatUserDto> participants = relationships.stream()
-                        .map(r -> ChatUserDto.builder()
-                                .userId(r.getUser().getUserId())
-                                .nickname(r.getUser().getNickName())
-                                .profileImageUrl(r.getUser().getProfileUrl())
-                                .build()).toList();
+                .map(r -> ChatUserDto.builder()
+                        .userId(r.getUser().getUserId())
+                        .nickname(r.getUser().getNickName())
+                        .profileImageUrl(r.getUser().getProfileUrl())
+                        .build()).toList();
 
         sendNotification(currentChat, savedMessage, participants);
     }
@@ -316,6 +317,20 @@ public class ChatService {
         UserChatRelationship relationship = relationshipRepository.findByUserIdAndChatId(userId, chatId)
                 .orElseThrow(() -> new IllegalArgumentException("채팅방 참여 정보를 찾을 수 없음"));
         relationship.updateLastReadAt();
+    }
+
+    // 채팅방 유저 체크
+    public List<ChatUserDto> getParticipants(Long chatId) {
+        // 1대1 채팅방이면 다른 한명이 나갔어도 보여주는게 로직상 맞는 것 같음
+        // 그룹 채팅방이면 어차피 존재하는 유저만 나옴
+        List<UserChatRelationship> relationships = relationshipRepository.findAllByChatId(chatId);
+        return relationships.stream()
+                .map(r -> ChatUserDto.builder()
+                        .userId(r.getUser().getUserId())
+                        .nickname(r.getUser().getNickName())
+                        .profileImageUrl(r.getUser().getProfileUrl())
+                        .build())
+                .toList();
     }
 }
 

@@ -4,6 +4,7 @@ import com.example.food_delivery_managing_system.menu.MenuRepository;
 import com.example.food_delivery_managing_system.menu.dto.MenuSummaryResponse;
 import com.example.food_delivery_managing_system.user.dto.UserRequest;
 import com.example.food_delivery_managing_system.user.dto.UserResponse;
+import com.example.food_delivery_managing_system.user.dto.UserSearchDto;
 import com.example.food_delivery_managing_system.user.entity.User;
 import com.example.food_delivery_managing_system.user.repository.UserRepository;
 import java.util.List;
@@ -53,6 +54,18 @@ public class UserService {
                 .createdAt(m.getCreatedAt())
                 .build()
             ).toList();
+    }
+
+    public UserSearchDto findUserByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        return UserSearchDto.builder()
+                .userId(user.getUserId())
+                .nickname(user.getNickName())
+                .profileImageUrl(user.getProfileUrl())
+                .email(user.getEmail())
+                .build();
     }
 
 }

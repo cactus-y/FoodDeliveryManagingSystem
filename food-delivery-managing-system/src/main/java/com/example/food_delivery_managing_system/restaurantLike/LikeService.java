@@ -1,8 +1,8 @@
-package com.example.food_delivery_managing_system.RestaurantLike;
+package com.example.food_delivery_managing_system.restaurantLike;
 
 import com.example.food_delivery_managing_system.restaurant.Restaurant;
 import com.example.food_delivery_managing_system.restaurant.RestaurantRepository;
-import com.example.food_delivery_managing_system.RestaurantLike.dto.LikeResponse;
+import com.example.food_delivery_managing_system.restaurantLike.dto.LikeResponse;
 import com.example.food_delivery_managing_system.user.entity.User;
 import com.example.food_delivery_managing_system.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

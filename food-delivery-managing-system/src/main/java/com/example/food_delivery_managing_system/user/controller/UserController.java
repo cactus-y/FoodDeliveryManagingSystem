@@ -5,6 +5,7 @@ import com.example.food_delivery_managing_system.menu.dto.MenuSummaryResponse;
 import com.example.food_delivery_managing_system.restaurant.RestaurantService;
 import com.example.food_delivery_managing_system.restaurant.dto.RestaurantListResponse;
 import com.example.food_delivery_managing_system.user.dto.UserResponse;
+import com.example.food_delivery_managing_system.user.dto.UserSearchDto;
 import com.example.food_delivery_managing_system.user.service.UserService;
 import com.example.food_delivery_managing_system.user.dto.UserRequest;
 import java.security.Principal;
@@ -74,8 +75,8 @@ public class UserController {
 
     // 유저 검색을 쓸 일이 생겨서 추가합니다..
     @GetMapping
-    public ResponseEntity<ChatUserDto> findUserByEmail(@RequestParam("email") String email) {
-        ChatUserDto response = userService.findUserByEmail(email);
+    public ResponseEntity<UserSearchDto> findUserByEmail(@RequestParam("email") String email) {
+        UserSearchDto response = userService.findUserByEmail(email);
         return ResponseEntity.ok(response);
     }
 }

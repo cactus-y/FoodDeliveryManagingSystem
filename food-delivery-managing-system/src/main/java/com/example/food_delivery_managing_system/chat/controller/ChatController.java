@@ -56,5 +56,9 @@ public class ChatController {
         return ResponseEntity.ok().build();
     }
 
-
+    // 채팅방 참가자 확인
+    @GetMapping("/chats/{chatId}/participants")
+    public ResponseEntity<List<ChatUserDto>> getParticipants(@PathVariable Long chatId) {
+        return ResponseEntity.ok(chatService.getParticipants(chatId));
+    }
 }
