@@ -16,7 +16,7 @@
     <h1 id="signupTitle">회원가입</h1>
     <p class="lead">아래 정보를 입력해 계정을 생성하세요.</p>
 
-    <form action="/api/users/signup" method="POST" enctype="multipart/form-data" onkeydown="return event.key !== 'Enter';" novalidate>
+    <form action="/signup" method="POST" enctype="multipart/form-data" onkeydown="return event.key !== 'Enter';" novalidate>
       <input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" />
       <div class="grid">
         <!-- 이름 -->

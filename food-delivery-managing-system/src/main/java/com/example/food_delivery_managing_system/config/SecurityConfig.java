@@ -24,7 +24,7 @@ public class SecurityConfig {
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider(CustomUserDetailsService userDetailsService,
-                                                            PasswordEncoder passwordEncoder) {
+        PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder);
@@ -34,14 +34,31 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/api/auth/login", "/api/auth/logout")
-                )
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login", "/api/auth/logout").permitAll()
-                        .anyRequest().authenticated()
-                )
-                .sessionManagement(sm -> sm.sessionFixation(sess -> sess.migrateSession()));
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/api/auth/login", "/api/auth/logout", "/api/**")
+            )
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/auth/login"
+                    , "/api/auth/logout"
+                    , "/login"
+                    , "/user/user_signup"
+                    , "/signup"
+                    , "/api/users/check-email"
+                    , "/api/users/nick-name"
+                    , "/user/image/*"
+                    , "/user/css/*"
+                    , "/user/js/*").permitAll()
+                .requestMatchers("/ws-stomp", "/pub/**", "/sub/**").authenticated()
+                .anyRequest().authenticated()
+            )
+            .formLogin(form -> form
+                .loginPage("/login")           // 커스텀 로그인 페이지 경로
+                .usernameParameter("email")         // "email" 필드 사용
+                .passwordParameter("password")      // "password" 필드 사용
+                .defaultSuccessUrl("/restaurants", true)   // 성공 후 이동할 경로
+                .permitAll()
+            )
+            .sessionManagement(sm -> sm.sessionFixation(sess -> sess.migrateSession()));
 
         return http.build();
     }

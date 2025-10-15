@@ -8,6 +8,7 @@ import com.example.food_delivery_managing_system.user.entity.User;
 import com.example.food_delivery_managing_system.user.repository.UserRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,8 @@ public class UserService {
     }
 
     public UserResponse getUserDetails(String email) {
-        User user = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
         return UserResponse.from(user);
     }
 
