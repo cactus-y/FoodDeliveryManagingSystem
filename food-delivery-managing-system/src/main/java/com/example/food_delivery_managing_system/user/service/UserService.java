@@ -29,9 +29,7 @@ public class UserService {
 
     public UserResponse getUserDetails(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "No user with email: " + email));
-        return UserResponse.from(user);
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));        return UserResponse.from(user);
     }
 
     public boolean existsByEmail(String email) {
@@ -44,15 +42,15 @@ public class UserService {
 
     public List<MenuSummaryResponse> getListOfMenus(Long restaurantId){
         return menuRepository.findAllByRestaurant_RestaurantIdx(restaurantId).stream()
-                .map(m -> MenuSummaryResponse.builder()
-                        .menuIdx(m.getMenuIdx())
-                        .name(m.getName())
-                        .price(m.getPrice())
-                        .isSignature(m.getIsSignature())
-                        .imageUrl(m.getImageUrl())
-                        .createdAt(m.getCreatedAt())
-                        .build()
-                ).toList();
+            .map(m -> MenuSummaryResponse.builder()
+                .menuIdx(m.getMenuIdx())
+                .name(m.getName())
+                .price(m.getPrice())
+                .isSignature(m.getIsSignature())
+                .imageUrl(m.getImageUrl())
+                .createdAt(m.getCreatedAt())
+                .build()
+            ).toList();
     }
 
 }

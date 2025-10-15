@@ -48,6 +48,7 @@ public class SecurityConfig {
                                 , "/api/users/nick-name"
                                 , "/user/css/*"
                                 , "/user/js/*").permitAll()
+                        .requestMatchers("/ws-stomp", "/pub/**", "/sub/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

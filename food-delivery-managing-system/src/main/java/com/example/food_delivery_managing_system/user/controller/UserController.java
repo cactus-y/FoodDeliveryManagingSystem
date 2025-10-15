@@ -1,5 +1,6 @@
 package com.example.food_delivery_managing_system.user.controller;
 
+import com.example.food_delivery_managing_system.chat.dto.ChatUserDto;
 import com.example.food_delivery_managing_system.menu.dto.MenuSummaryResponse;
 import com.example.food_delivery_managing_system.restaurant.RestaurantService;
 import com.example.food_delivery_managing_system.restaurant.dto.RestaurantListResponse;
@@ -9,6 +10,7 @@ import com.example.food_delivery_managing_system.user.dto.UserRequest;
 import java.security.Principal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -68,5 +70,12 @@ public class UserController {
     @ResponseBody
     public List<MenuSummaryResponse> getListOfMenu(@PathVariable Long restaurantIdx) {
         return userService.getListOfMenus(restaurantIdx);
+    }
+
+    // 유저 검색을 쓸 일이 생겨서 추가합니다..
+    @GetMapping
+    public ResponseEntity<ChatUserDto> findUserByEmail(@RequestParam("email") String email) {
+        ChatUserDto response = userService.findUserByEmail(email);
+        return ResponseEntity.ok(response);
     }
 }
