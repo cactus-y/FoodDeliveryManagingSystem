@@ -11,6 +11,7 @@ import java.util.List;
 @Repository
 public interface MenuRepository extends JpaRepository<Menu,Long> {
     Page<Menu> findByRestaurant_RestaurantIdx(Long restaurantId, Pageable pageable);
+    List<Menu> findAllByRestaurant_RestaurantIdx(Long restaurantId);
 
     Page<Menu> findByNameContainingOrDescriptionContaining(
             String nameKeyword, String descKeyword, Pageable pageable);
