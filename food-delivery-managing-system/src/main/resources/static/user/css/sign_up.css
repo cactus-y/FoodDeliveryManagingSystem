@@ -1,7 +1,7 @@
 /* ===== 전체 배경 (CSS만) ===== */
 :root{
-  --card-bg: rgba(255,255,255,0.95);
-  --accent: #6c5ce7;
+  --card-bg: rgb(255, 255, 255);
+  --accent: #1245AB;
   --muted: #6b7280;
   --shadow: 0 10px 30px rgba(15,23,42,0.12);
 }
@@ -20,36 +20,10 @@ body{
   display:flex;
   align-items:center;
   justify-content:center;
-  background: linear-gradient(135deg, #f5f7ff 0%, #eef2ff 40%, #fef7ff 100%);
+  background: #f5f7fa; /*linear-gradient(135deg, #00A2FF 0%, #D9E5FF 40%, #003399 100%);*/
   overflow:auto;
 }
-/* soft floating shapes */
-body::before, body::after {
-  content: "";
-  position: fixed;
-  width: 520px;
-  height: 520px;
-  border-radius: 50%;
-  filter: blur(60px);
-  z-index: 0;
-  opacity: 0.9;
-  transform: translate3d(0,0,0);
-  will-change: transform;
-  animation: floaty 12s ease-in-out infinite;
-  pointer-events: none;
-}
-body::before {
-  left: -120px;
-  top: -80px;
-  background: radial-gradient(circle at 30% 30%, rgba(108,92,231,0.22), rgba(108,92,231,0.08) 40%, transparent 60%);
-  animation-delay: 0s;
-}
-body::after {
-  right: -100px;
-  bottom: -120px;
-  background: radial-gradient(circle at 70% 70%, rgba(34,197,94,0.16), rgba(34,197,94,0.06) 35%, transparent 60%);
-  animation-delay: 4s;
-}
+
 @keyframes floaty {
   0% { transform: translateY(0) rotate(0deg) scale(1); }
   50% { transform: translateY(-18px) rotate(6deg) scale(1.02); }
@@ -76,7 +50,7 @@ body::after {
 }
 .aside {
   background:
-      linear-gradient(180deg, rgba(108,92,231,0.08), rgba(108,92,231,0.03));
+      linear-gradient(180deg, rgb(227, 245, 255), rgb(200, 223, 255));
   padding: 28px;
   display:flex;
   flex-direction:column;
@@ -90,12 +64,18 @@ body::after {
   align-items:center;
   margin-bottom:6px;
 }
-.dot {
-  width:44px; height:44px;
-  border-radius:8px;
-  background: linear-gradient(135deg,var(--accent), #00c2ff);
-  box-shadow: 0 6px 18px rgba(99,102,241,0.18);
+/*.dot {*/
+/*  width:44px; height:44px;*/
+/*  border-radius:8px;*/
+/*  background: linear-gradient(135deg,var(--accent), #002349);*/
+/*  box-shadow: 0 6px 18px rgba(99,102,241,0.18);*/
+/*}*/
+.logo {
+  width: 240px;
+  height: 50px;
+  margin-bottom: 20px;
 }
+
 h1 { margin:0; font-size:20px; }
 p.lead { margin:6px 0 18px; color:var(--muted); font-size:13px; }
 
@@ -130,7 +110,7 @@ textarea {
   transition:box-shadow .15s, border-color .12s;
 }
 input:focus, textarea:focus {
-  border-color: rgba(108,92,231,0.8);
+  border-color: rgba(54,105,207,0.8);
   box-shadow: 0 6px 18px rgba(108,92,231,0.08);
 }
 
@@ -154,7 +134,7 @@ input:focus, textarea:focus {
   border:0;
   font-weight:700;
   cursor:pointer;
-  background: linear-gradient(90deg,var(--accent), #00c2ff);
+  background: linear-gradient(90deg,var(--accent), #002349);
   color:white;
   box-shadow: 0 8px 24px rgba(108,92,231,0.18);
 }

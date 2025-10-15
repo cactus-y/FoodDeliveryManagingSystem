@@ -4,4 +4,11 @@ spring:
   application:
     name: food-delivery-managing-system-menu
   profiles:
-    active: dev
+    active: local
+
+aws:
+  access-key-id: ${ACCESS_KEY}
+  secret-access-key: ${SECRET_KEY}
+  region: ap-northeast-2
+  s3:
+    bucket-name: ${BUCKET_NAME}
