@@ -2,30 +2,166 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>동네 식당 등록/수정</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f6f8;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        .form-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+            padding: 30px;
+            max-width: 600px;
+            margin: 50px auto;
+        }
+        .form-title {
+            font-weight: 700;
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .upload-box {
+            border: 2px dashed #d0d0d0;
+            border-radius: 10px;
+            text-align: center;
+            padding: 40px 0;
+            color: #999;
+            cursor: pointer;
+            transition: border-color 0.2s;
+            position: relative;
+            overflow: hidden;  /* 이미지가 박스 밖으로 나가지 않게 */
+            height: 220px;     /* 박스 높이 고정 */
+        }
+        .upload-box:hover {
+            border-color: #00A2FF;
+        }
+        /*.upload-box img {*/
+        /*    width: 64px;*/
+        /*    opacity: 0.5;*/
+        /*    margin-bottom: 10px;*/
+        /*}*/
+
+        /* 업로드 전 아이콘/텍스트 */
+        .upload-icon {
+            width: 64px;
+            opacity: 0.6;
+            margin-bottom: 10px;
+            transition: opacity 0.2s;
+        }
+        .upload-text {
+            font-size: 0.95rem;
+        }
+
+        /* 업로드 후 이미지가 박스를 채움 */
+        .upload-box.uploaded img.preview-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-radius: 10px;
+        }
+
+        /* 업로드 후에는 아이콘과 텍스트 숨김 */
+        .upload-box.uploaded .upload-icon,
+        .upload-box.uploaded .upload-text {
+            display: none;
+        }
+
+        input, textarea {
+            border-radius: 8px !important;
+        }
+        textarea {
+            resize: none;
+            height: 120px;
+        }
+        .btn-primary {
+            background-color: #00A2FF;
+            border: none;
+            width: 100%;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            background-color: #002349;
+        }
+        .form-label {
+            font-weight: 600;
+            margin-top: 15px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <a href="/restaurants">뒤로</a>
-        <input type="hidden" id="restaurant-id-aom" th:value="${restaurant.id}">
-        <input type="text" id="name" placeholder="이름" th:value="${restaurant.name}">
-        <input type="text" id="road-address" placeholder="도로명 주소" th:value="${restaurant.roadAddress}">
-        <input type="text" id="detail-address" placeholder="상세 주소" th:value="${restaurant.detailAddress}">
-        <input type="number" id="coordinates-x" placeholder="경도" th:value="${restaurant.coordinates?.x}">
-        <input type="number" id="coordinates-y" placeholder="위도" th:value="${restaurant.coordinates?.y}">
-        <input type="text" id="open-at" placeholder="오픈 시간" th:value="${restaurant.openAt}">
-        <input type="text" id="close-at" placeholder="폐점 시간" th:value="${restaurant.closeAt}">
-        <input type="text" id="image-url" placeholder="이미지 url" th:value="${restaurant.imageUrl}">
-        <textarea type="text" id="additional-info" placeholder="추가 정보" th:text="${restaurant.additionalInfo}"></textarea>
-        <button th:if="${restaurant.id != null}" type="button" id="modify-btn">수정</button>
-        <button th:if="${restaurant.id == null}" type="button" id="create-btn">등록</button>
-    </div>
+    <div th:replace="fragments/navbar :: navbar"></div>
+    <form class="form-card">
+        <div class="form-title" th:text="${restaurant.restaurantIdx == null} ? '식당 등록' : '식당 수정'"></div>
+
+        <!-- 이미지 업로드 -->
+        <div class="upload-box" onclick="document.getElementById('image-url').click()">
+            <img id="preview" src="https://cdn-icons-png.flaticon.com/512/685/685655.png"
+                 alt="upload icon" class="upload-icon">
+            <p class="upload-text">이미지를 업로드하세요</p>
+            <!-- <input type="file" id="imageInput" accept="image/*" style="display:none" onchange="previewImage(event)"> -->
+            <input type="file" id="image-url" accept="image/*" style="display:none" th:value="${restaurant.imageUrl}">
+        </div>
+
+        <input type="hidden" id="restaurant-id-aom" th:value="${restaurant.restaurantIdx}">
+
+        <label class="form-label">식당 이름  <span style="color:#ef4444">*</span></label>
+        <input type="text" class="form-control" id="name" placeholder="이름"
+               th:value="${restaurant.name}"  required>
+
+        <label class="form-label">도로명 주소  <span style="color:#ef4444">*</span></label>
+        <input type="text" class="form-control" id="road-address" placeholder="도로명 주소"
+               th:value="${restaurant.roadAddress}" required>
+
+        <label class="form-label">상세 주소  <span style="color:#ef4444">*</span></label>
+        <input type="text" class="form-control" id="detail-address" placeholder="상세 주소"
+               th:value="${restaurant.detailAddress}" required>
+
+        <label class="form-label">좌표  <span style="color:#ef4444">*</span></label>
+        <input type="number" class="form-control" id="longitude" placeholder="경도(-180~180)"
+               th:value="${restaurant.coordinates?.x}" required>
+        <input type="number" class="form-control" id="latitude" placeholder="위도(-90~90)"
+               th:value="${restaurant.coordinates?.y}" required>
+
+        <label class="form-label">오픈 시간  <span style="color:#ef4444">*</span></label>
+        <input type="time" class="form-control" id="open-at"
+               th:value="${restaurant.openAt}" required>
+
+        <label class="form-label">폐점 시간  <span style="color:#ef4444">*</span></label>
+        <input type="time" class="form-control" id="close-at"
+               th:value="${restaurant.closeAt}" required>
+
+        <label class="form-label">추가 설명</label>
+        <textarea id="additional-info" class="form-control" placeholder="식당에 대한 추가 설명을 입력해주세요."
+                  th:text="${restaurant.additionalInfo}"></textarea>
+
+        <input type="hidden" id="my-username" th:value="${restaurant.username}">
+
+        <input class="btn btn-primary mt-4" th:if="${restaurant.restaurantIdx != null}" type="submit" id="modify-btn" value="수정">
+        <input class="btn btn-primary mt-4" th:if="${restaurant.restaurantIdx == null}" type="submit" id="create-btn" value="등록">
+    </form>
 
     <script>
         const modifyButton = document.getElementById("modify-btn");
 
         if(modifyButton){
-            modifyButton.addEventListener('click', function() {
+            modifyButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                const requiredFields = ["name", "road-address", "detail-address", "longitude", "latitude", "open-at", "close-at"];
+                for (let id of requiredFields) {
+                    const input = document.getElementById(id);
+                    if (!input.value.trim()) {
+                        alert("빈 값이 있습니다.");
+                        input.focus();
+                        return;
+                    }
+                }
                 let restaurantId = Number(document.getElementById("restaurant-id-aom").value);
                 fetch(`/api/restaurants/${restaurantId}`, {
                     method: 'PUT',
@@ -36,10 +172,8 @@
                         name: document.getElementById("name").value,
                         roadAddress: document.getElementById("road-address").value,
                         detailAddress: document.getElementById("detail-address").value,
-                        coordinates: {
-                            x: Number(document.getElementById("coordinates-x").value),
-                            y: Number(document.getElementById("coordinates-y").value)
-                        },
+                        longitude: Number(document.getElementById("longitude").value),
+                        latitude: Number(document.getElementById("latitude").value),
                         openAt: document.getElementById("open-at").value,
                         closeAt: document.getElementById("close-at").value,
                         imageUrl: document.getElementById("image-url").value,
@@ -50,7 +184,7 @@
                         alert("수정 완료");
                         location.replace(`restaurants/${restaurantId}`);
                     }
-                    else alert("다시 시도해주세요.");
+                    else alert(response.status+": 다시 시도해주세요.");
                 })
             })
         }
@@ -58,7 +192,17 @@
         const createButton = document.getElementById("create-btn");
 
         if(createButton){
-            createButton.addEventListener('click', function() {
+            createButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                const requiredFields = ["name", "road-address", "detail-address", "longitude", "latitude", "open-at", "close-at"];
+                for (let id of requiredFields) {
+                    const input = document.getElementById(id);
+                    if (!input.value.trim()) {
+                        alert("빈 값이 있습니다.");
+                        input.focus();
+                        return;
+                    }
+                }
                 fetch(`/api/restaurants`, {
                     method: 'POST',
                     headers: {
@@ -68,21 +212,20 @@
                         name: document.getElementById("name").value,
                         roadAddress: document.getElementById("road-address").value,
                         detailAddress: document.getElementById("detail-address").value,
-                        coordinates: {
-                            x: Number(document.getElementById("coordinates-x").value),
-                            y: Number(document.getElementById("coordinates-y").value)
-                        },
+                        longitude: Number(document.getElementById("longitude").value),
+                        latitude: Number(document.getElementById("latitude").value),
                         openAt: document.getElementById("open-at").value,
                         closeAt: document.getElementById("close-at").value,
                         imageUrl: document.getElementById("image-url").value,
-                        additionalInfo: document.getElementById("additional-info").value
+                        additionalInfo: document.getElementById("additional-info").value,
+                        username: document.getElementById("my-username").value
                     })
                 }).then((response) => {
                     if(response.ok){
                         alert("등록 완료");
                         location.replace("/restaurants");
                     }
-                    else alert("다시 시도해주세요.");
+                    else alert(response.status+": 다시 시도해주세요.");
                 })
             })
         }
