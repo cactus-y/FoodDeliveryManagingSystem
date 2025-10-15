@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MenuRepository extends JpaRepository<Menu,Long> {
@@ -22,4 +23,6 @@ public interface MenuRepository extends JpaRepository<Menu,Long> {
             Restaurant restaurant2, String descKeyword,
             Pageable pageable
     );
+
+    Optional<Menu> findFirstByRestaurantAndIsSignatureOrderByName(Restaurant restaurant, String isSignature);
 }

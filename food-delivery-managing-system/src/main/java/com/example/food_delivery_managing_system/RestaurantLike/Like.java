@@ -1,4 +1,4 @@
-package com.example.food_delivery_managing_system.restaurantLike;
+package com.example.food_delivery_managing_system.RestaurantLike;
 
 import com.example.food_delivery_managing_system.restaurant.Restaurant;
 import com.example.food_delivery_managing_system.user.entity.User;

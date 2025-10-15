@@ -1,7 +1,8 @@
 package com.example.food_delivery_managing_system.restaurant;
 
-import com.example.food_delivery_managing_system.restaurantLike.Like;
+import com.example.food_delivery_managing_system.RestaurantLike.Like;
 import com.example.food_delivery_managing_system.user.entity.User;
+import com.example.food_delivery_managing_system.restaurant.dto.RestaurantStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.locationtech.jts.geom.Coordinate;
@@ -62,6 +63,10 @@ public class Restaurant {
     @Column(name = "restaurant_rating")
     private Float restaurantRating = 0.0f;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "restaurant_status")
+    private RestaurantStatus restaurantStatus = RestaurantStatus.ACTIVE;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -113,5 +118,7 @@ public class Restaurant {
         this.additionalInfo = additionalInfo;
     }
 
-
+    public void update(RestaurantStatus restaurantStatus) {
+        this.restaurantStatus = restaurantStatus;
+    }
 }
