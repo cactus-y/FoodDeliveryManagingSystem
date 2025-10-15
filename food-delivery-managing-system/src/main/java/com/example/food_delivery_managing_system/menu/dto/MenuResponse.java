@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class MenuResponse {
     private Long menuIdx;
     private Long restaurantIdx;
+    private String restaurantName;
     private String name;
     private BigDecimal price;
     private String description;
