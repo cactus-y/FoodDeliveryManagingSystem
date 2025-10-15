@@ -1,8 +1,12 @@
 :root{
   --card-bg: rgba(255,255,255,0.95);
-  --accent: #6c5ce7;
+  --accent: #1245AB;
   --muted: #6b7280;
   --shadow: 0 10px 30px rgba(15,23,42,0.12);
+}
+
+* {
+  box-sizing: border-box;
 }
 
 html,body{
@@ -15,7 +19,7 @@ body{
   display:flex;
   align-items:center;
   justify-content:center;
-  background: linear-gradient(135deg, #f5f7ff 0%, #eef2ff 40%, #fef7ff 100%);
+  background: #f5f7fa; /*linear-gradient(135deg, #f5f7ff 0%, #eef2ff 40%, #fef7ff 100%);*/
   overflow:auto;
 }
 
@@ -65,21 +69,12 @@ body::after {
 
 .brand {
   display:flex;
-  align-items:center;
-  gap:12px;
   margin-bottom:10px;
 }
 
-.dot {
-  width:40px;
-  height:40px;
-  border-radius:8px;
-  background: linear-gradient(135deg,var(--accent), #00c2ff); box-shadow: 0 6px 18px rgba(99,102,241,0.18);
-}
-
-h1 {
-  margin:0;
-  font-size:22px;
+.logo {
+  width: 240px;
+  height: 50px;
 }
 
 label {
@@ -87,6 +82,10 @@ label {
   font-size:13px;
   margin-bottom:6px;
   font-weight:600;
+}
+
+.login-input {
+  margin-bottom: 10px;
 }
 
 input[type="email"], input[type="password"] {
@@ -100,7 +99,7 @@ input[type="email"], input[type="password"] {
 }
 
 input:focus {
-  border-color: rgba(108,92,231,0.8);
+  border-color: rgba(54,105,207,0.8);
   box-shadow: 0 6px 18px rgba(108,92,231,0.08);
 }
 
@@ -109,7 +108,7 @@ input:focus {
   border-radius:10px;
   border:0;
   font-weight:700;
-  cursor:pointer; background: linear-gradient(90deg,var(--accent), #00c2ff);
+  cursor:pointer; background: linear-gradient(90deg,var(--accent), #002349);
   color:white;
   box-shadow: 0 8px 24px rgba(108,92,231,0.18); width:100%;
 }

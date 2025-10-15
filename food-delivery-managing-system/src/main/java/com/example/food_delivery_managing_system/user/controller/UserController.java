@@ -1,11 +1,18 @@
 package com.example.food_delivery_managing_system.user.controller;
 
+import com.example.food_delivery_managing_system.menu.dto.MenuSummaryResponse;
+import com.example.food_delivery_managing_system.restaurant.RestaurantService;
+import com.example.food_delivery_managing_system.restaurant.dto.RestaurantListResponse;
+import com.example.food_delivery_managing_system.user.dto.UserResponse;
 import com.example.food_delivery_managing_system.user.service.UserService;
 import com.example.food_delivery_managing_system.user.dto.UserRequest;
+import java.security.Principal;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
 
     private final UserService userService;
+    private final RestaurantService restaurantService;
 
     @GetMapping("/check-email")
     @ResponseBody
@@ -40,5 +48,25 @@ public class UserController {
 
         userService.addOwner(userRequest);
         return "redirect:/user/login";
+    }
+
+    @GetMapping("/position")
+    @ResponseBody
+    public UserResponse getUserPosition(Principal principal) {
+        String userEmail = principal.getName();
+        return userService.getUserDetails(userEmail);
+    }
+
+    @GetMapping("/restaurants")
+    @ResponseBody
+    public List<RestaurantListResponse> getListOfRestaurants(Principal principal) {
+        String userEmail = principal.getName();
+        return restaurantService.getListOfRestaurants(userEmail);
+    }
+
+    @GetMapping("/restaurants/{restaurantIdx}")
+    @ResponseBody
+    public List<MenuSummaryResponse> getListOfMenu(@PathVariable Long restaurantIdx) {
+        return userService.getListOfMenus(restaurantIdx);
     }
 }
