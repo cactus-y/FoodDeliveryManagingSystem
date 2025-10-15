@@ -165,7 +165,7 @@
                     <p class="text-muted mb-1" th:text="${m.restaurantName}">식당 이름</p>
                     <p class="price mb-3"
                        th:text="${#numbers.formatDecimal(m.price, 0, 'COMMA', 0, 'POINT')} + '원'">0원</p>
-                    <a th:href="@{|/test/menus/${m.menuIdx}|}"
+                    <a th:href="@{|/menus/${m.menuIdx}|}"
                        class="btn btn-sm btn-outline-primary mt-auto">자세히 보기</a>
                 </div>
             </div>
@@ -177,20 +177,20 @@
         <ul class="pagination">
             <li class="page-item" th:classappend="${page.first} ? 'disabled'">
                 <a class="page-link"
-                   th:href="@{/test/menus/search(keyword=${keyword}, page=${page.number - 1}, size=${page.size})}">이전</a>
+                   th:href="@{/menus/search(keyword=${keyword}, page=${page.number - 1}, size=${page.size})}">이전</a>
             </li>
 
             <li class="page-item"
                 th:each="i : ${#numbers.sequence(start, end)}"
                 th:classappend="${i == page.number} ? 'active'">
                 <a class="page-link"
-                   th:href="@{/test/menus/search(keyword=${keyword}, page=${i}, size=${page.size})}"
+                   th:href="@{/menus/search(keyword=${keyword}, page=${i}, size=${page.size})}"
                    th:text="${i + 1}">1</a>
             </li>
 
             <li class="page-item" th:classappend="${page.last} ? 'disabled'">
                 <a class="page-link"
-                   th:href="@{/test/menus/search(keyword=${keyword}, page=${page.number + 1}, size=${page.size})}">다음</a>
+                   th:href="@{/menus/search(keyword=${keyword}, page=${page.number + 1}, size=${page.size})}">다음</a>
             </li>
         </ul>
     </nav>
