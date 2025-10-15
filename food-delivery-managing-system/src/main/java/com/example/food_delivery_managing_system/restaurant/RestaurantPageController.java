@@ -3,7 +3,7 @@ package com.example.food_delivery_managing_system.restaurant;
 import com.example.food_delivery_managing_system.restaurant.dto.RestaurantAoMResponse;
 import com.example.food_delivery_managing_system.restaurant.dto.RestaurantDetailResponse;
 import com.example.food_delivery_managing_system.restaurant.dto.RestaurantListResponse;
-import com.example.food_delivery_managing_system.RestaurantLike.LikeService;
+import com.example.food_delivery_managing_system.restaurantLike.LikeService;
 import com.example.food_delivery_managing_system.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

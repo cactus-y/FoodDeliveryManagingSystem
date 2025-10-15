@@ -1,6 +1,6 @@
 package com.example.food_delivery_managing_system.restaurant;
 
-import com.example.food_delivery_managing_system.RestaurantLike.Like;
+import com.example.food_delivery_managing_system.restaurantLike.Like;
 import com.example.food_delivery_managing_system.user.entity.User;
 import com.example.food_delivery_managing_system.restaurant.dto.RestaurantStatus;
 import jakarta.persistence.*;

@@ -2,13 +2,11 @@ package com.example.food_delivery_managing_system.restaurant;
 
 import com.example.food_delivery_managing_system.restaurant.dto.AddRestaurantRequest;
 import com.example.food_delivery_managing_system.restaurant.dto.UpdateRestaurantRequest;
-import com.example.food_delivery_managing_system.RestaurantLike.LikeService;
+import com.example.food_delivery_managing_system.restaurantLike.LikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

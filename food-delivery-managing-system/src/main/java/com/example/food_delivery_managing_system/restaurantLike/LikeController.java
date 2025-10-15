@@ -1,6 +1,6 @@
-package com.example.food_delivery_managing_system.RestaurantLike;
+package com.example.food_delivery_managing_system.restaurantLike;
 
-import com.example.food_delivery_managing_system.RestaurantLike.dto.LikeResponse;
+import com.example.food_delivery_managing_system.restaurantLike.dto.LikeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
