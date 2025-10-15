@@ -1,14 +1,15 @@
 package com.example.food_delivery_managing_system.restaurant.dto;
 
 import lombok.Getter;
-import org.springframework.data.geo.Point;
+import org.locationtech.jts.geom.Point;
 
 @Getter
 public class UpdateRestaurantRequest {
     private String name;
     private String roadAddress;
     private String detailAddress;
-    private Point coordinates;
+    private double longitude;
+    private double latitude;
     private String openAt;
     private String closeAt;
     private String imageUrl;
@@ -18,7 +19,8 @@ public class UpdateRestaurantRequest {
             String name,
             String roadAddress,
             String detailAddress,
-            Point coordinates,
+            double longitude,
+            double latitude,
             String openAt,
             String closeAt,
             String imageUrl,
@@ -27,7 +29,8 @@ public class UpdateRestaurantRequest {
         this.name = name;
         this.roadAddress = roadAddress;
         this.detailAddress = detailAddress;
-        this.coordinates = new Point(coordinates);
+        this.longitude = longitude;
+        this.latitude = latitude;
         this.openAt = openAt;
         this.closeAt = closeAt;
         this.imageUrl = imageUrl;

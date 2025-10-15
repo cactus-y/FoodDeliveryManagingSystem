@@ -17,7 +17,7 @@ public class LikeResponse {
         this.likeIdx= like.getLikeIdx();
         this.createdAt = like.getCreatedAt();
         this.restaurantId = like.getRestaurant().getRestaurantIdx();
-        this.userId = like.getUserId();
+        this.userId = like.getUser().getUserId();
         this.likesCount = like.getRestaurant().getLikes().size();
     }
 }

@@ -3,9 +3,11 @@ package com.example.food_delivery_managing_system.restaurant;
 import com.example.food_delivery_managing_system.restaurant.dto.AddRestaurantRequest;
 import com.example.food_delivery_managing_system.restaurant.dto.RestaurantListResponse;
 import com.example.food_delivery_managing_system.restaurant.dto.UpdateRestaurantRequest;
+import com.example.food_delivery_managing_system.user.entity.User;
+import com.example.food_delivery_managing_system.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.geo.Point;
+import org.locationtech.jts.geom.Point;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -16,17 +18,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RestaurantService {
     private final RestaurantRepository restaurantRepository;
+    private final UserRepository userRepository;
 
     // POST: 내 식당 추가
-    public Restaurant addRestaurant(AddRestaurantRequest request, Long userId) {
-        // User user = userRepository.findById(userId);
-        return restaurantRepository.save(request.toEntity(/* user */));
+    public Restaurant addRestaurant(AddRestaurantRequest request) {
+        User user = userRepository.findByEmail(request.getUsername()).get();
+        return restaurantRepository.save(request.toEntity(user));
     }
 
     // GET: 동네 식당 목록 조회
-    public List<RestaurantListResponse> getListOfRestaurants(Point my) {
+    public List<RestaurantListResponse> getListOfRestaurants(String myUsername) {
+        Point myCoordinates = userRepository.findByEmail(myUsername).get().getCoordinates();
         return restaurantRepository.findAll()
-                .stream().map(restaurant->new RestaurantListResponse(restaurant, my))
+                .stream().map(restaurant->new RestaurantListResponse(restaurant, myCoordinates, myUsername))
                 // .filter(response -> response.getDistance() <= 2) // 내 좌표로부터 2km 이내(추후반영)
                 .toList();
     }
@@ -46,7 +50,8 @@ public class RestaurantService {
                 request.getName(),
                 request.getRoadAddress(),
                 request.getDetailAddress(),
-                request.getCoordinates(),
+                request.getLongitude(),
+                request.getLatitude(),
                 request.getOpenAt(),
                 request.getCloseAt(),
                 request.getImageUrl(),
