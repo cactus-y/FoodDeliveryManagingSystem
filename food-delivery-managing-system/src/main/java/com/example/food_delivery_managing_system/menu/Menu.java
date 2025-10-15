@@ -42,8 +42,6 @@ public class Menu {
     @Column(name = "image_url", length = 200)
     private String imageUrl;
 
-//    @Column(name = "restaurant_idx")
-//    private Long restaurantIdx;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_idx")
