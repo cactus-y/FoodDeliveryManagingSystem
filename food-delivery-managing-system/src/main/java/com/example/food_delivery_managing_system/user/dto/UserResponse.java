@@ -4,8 +4,10 @@ import com.example.food_delivery_managing_system.user.entity.User;
 import com.example.food_delivery_managing_system.user.entity.UserRole;
 import lombok.Builder;
 import lombok.Getter;
-
+import lombok.Setter;
+// UserResponse.java
 @Getter
+@Builder(toBuilder = true) // 복사 빌더 활성화!
 public class UserResponse {
 
     private final Long userId;
@@ -17,43 +19,31 @@ public class UserResponse {
     private final String detailAddress;
     private final double latitude;
     private final double longitude;
-    private final String profileUrl;
+    private final String profileUrl;       // S3 key 저장
+    private final String profileImageUrl;  // (선택) 서명 URL 응답용
 
-    @Builder
-    public UserResponse(Long userId
-        , String email
-        , String name
-        , UserRole userRole
-        , String nickName
-        , String roadAddress
-        , String detailAddress
-        , double latitude
-        , double longitude
-        , String profileUrl) {
-        this.userId = userId;
-        this.email = email;
-        this.name = name;
-        this.userRole = userRole;
-        this.nickName = nickName;
-        this.roadAddress = roadAddress;
-        this.detailAddress = detailAddress;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.profileUrl = profileUrl;
-    }
 
     public static UserResponse from(User user) {
+        // 좌표 null 안전 처리
+        double lat = 0d;
+        double lon = 0d;
+        if (user.getCoordinates() != null) {
+            lat = user.getCoordinates().getY();
+            lon = user.getCoordinates().getX();
+        }
+
         return UserResponse.builder()
-            .userId(user.getUserId())
-            .email(user.getEmail())
-            .name(user.getName())
-            .userRole(user.getUserRole())
-            .nickName(user.getNickName())
-            .roadAddress(user.getRoadAddress())
-            .detailAddress(user.getDetailAddress())
-            .latitude(user.getCoordinates().getY())
-            .longitude(user.getCoordinates().getX())
-            .profileUrl(user.getProfileUrl())
-            .build();
+                .userId(user.getUserId())
+                .email(user.getEmail())
+                .name(user.getName())
+                .userRole(user.getUserRole())
+                .nickName(user.getNickName())
+                .roadAddress(user.getRoadAddress())
+                .detailAddress(user.getDetailAddress())
+                .latitude(lat)
+                .longitude(lon)
+                .profileUrl(user.getProfileUrl())
+                // profileImageUrl 는 컨트롤러에서 toBuilder()로 채움
+                .build();
     }
 }

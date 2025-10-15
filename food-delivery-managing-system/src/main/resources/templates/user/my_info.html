@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>내 정보</title>
+    <link rel="stylesheet" href="/user/css/my_info.css"/>
+</head>
+<body>
+<main class="container" role="main" aria-labelledby="myInfoTitle">
+    <header class="topbar">
+        <h1 id="myInfoTitle">내 정보</h1>
+        <div class="actions">
+            <a class="btn secondary" href="/">홈</a>
+            <a class="btn" href="/users/profile/edit" id="goEditBtn">프로필 수정</a>
+        </div>
+    </header>
+
+    <section class="card profile" aria-label="기본 프로필">
+        <div class="avatar-wrap">
+            <img id="avatar" alt="프로필 이미지"
+                 src="https://dummyimage.com/96x96/eeeeee/888888.png&text=User"/>
+        </div>
+        <div class="meta">
+            <div class="name-row">
+                <h2 id="name" class="skeleton">불러오는 중…</h2>
+                <span id="nickName" class="tag skeleton"></span>
+            </div>
+
+            <div class="field">
+                <span class="label">이메일</span>
+                <span id="email" class="value skeleton"></span>
+            </div>
+
+            <div class="field">
+                <span class="label">가입일</span>
+                <span id="joinedAt" class="value skeleton"></span>
+            </div>
+
+            <div class="field">
+                <span class="label">주소</span>
+                <span id="address" class="value skeleton"></span>
+            </div>
+
+            <div class="coords" id="coordsRow" hidden>
+                <span class="chip" id="latChip"></span>
+                <span class="chip" id="lngChip"></span>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script src="/user/js/my_info.js"></script>
+</body>
+</html>

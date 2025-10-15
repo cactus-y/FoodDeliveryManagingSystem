@@ -10,10 +10,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+
+import lombok.*;
 import org.locationtech.jts.geom.Point;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -22,6 +20,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
@@ -32,15 +31,18 @@ public class User {
     @Column(name = "user_idx", nullable = false, updatable = false)
     private Long userId;
 
+    @Setter(AccessLevel.NONE)
     @Column(name = "email", nullable = false)
     private String email;
 
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Setter(AccessLevel.NONE)
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Setter(AccessLevel.NONE)
     @Enumerated(EnumType.STRING)
     @Column(name = "user_role", nullable = false)
     private UserRole userRole;
@@ -57,6 +59,7 @@ public class User {
     @Column(columnDefinition = "geography(Point,4326)")
     private Point coordinates;
 
+    @Setter(AccessLevel.NONE)
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -93,5 +96,6 @@ public class User {
         this.updatedAt = updatedAt;
         this.profileUrl = profileUrl;
     }
+
 
 }

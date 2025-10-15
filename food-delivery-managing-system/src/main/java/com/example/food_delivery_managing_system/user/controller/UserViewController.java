@@ -21,4 +21,13 @@ public class UserViewController {
         return "/user/map";
     }
 
+    @GetMapping("/users/profile/edit")
+    public String editProfile() {
+        return "/user/profile_edit";
+    }
+
+    @GetMapping("/users/me")
+    public String myInfo() {
+        return "user/my_info";
+    }
 }
