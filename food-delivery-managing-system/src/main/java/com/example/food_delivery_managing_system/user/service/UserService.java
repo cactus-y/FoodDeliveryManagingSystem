@@ -1,5 +1,6 @@
 package com.example.food_delivery_managing_system.user.service;
 
+import com.example.food_delivery_managing_system.chat.dto.ChatUserDto;
 import com.example.food_delivery_managing_system.menu.MenuRepository;
 import com.example.food_delivery_managing_system.menu.dto.MenuSummaryResponse;
 import com.example.food_delivery_managing_system.user.dto.UserRequest;
@@ -36,6 +37,17 @@ public class UserService {
 
     public boolean existsByNickName(String nickName) {
         return userRepository.existsByNickName(nickName);
+    }
+
+    public ChatUserDto findUserByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        return ChatUserDto.builder()
+                .userId(user.getUserId())
+                .nickname(user.getNickName())
+                .profileImageUrl(user.getProfileUrl())
+                .build();
     }
 
     public List<MenuSummaryResponse> getListOfMenus(Long restaurantId){
