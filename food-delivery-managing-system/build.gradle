@@ -32,16 +32,30 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
-    compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'com.h2database:h2'
-    annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-//	testImplementation 'org.springframework.security:spring-security-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    implementation 'org.hibernate.orm:hibernate-spatial'
+    implementation 'software.amazon.awssdk:s3:2.25.66'
+
+    // JPA + PostGIS
+    implementation 'org.hibernate.orm:hibernate-spatial'     // Boot BOM이 버전 관리
     implementation 'org.locationtech.jts:jts-core:1.19.0'
+
+    // DB 드라이버
+    runtimeOnly 'org.postgresql:postgresql:42.7.4'
+    runtimeOnly 'com.h2database:h2'                           // 로컬 개발용(H2 프로필일 때만 사용)
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // 테스트
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers' // 편의 유틸
+    testImplementation 'org.testcontainers:junit-jupiter:1.20.4'
+    testImplementation 'org.testcontainers:postgresql:1.20.4'
+
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
+    systemProperty "spring.profiles.active", "test"
 }

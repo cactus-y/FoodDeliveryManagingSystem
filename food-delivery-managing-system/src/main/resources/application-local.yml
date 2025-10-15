@@ -1,14 +1,38 @@
 spring:
+  profiles:
+    active: local
+
   datasource:
-    driver-class-name: org.h2.Driver
-    url: ${LOCAL_URL}
-    username: ${LOCAL_USERNAME}
-    password:
-  h2:
-    console:
-      enabled: true
+    driver-class-name: org.postgresql.Driver
+    url: ${LOCAL_URL:jdbc:postgresql://localhost:5432/food_delivery}
+    username: ${LOCAL_USERNAME:postgres}
+    password: ${LOCAL_PASSWORD:changeme}
+
   jpa:
-    show-sql: true
+    open-in-view: false
     hibernate:
       ddl-auto: update
-    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  sql:
+    init:
+      mode: never
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
+
+app:
+  s3:
+    bucket: est3-s3-bucket
+    region: ap-northeast-2
+    base-url: https://est3-s3-bucket.s3.ap-northeast-2.amazonaws.com
+    public: true
+    key-prefix: uploads/

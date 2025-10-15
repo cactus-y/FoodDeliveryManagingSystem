@@ -2,58 +2,46 @@ package com.example.food_delivery_managing_system.user.dto;
 
 import com.example.food_delivery_managing_system.user.eneity.User;
 import com.example.food_delivery_managing_system.user.eneity.UserRole;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 @Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
 public class UserResponse {
 
-    private final Long userId;
-    private final String email;
-    private final String name;
-    private final UserRole userRole;
-    private final String nickName;
-    private final String roadAddress;
-    private final String detailAddress;
-    private final double latitude;
-    private final double longitude;
-    private final String profileUrl;
-
-    @Builder
-    public UserResponse(Long userId
-        , String email
-        , String name
-        , UserRole userRole
-        , String nickName
-        , String roadAddress
-        , String detailAddress
-        , double latitude
-        , double longitude
-        , String profileUrl) {
-        this.userId = userId;
-        this.email = email;
-        this.name = name;
-        this.userRole = userRole;
-        this.nickName = nickName;
-        this.roadAddress = roadAddress;
-        this.detailAddress = detailAddress;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.profileUrl = profileUrl;
-    }
+    private Long userId;
+    private String email;
+    private String name;
+    private UserRole userRole;
+    private String nickName;
+    private String roadAddress;
+    private String detailAddress;
+    private Double latitude;
+    private Double longitude;
+    private String profileUrl;
+    private String profileImageUrl;
 
     public static UserResponse from(User user) {
+        Double lat = null;
+        Double lng = null;
+        if (user.getCoordinates() != null) {
+            lat = user.getCoordinates().getY();
+            lng = user.getCoordinates().getX();
+        }
+
         return UserResponse.builder()
-            .userId(user.getUserId())
-            .email(user.getEmail())
-            .name(user.getName())
-            .userRole(user.getUserRole())
-            .nickName(user.getNickName())
-            .roadAddress(user.getRoadAddress())
-            .detailAddress(user.getDetailAddress())
-            .latitude(user.getCoordinates().getY())
-            .longitude(user.getCoordinates().getX())
-            .profileUrl(user.getProfileUrl())
-            .build();
+                .userId(user.getUserId())
+                .email(user.getEmail())
+                .name(user.getName())
+                .userRole(user.getUserRole())
+                .nickName(user.getNickName())
+                .roadAddress(user.getRoadAddress())
+                .detailAddress(user.getDetailAddress())
+                .latitude(lat)
+                .longitude(lng)
+                .profileUrl(user.getProfileUrl())
+                .build();
     }
 }

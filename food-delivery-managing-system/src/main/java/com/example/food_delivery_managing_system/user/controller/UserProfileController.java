@@ -1,58 +1,62 @@
+// src/main/java/com/example/food_delivery_managing_system/user/controller/UserProfileController.java
 package com.example.food_delivery_managing_system.user.controller;
 
+import com.example.food_delivery_managing_system.file.domain.StoredFile;
+import com.example.food_delivery_managing_system.file.service.S3StorageService;
 import com.example.food_delivery_managing_system.user.dto.PasswordChangeRequest;
 import com.example.food_delivery_managing_system.user.dto.UserPatchRequest;
 import com.example.food_delivery_managing_system.user.dto.UserResponse;
 import com.example.food_delivery_managing_system.user.eneity.CustomUserDetails;
 import com.example.food_delivery_managing_system.user.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-@Controller
-@RequestMapping("/api") // <-- /api/me, /api/me/password 만들기 위함
+@RestController
+@RequestMapping("/api")
 @RequiredArgsConstructor
-@Validated
 public class UserProfileController {
 
     private final UserService userService;
+    private final S3StorageService s3;
 
-    // GET /api/me : 내 정보 조회
+    /** 내 정보 조회: profileImageUrl(절대 URL) 세팅해서 반환 */
+    // UserProfileController.java (user 패키지의 컨트롤러)
     @GetMapping("/me")
-    @ResponseBody // JSON으로 주고 싶으면 유지, 뷰로 보낼 거면 제거하고 Model 사용
     public UserResponse getMe(@AuthenticationPrincipal CustomUserDetails principal) {
         Long userId = principal.getId();
-        return userService.getProfile(userId);
+        UserResponse resp = userService.getProfile(userId);
+
+        String key = resp.getProfileUrl(); // DB엔 S3 key 저장
+        if (key != null && (resp.getProfileImageUrl() == null || resp.getProfileImageUrl().isBlank())) {
+            resp.setProfileImageUrl(s3.signedGetUrl(key, 60)); // 60분짜리 서명 URL
+        }
+        return resp;
     }
 
-    // PATCH /api/me : 내 정보 수정(프로필 이미지 포함 가능)
+    /** 내 정보 수정 (멀티파트) – 파일 있으면 S3 업로드 후 키를 profileUrl에 주입 */
     @PatchMapping(value = "/me", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @ResponseBody
     public void updateMe(@AuthenticationPrincipal CustomUserDetails principal,
                          @ModelAttribute UserPatchRequest request,
-                         @RequestParam(value = "profileImage", required = false) MultipartFile profileImage) {
+                         @RequestParam(value = "profileImage", required = false) MultipartFile profileImage) throws Exception {
 
         Long userId = principal.getId();
 
-        // 프로필 이미지 파일이 있으면 업로드 처리 후 URL을 request.setProfileUrl()에 넣기
         if (profileImage != null && !profileImage.isEmpty()) {
-            // TODO: S3 업로드 후 실제 URL로 대체
-            String profileImageUrl = profileImage.getOriginalFilename();
-            request.setProfileUrl(profileImageUrl);
+            StoredFile sf = s3.uploadAndSave(profileImage, userId, "profiles/" + userId);
+            request.setProfileUrl(sf.getS3Key()); // DB에는 “키” 저장
         }
 
         userService.updateUser(userId, request);
     }
 
-    // PATCH /api/me/password : 비밀번호 변경
+    /** 비밀번호 변경 */
     @PatchMapping("/me/password")
-    @ResponseBody
     public void changePassword(@AuthenticationPrincipal CustomUserDetails principal,
-                               @ModelAttribute @Validated PasswordChangeRequest request) {
+                               @ModelAttribute @Valid PasswordChangeRequest request) {
         Long userId = principal.getId();
         userService.changePassword(userId, request);
     }
