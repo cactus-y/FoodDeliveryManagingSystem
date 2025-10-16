@@ -147,13 +147,19 @@
 </div>
 
 <script th:inline="javascript">
-    const baseUrl = "http://localhost:8080";
 
     async function submitMenu() {
         const mode = /*[[${mode}]]*/ 'create';
         const menuId = /*[[${menuId}]]*/ null;
         const restaurantId = /*[[${restaurantId}]]*/ null;
 
+        // 기존 URL (수정 전)
+        const oldImageUrl = /*[[${menuResponse != null ? menuResponse.imageUrl : ''}]]*/ '';
+
+        // 현재 이미지 src
+        const newImageUrl = document.querySelector('.preview-image')
+            ? document.querySelector('.preview-image').src
+            : '';
 
         const body = {
             name: document.getElementById("name").value,
@@ -165,10 +171,10 @@
 
         let url, method;
         if (mode === 'edit' && menuId) {
-            url = `${baseUrl}/api/menus/${menuId}`;
+            url = `/api/menus/${menuId}`;
             method = "PUT";
         } else {
-            url = `${baseUrl}/api/restaurants/${restaurantId}/menus`;
+            url = `/api/restaurants/${restaurantId}/menus`;
             method = "POST";
         }
 
@@ -181,7 +187,7 @@
         if (res.ok) {
             // 기존 이미지와 새 이미지가 다를 경우 이전 이미지 삭제 요청
             if (mode === 'edit' && oldImageUrl && oldImageUrl !== newImageUrl) {
-                await fetch(`${baseUrl}/api/files/delete`, {
+                await fetch(`/api/files/delete`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ imageUrl: oldImageUrl })
@@ -204,7 +210,7 @@
         formData.append("file", file);
 
         // S3 업로드 요청
-        const res = await fetch("http://localhost:8080/api/files/upload", {
+        const res = await fetch("/api/files/upload", {
             method: "POST",
             body: formData
         });
