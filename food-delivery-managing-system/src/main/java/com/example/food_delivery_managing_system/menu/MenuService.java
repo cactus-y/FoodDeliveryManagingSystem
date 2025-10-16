@@ -103,8 +103,7 @@ public class MenuService {
 
     //메뉴 단건 상세 조회
     public MenuResponse getMenuById(Long id) {
-//        Menu menu = menuRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        Menu menu = menuRepository.findById(id)
+        Menu menu = menuRepository.findByIdWithRestaurant(id)
                 .orElseThrow(() -> new MenuNotFoundException(id));
 
         return MenuResponse.builder()
