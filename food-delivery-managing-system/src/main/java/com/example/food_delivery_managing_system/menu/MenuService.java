@@ -9,7 +9,6 @@ import com.example.food_delivery_managing_system.menu.dto.MenuSearchResponse;
 import com.example.food_delivery_managing_system.menu.dto.MenuSummaryResponse;
 import com.example.food_delivery_managing_system.restaurant.Restaurant;
 import com.example.food_delivery_managing_system.restaurant.RestaurantRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -121,14 +120,7 @@ public class MenuService {
                 .build();
     }
 
-    //메뉴 삭제
-    @Transactional
     public void deleteMenuById(Long id) {
-//        try {
-//            menuRepository.deleteById(id);
-//        } catch (EmptyResultDataAccessException e) {
-//            throw new MenuNotFoundException(id);
-//        }
         Menu menu = menuRepository.findById(id)
                 .orElseThrow(() -> new MenuNotFoundException(id));
 
@@ -136,21 +128,15 @@ public class MenuService {
         String imageUrl = menu.getImageUrl();
         if (imageUrl != null && !imageUrl.isBlank()) {
             try {
-                String key = extractKeyFromUrl(imageUrl);
-                s3Service.deleteFile(key);
+                //URL 그대로 넘기면 S3Service가 내부적으로 key를 추출함
+                s3Service.deleteFile(imageUrl);
             } catch (Exception e) {
                 System.err.println("S3 이미지 삭제 실패: " + e.getMessage());
             }
         }
+
         //DB에서 메뉴 삭제
         menuRepository.delete(menu);
-    }
-
-    private String extractKeyFromUrl(String imageUrl) {
-        // S3 key 추출: 버킷 이름 뒤의 경로 부분만 남김
-        int index = imageUrl.indexOf(".amazonaws.com/");
-        if (index == -1) return imageUrl; // URL 형식이 다르면 그대로 반환
-        return imageUrl.substring(index + ".amazonaws.com/".length());
     }
 
     //메뉴 정보 수정
