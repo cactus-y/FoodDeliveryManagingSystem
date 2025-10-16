@@ -11,7 +11,7 @@ import java.security.Principal;
 @RequiredArgsConstructor
 @RequestMapping("/api/restaurants/{restaurantId}/likes")
 public class LikeController {
-    private final com.example.food_delivery_managing_system.restaurantLike.LikeService likeService;
+    private final LikeService likeService;
 
     // POST: 특정 식당 좋아요
     @PostMapping

@@ -11,7 +11,8 @@ public class RestaurantAoMResponse {
     private String name;
     private String roadAddress;
     private String detailAddress;
-    private Point coordinates;
+    private double longitude;
+    private double latitude;
     private String openAt;
     private String closeAt;
     private String imageUrl;
@@ -27,7 +28,8 @@ public class RestaurantAoMResponse {
         this.name = restaurant.getName();
         this.roadAddress = restaurant.getRoadAddress();
         this.detailAddress = restaurant.getDetailAddress();
-        this.coordinates = restaurant.getCoordinates();
+        this.longitude = restaurant.getCoordinates().getX();
+        this.latitude = restaurant.getCoordinates().getY();
         this.openAt = restaurant.getOpenAt();
         this.closeAt = restaurant.getCloseAt();
         this.imageUrl = restaurant.getImageUrl();

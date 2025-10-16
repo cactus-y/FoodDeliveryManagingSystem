@@ -4,6 +4,8 @@ import com.example.food_delivery_managing_system.restaurant.Restaurant;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -25,4 +27,8 @@ public interface MenuRepository extends JpaRepository<Menu,Long> {
     );
 
     Optional<Menu> findFirstByRestaurantAndIsSignatureOrderByName(Restaurant restaurant, String isSignature);
+
+    //메뉴 단건 상세 조회시 LazyInitializationException 방지
+    @Query("select m from Menu m join fetch m.restaurant where m.menuIdx = :id")
+    Optional<Menu> findByIdWithRestaurant(@Param("id") Long id);
 }

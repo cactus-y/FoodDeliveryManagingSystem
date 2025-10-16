@@ -151,7 +151,7 @@
                 <li><span class="info-label">점주 이메일:</span> <span th:text="${restaurant.ownerUsername}"></span></li>
             </ul>
 
-            <a style="color: black; text-decoration: none; margin: 10px;" href=""> <!-- TODO: 메뉴 목록으로 이동 -->
+            <a style="color: black; text-decoration: none; margin: 10px;" th:href='@{/restaurants/{id}/menus(id=${restaurant.restaurantIdx})}'>
                 <h6 class="card-title d-flex align-items-center">
                     <span>이 식당의 메뉴 보러 가기</span>
                     <svg fill="#000000" width="36px" height="36px" viewBox="0 0 256 256" id="Flat" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M218.82812,130.82812l-72,72a3.99957,3.99957,0,0,1-5.65625-5.65625L206.34326,132H40a4,4,0,0,1,0-8H206.34326L141.17187,58.82812a3.99957,3.99957,0,0,1,5.65625-5.65625l72,72A3.99854,3.99854,0,0,1,218.82812,130.82812Z"></path> </g></svg>

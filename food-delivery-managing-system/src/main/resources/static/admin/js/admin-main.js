@@ -72,21 +72,21 @@ function showStatistics() {
 
 // 유저 로드
 function loadUsers() {
-    console.log('유저 데이터 로드 중...');
+    // console.log('유저 데이터 로드 중...');
     fetch('/api/admin/users')
         .then(res => {
-            console.log('응답 상태:', res.status);
+            // console.log('응답 상태:', res.status);
             if (!res.ok) throw new Error('네트워크 응답 오류');
             return res.json();
         })
         .then(data => {
-            console.log('받은 데이터:', data);
+            // console.log('받은 데이터:', data);
             usersData = data;
             currentUserPage = 1;
             renderUsersPagination();
         })
         .catch(err => {
-            console.error('에러:', err);
+            // console.error('에러:', err);
             document.getElementById('users-tbody').innerHTML = '<tr><td colspan="5">데이터 로드 실패</td></tr>';
         });
 }
@@ -178,21 +178,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 레스토랑 로드
 function loadRestaurants() {
-    console.log('레스토랑 데이터 로드 중...');
+    // console.log('레스토랑 데이터 로드 중...');
     fetch('/api/admin/posts')
         .then(res => {
-            console.log('응답 상태:', res.status);
+            // console.log('응답 상태:', res.status);
             if (!res.ok) throw new Error('네트워크 응답 오류');
             return res.json();
         })
         .then(data => {
-            console.log('받은 레스토랑 데이터:', data);
+            // console.log('받은 레스토랑 데이터:', data);
             restaurantsData = data;
             currentRestaurantPage = 1;
             renderRestaurantsPagination();
         })
         .catch(err => {
-            console.error('에러:', err);
+            // console.error('에러:', err);
             document.getElementById('restaurants-tbody').innerHTML = '<tr><td colspan="7">데이터 로드 실패</td></tr>';
         });
 }
@@ -288,7 +288,7 @@ function loadStatistics() {
     fetch('/api/statistics')
         .then(res => res.json())
         .then(data => {
-            console.log('통계 데이터:', data);
+            // console.log('통계 데이터:', data);
             renderStatisticsTable(data);
             renderChart(data);
         })
