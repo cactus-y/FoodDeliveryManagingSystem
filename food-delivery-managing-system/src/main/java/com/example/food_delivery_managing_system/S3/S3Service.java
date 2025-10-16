@@ -24,10 +24,10 @@ public class S3Service {
     private final String publicBaseUrl;    // APP_S3_PUBLIC_BASE_URL (예: https://bucket.s3.ap-northeast-2.amazonaws.com)
 
     public S3Service(
-            @Value("${APP_S3_BUCKET}") String bucketName,
-            @Value("${APP_S3_PREFIX:uploads/}") String keyPrefix,
-            @Value("${APP_S3_PUBLIC_BASE_URL}") String publicBaseUrl,
-            @Value("${AWS_REGION:}") String awsRegion // 있으면 사용
+            @Value("${aws.s3.bucket-name}") String bucketName,
+            @Value("${aws.s3.prefix}") String keyPrefix,
+            @Value("${aws.s3.public-base-url}") String publicBaseUrl,
+            @Value("${aws.region}") String awsRegion // 있으면 사용
     ) {
         if (bucketName == null || bucketName.isBlank()) {
             throw new IllegalStateException("APP_S3_BUCKET is required.");
