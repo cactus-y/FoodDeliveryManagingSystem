@@ -964,7 +964,7 @@
                                 alert('채팅방을 나갔습니다.');
                                 document.getElementById(`chat-item-${currentChatId}`)?.remove();
                                 deselectChatRoom();
-                                modal.classList.remove('show');
+                                chatOptionsModal.classList.remove('show');
                             }
                         })
                         .catch(err => console.error(err.message));

@@ -35,6 +35,7 @@ public interface UserChatRelationshipRepository extends JpaRepository<UserChatRe
 
     // 채팅방의 모든 관계 조회
     @Query("SELECT ucr FROM UserChatRelationship ucr " +
+            "JOIN FETCH ucr.user " +
             "WHERE ucr.chat.chatId = :chatId")
     List<UserChatRelationship> findAllByChatId(@Param("chatId") Long chatId);
 

@@ -60,7 +60,9 @@ public class ChatService {
                 .stream()
                 .map(chatId -> {
                     // 내 relationship을 찾아서 안읽은 메시지 수를 확인
-                    UserChatRelationship myRelationship = relationshipRepository.findByUserIdAndChatId(userId, chatId)
+                    UserChatRelationship myRelationship = allRelationships.stream()
+                            .filter(r -> r.getUser().getUserId().equals(userId) && r.getChat().getChatId().equals(chatId))
+                            .findFirst()
                             .orElseThrow(() -> new IllegalArgumentException("UserChatRelationship not found"));
 
                     List<ChatUserDto> chatUsers = usersByChatId.getOrDefault(chatId, Collections.emptyList());
