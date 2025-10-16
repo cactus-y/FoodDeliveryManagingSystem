@@ -1,3 +1,4 @@
+/*
 package com.example.food_delivery_managing_system.restaurant;
 
 import com.example.food_delivery_managing_system.restaurant.dto.RestaurantAoMResponse;
@@ -56,3 +57,4 @@ public class RestaurantTestPageController {
         }
     }
 }
+*/
