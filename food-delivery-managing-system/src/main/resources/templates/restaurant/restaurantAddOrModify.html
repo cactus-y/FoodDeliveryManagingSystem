@@ -101,12 +101,19 @@
         <div class="form-title" th:text="${restaurant.restaurantIdx == null} ? '식당 등록' : '식당 수정'"></div>
 
         <!-- 이미지 업로드 -->
-        <div class="upload-box" onclick="document.getElementById('image-url').click()">
-            <img id="preview" src="https://cdn-icons-png.flaticon.com/512/685/685655.png"
+        <div class="upload-box"
+             onclick="document.getElementById('imageInput').click()"
+             th:classappend="${restaurant != null and restaurant.imageUrl != null} ? ' uploaded'">
+            <img th:if="${restaurant != null and restaurant.imageUrl != null}"
+                 th:src="${restaurant.imageUrl}"
+                 class="preview-image"
+                 alt="menu image">
+            <img th:if="${restaurant == null or restaurant.imageUrl == null}"
+                 id="preview"
+                 src="https://cdn-icons-png.flaticon.com/512/685/685655.png"
                  alt="upload icon" class="upload-icon">
             <p class="upload-text">이미지를 업로드하세요</p>
-            <!-- <input type="file" id="imageInput" accept="image/*" style="display:none" onchange="previewImage(event)"> -->
-            <input type="file" id="image-url" accept="image/*" style="display:none" th:value="${restaurant.imageUrl}">
+            <input type="file" id="imageInput" accept="image/*" style="display:none" onchange="uploadAndPreviewImage(event)">
         </div>
 
         <input type="hidden" id="restaurant-id-aom" th:value="${restaurant.restaurantIdx}">
@@ -228,6 +235,41 @@
                     else alert(response.status+": 다시 시도해주세요.");
                 })
             })
+        }
+
+        async function uploadAndPreviewImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            // S3 업로드 요청
+            const res = await fetch("/api/files/upload", {
+                method: "POST",
+                body: formData
+            });
+
+            if (!res.ok) {
+                alert("이미지 업로드 실패!");
+                return;
+            }
+
+            const imageUrl = await res.text();
+
+            // 업로드 후 미리보기 표시
+            const box = document.querySelector('.upload-box');
+            const oldPreview = box.querySelector('.preview-image');
+            if (oldPreview) oldPreview.remove();
+
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.classList.add('preview-image');
+            box.appendChild(img);
+            box.classList.add('uploaded');
+
+            // hidden 이미지 경로 저장 (submitMenu에서 쓰임)
+            document.getElementById("preview").setAttribute("src", imageUrl);
         }
     </script>
 </body>

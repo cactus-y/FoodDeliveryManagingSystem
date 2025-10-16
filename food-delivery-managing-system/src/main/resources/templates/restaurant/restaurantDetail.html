@@ -180,10 +180,10 @@
             </a>
         </div>
 
-        <!-- 버튼 영역 -->
+        <!-- 버튼 영역 (내 식당일 때만 표시) -->
         <div class="action-buttons" th:if="${restaurant.isMyRestaurant}">
             <a class="btn btn-sm mt-auto add-button" th:href='@{/restaurant/{id}/menus/new(id=${restaurant.restaurantIdx})}'>
-                식당 추가
+                메뉴 추가
             </a>
 
             <button class="btn btn-outline-primary mr-2" th:onclick="|location.href='@{/restaurantsAddOrModify?restaurantId={id}(id=${restaurant.restaurantIdx})}'|">수정</button>
