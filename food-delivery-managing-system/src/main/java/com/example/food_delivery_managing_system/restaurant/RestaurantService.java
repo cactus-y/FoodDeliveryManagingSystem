@@ -8,6 +8,9 @@ import com.example.food_delivery_managing_system.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Point;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -33,10 +36,28 @@ public class RestaurantService {
         Point myCoordinates = userRepository.findByEmail(myUsername)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"))
             .getCoordinates();
+
         return restaurantRepository.findAll()
                 .stream().map(restaurant->new RestaurantListResponse(restaurant, myCoordinates, myUsername))
                 .filter(response -> response.getDistance() <= 3) // 내 좌표로부터 2km 이내(추후반영)
                 .toList();
+    }
+
+    public Page<RestaurantListResponse> getPagesOfRestaurants(String myUsername, Pageable pageable) {
+        Point myCoordinates = userRepository.findByEmail(myUsername)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"))
+            .getCoordinates();
+
+        Page<Restaurant> page = restaurantRepository.findAllWithPaging(pageable);
+
+        List<RestaurantListResponse> filteredList = page.getContent().stream()
+                .map(restaurant -> new RestaurantListResponse(restaurant, myCoordinates, myUsername))
+                .filter(response -> response.getDistance() <= 3) // 내 좌표로부터 3km 이내
+                .toList();
+
+        Page<RestaurantListResponse> filteredPage = new PageImpl<>(filteredList, pageable, filteredList.size());
+
+        return filteredPage;
     }
 
     // GET: 특정 식당 정보 조회

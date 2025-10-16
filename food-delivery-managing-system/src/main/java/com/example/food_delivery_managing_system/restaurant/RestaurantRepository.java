@@ -1,5 +1,7 @@
 package com.example.food_delivery_managing_system.restaurant;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,4 +20,7 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
            WHERE r.restaurantIdx = :id
            """)
     Optional<Restaurant> findByIdWithUserAndLikes(@Param("id") Long id);
+
+    @Query("SELECT r FROM Restaurant r")
+    Page<Restaurant> findAllWithPaging(Pageable pageable);
 }

@@ -15,7 +15,7 @@
         }
 
         .add-button {
-            position: absolute;
+            position: fixed;
             bottom: 50px;
             right: 50px;
             align-content: center;
@@ -158,13 +158,13 @@
         <h4 class="mb-4 font-weight-bold text-center">동네 식당 목록</h4>
 
         <!-- 비어있을 때 -->
-        <div th:if="${restaurants.isEmpty()}" class="alert alert-light text-center py-5">
+        <div th:if="${page.empty}" class="alert alert-light text-center py-5">
             등록된 동네 식당이 없습니다 😢
         </div>
 
         <!-- 카드 그리드 -->
-        <div class="row" th:if="${!restaurants.isEmpty()}">
-            <div class="col-sm-6 col-md-4 col-lg-3 mb-4" th:each="r:${restaurants}">
+        <div class="row" th:if="${!page.empty}">
+            <div class="col-sm-6 col-md-4 col-lg-3 mb-4" th:each="r:${page.content}">
                 <div class="card menu-card">
                     <img th:if="${r.imageUrl != null and !#strings.isEmpty(r.imageUrl)}"
                          th:src="${r.imageUrl}"
@@ -200,6 +200,38 @@
         </div>
 
         <!-- 페이지네이션 -->
+        <nav aria-label="pagination">
+            <ul class="pagination justify-content-center">
+
+                <!-- 이전 -->
+                <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{|/restaurants?page=${page.number - 1}&size=${page.size}|}">
+                        이전
+                    </a>
+                </li>
+
+                <!-- 번호 (blockSize 기준) -->
+                <li class="page-item"
+                    th:each="i : ${#numbers.sequence(start, end)}"
+                    th:classappend="${i} == ${page.number} ? 'active'">
+                    <a class="page-link"
+                       th:text="${i + 1}"
+                       th:href="@{|/restaurants?page=${i}&size=${page.size}|}">
+                        1
+                    </a>
+                </li>
+
+                <!-- 다음 -->
+                <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{|/restaurants?page=${page.number + 1}&size=${page.size}|}">
+                        다음
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
     </div>
 
     <script>
