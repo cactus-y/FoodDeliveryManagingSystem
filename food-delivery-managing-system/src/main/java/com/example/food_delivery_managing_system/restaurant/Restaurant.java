@@ -71,7 +71,7 @@ public class Restaurant {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Like> likes = new ArrayList<>();
 
     @Builder
