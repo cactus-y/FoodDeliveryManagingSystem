@@ -41,7 +41,7 @@ public class RestaurantService {
 
     // GET: 특정 식당 정보 조회
     public Restaurant getRestaurantById(Long restaurantId) {
-        return restaurantRepository.findById(restaurantId)
+        return restaurantRepository.findByIdWithUserAndLikes(restaurantId)
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 

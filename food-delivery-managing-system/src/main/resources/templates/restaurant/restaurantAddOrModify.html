@@ -125,9 +125,9 @@
 
         <label class="form-label">좌표  <span style="color:#ef4444">*</span></label>
         <input type="number" class="form-control" id="longitude" placeholder="경도(-180~180)"
-               th:value="${restaurant.coordinates?.x}" required>
+               th:value="${restaurant.longitude}" required>
         <input type="number" class="form-control" id="latitude" placeholder="위도(-90~90)"
-               th:value="${restaurant.coordinates?.y}" required>
+               th:value="${restaurant.latitude}" required>
 
         <label class="form-label">오픈 시간  <span style="color:#ef4444">*</span></label>
         <input type="time" class="form-control" id="open-at"

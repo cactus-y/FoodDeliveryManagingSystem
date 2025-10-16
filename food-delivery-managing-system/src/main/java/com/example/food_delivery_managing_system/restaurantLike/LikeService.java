@@ -22,7 +22,8 @@ public class LikeService {
     public LikeResponse like(Long restaurantId, String myUsername) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND));
-        User user = userRepository.findByEmail(myUsername).get();
+        User user = userRepository.findByEmail(myUsername)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
         Like like = new Like();
         like.setRestaurant(restaurant);
         like.setUser(user);
