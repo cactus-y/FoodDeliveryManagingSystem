@@ -23,16 +23,19 @@ public class RestaurantService {
 
     // POST: 내 식당 추가
     public Restaurant addRestaurant(AddRestaurantRequest request) {
-        User user = userRepository.findByEmail(request.getUsername()).get();
+        User user = userRepository.findByEmail(request.getUsername())
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
         return restaurantRepository.save(request.toEntity(user));
     }
 
     // GET: 동네 식당 목록 조회
     public List<RestaurantListResponse> getListOfRestaurants(String myUsername) {
-        Point myCoordinates = userRepository.findByEmail(myUsername).get().getCoordinates();
+        Point myCoordinates = userRepository.findByEmail(myUsername)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"))
+            .getCoordinates();
         return restaurantRepository.findAll()
                 .stream().map(restaurant->new RestaurantListResponse(restaurant, myCoordinates, myUsername))
-                // .filter(response -> response.getDistance() <= 2) // 내 좌표로부터 2km 이내(추후반영)
+                .filter(response -> response.getDistance() <= 3) // 내 좌표로부터 2km 이내(추후반영)
                 .toList();
     }
 

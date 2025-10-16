@@ -86,9 +86,10 @@ public class SecurityConfig {
                                 , "/api/auth/logout"
                                 , "/login"
                                 , "/user/user_signup"
-                                , "/api/users/signup"
+                                , "/signup"
                                 , "/api/users/check-email"
                                 , "/api/users/nick-name"
+                                , "/user/image/*"
                                 , "/user/css/*"
                                 , "/user/js/*").permitAll()
                         .requestMatchers("/ws-stomp", "/pub/**", "/sub/**").authenticated()

@@ -10,7 +10,8 @@ import java.time.LocalDateTime;
 public class RestaurantListResponse {
     private Long restaurantIdx;
     private String name;
-    private Point coordinates;
+    private Double latitude;
+    private Double longitude;
     private Double distance;
     private LocalDateTime createdAt;
     private String openAt;
@@ -22,7 +23,8 @@ public class RestaurantListResponse {
     public RestaurantListResponse(Restaurant restaurant, Point myCoordinates, String myUsername) {
         this.restaurantIdx = restaurant.getRestaurantIdx();
         this.name = restaurant.getName();
-        this.coordinates = restaurant.getCoordinates();
+        this.latitude = restaurant.getCoordinates().getY();
+        this.longitude = restaurant.getCoordinates().getX();
         this.distance = distanceOfTwoPoints(restaurant.getCoordinates(), myCoordinates);
         this.createdAt = restaurant.getCreatedAt();
         this.openAt = restaurant.getOpenAt();
