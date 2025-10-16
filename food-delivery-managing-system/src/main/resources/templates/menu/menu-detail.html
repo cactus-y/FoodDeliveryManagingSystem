@@ -181,15 +181,13 @@
 </div>
 
 <script>
-    const baseUrl = "http://localhost:8080";
-
     async function deleteMenu(menuId, restaurantId) {
         if (!confirm("정말 삭제하시겠습니까?")) return;
 
-        const res = await fetch(`${baseUrl}/api/menu/${menuId}`, { method: "DELETE" });
+        const res = await fetch(`/api/menu/${menuId}`, { method: "DELETE" });
 
         if (res.status === 204) {
-            window.location.href = `${baseUrl}/restaurants/${restaurantId}/menus`;
+            window.location.href = `/restaurants/${restaurantId}/menus`;
         } else {
             alert("삭제 실패: " + res.status);
         }
