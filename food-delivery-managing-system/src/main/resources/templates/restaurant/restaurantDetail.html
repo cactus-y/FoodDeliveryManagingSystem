@@ -133,9 +133,9 @@
                  th:src="${restaurant.imageUrl}"
                  class="menu-image"
                  alt="menu image"
-                 onerror="this.src='https://docs.aiinbox.io/images/defaultVecor.svg'">
+                 onerror="this.src='image/default-placeholder.png'">
             <img th:if="${restaurant.imageUrl == null or #strings.isEmpty(restaurant.imageUrl)}"
-                 src="https://docs.aiinbox.io/images/defaultVecor.svg"
+                 th:src="@{/images/default-placeholder.png}"
                  class="menu-image"
                  alt="no image">
         </div>
