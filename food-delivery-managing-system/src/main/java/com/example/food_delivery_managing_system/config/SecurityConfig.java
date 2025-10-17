@@ -89,7 +89,7 @@ public class SecurityConfig {
                                 , "/signup"
                                 , "/api/users/check-email"
                                 , "/api/users/nick-name"
-                                , "/image/*"
+                                , "/images/*"
                                 , "/user/css/*"
                                 , "/user/js/*").permitAll()
                         .requestMatchers("/ws-stomp", "/pub/**", "/sub/**").authenticated()
