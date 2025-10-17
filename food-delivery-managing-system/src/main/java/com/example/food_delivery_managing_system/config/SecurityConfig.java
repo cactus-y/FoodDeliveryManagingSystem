@@ -105,6 +105,7 @@ public class SecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/login")           // 커스텀 로그인 페이지 경로
+                        .loginProcessingUrl("/api/auth/login")  // ★ 인증 처리 URL을 너의 API로 맞춤
                         .usernameParameter("email")         // "email" 필드 사용
                         .passwordParameter("password")      // "password" 필드 사용
                         .defaultSuccessUrl("/", true)   // 성공 후 이동할 경로
