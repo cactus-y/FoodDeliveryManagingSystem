@@ -103,14 +103,14 @@
     <!-- 이미지 업로드 -->
     <div class="upload-box"
          onclick="document.getElementById('image-url').click()"
-         th:classappend="${restaurant != null and restaurant.imageUrl != null} ? ' uploaded'">
-        <img th:if="${restaurant != null and restaurant.imageUrl != null}"
+         th:classappend="${restaurant != null and !#strings.isEmpty(restaurant.imageUrl)} ? ' uploaded'">
+        <img th:if="${restaurant != null and !#strings.isEmpty(restaurant.imageUrl)}"
              th:src="${restaurant.imageUrl}"
              class="preview-image"
              alt="menu image">
-        <img th:if="${restaurant == null or restaurant.imageUrl == null}"
+        <img th:if="${restaurant == null or #strings.isEmpty(restaurant.imageUrl)}"
              id="preview"
-             th:src="@{/images/icon-image-upload.png}"
+             src="/images/icon-image-upload.png"
              alt="upload icon" class="upload-icon">
         <p class="upload-text">이미지를 업로드하세요</p>
         <input type="file" id="image-url" accept="image/*" style="display:none" onchange="uploadAndPreviewImage(event)">
@@ -200,7 +200,7 @@
         const oldImageUrl = /*[[${menuResponse != null ? menuResponse.imageUrl : ''}]]*/ '';
 
         // 현재 이미지 src
-        const newImageUrl = document.querySelector('.preview-image')
+        const newImageUrl = document.querySelector('.preview-image') != null
             ? document.querySelector('.preview-image').src
             : '';
 

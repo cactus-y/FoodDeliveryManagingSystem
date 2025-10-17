@@ -111,14 +111,14 @@
     <!--    </div>-->
     <div class="upload-box"
          onclick="document.getElementById('imageInput').click()"
-         th:classappend="${menuResponse != null and menuResponse.imageUrl != null} ? ' uploaded'">
-        <img th:if="${menuResponse != null and menuResponse.imageUrl != null}"
+         th:classappend="${menuResponse != null and !#strings.isEmpty(menuResponse.imageUrl)} ? ' uploaded'">
+        <img th:if="${menuResponse != null and !#strings.isEmpty(menuResponse.imageUrl)}"
              th:src="${menuResponse.imageUrl}"
              class="preview-image"
              alt="menu image">
-        <img th:if="${menuResponse == null or menuResponse.imageUrl == null}"
+        <img th:if="${menuResponse == null or #strings.isEmpty(menuResponse.imageUrl)}"
              id="preview"
-             th:src="@{/images/icon-image-upload.png}"
+             src="/images/icon-image-upload.png"
              alt="upload icon" class="upload-icon">
         <p class="upload-text">이미지를 업로드하세요</p>
         <input type="file" id="imageInput" accept="image/*" style="display:none" onchange="uploadAndPreviewImage(event)">
@@ -195,7 +195,7 @@
             }
 
             alert(mode === 'edit' ? "메뉴 수정 완료!" : "메뉴 등록 완료!");
-            window.location.href = `/restaurants/${restaurantId}/menus`;
+            window.location.href = mode === 'edit' ? `/restaurants/${restaurantId}/menus` : `/restaurants/${restaurantId}`;
         } else {
             const errorText = await res.text();
             alert("오류 발생: " + errorText);
