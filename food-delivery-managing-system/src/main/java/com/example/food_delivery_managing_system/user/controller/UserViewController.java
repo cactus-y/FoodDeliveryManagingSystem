@@ -21,12 +21,12 @@ public class UserViewController {
 
     @GetMapping("/login")
     public String login() {
-        return "/user/login";
+        return "user/login";
     }
 
     @GetMapping("/signup")
     public String signup() {
-        return "/user/user_signup";
+        return "user/user_signup";
     }
 
     @PostMapping("/signup")
@@ -42,18 +42,18 @@ public class UserViewController {
             userRequest.setProfileUrl(fileUrl);
             userService.addOwner(userRequest);
         }
-        return "redirect:/user/login";
+        return "redirect:user/login";
 
     }
 
     @GetMapping("/map")
     public String mapView() {
-        return "/user/map";
+        return "user/map";
     }
 
     @GetMapping("/users/profile/edit")
     public String editProfile() {
-        return "/user/profile_edit";
+        return "user/profile_edit";
     }
 
     @GetMapping("/users/me")
