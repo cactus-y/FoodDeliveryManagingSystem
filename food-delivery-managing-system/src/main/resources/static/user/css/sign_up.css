@@ -1,0 +1,163 @@
+/* ===== 전체 배경 (CSS만) ===== */
+:root{
+  --card-bg: rgb(255, 255, 255);
+  --accent: #1245AB;
+  --muted: #6b7280;
+  --shadow: 0 10px 30px rgba(15,23,42,0.12);
+}
+
+html,body{
+  height:100%;
+  margin:0;
+  font-family: Inter, "Noto Sans KR", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color:#111827;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* animated gradient background made purely with CSS */
+body{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: #f5f7fa; /*linear-gradient(135deg, #00A2FF 0%, #D9E5FF 40%, #003399 100%);*/
+  overflow:auto;
+}
+
+@keyframes floaty {
+  0% { transform: translateY(0) rotate(0deg) scale(1); }
+  50% { transform: translateY(-18px) rotate(6deg) scale(1.02); }
+  100% { transform: translateY(0) rotate(0deg) scale(1); }
+}
+
+/* ===== 카드 (폼) ===== */
+.card {
+  position: relative;
+  z-index: 10;
+  width: min(760px, 94%);
+  max-width: 920px;
+  background: var(--card-bg);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  display:grid;
+  grid-template-columns: 1fr 360px;
+  overflow:hidden;
+}
+
+/* left: form, right: info/visual */
+.signup-form {
+  padding: 36px;
+}
+.aside {
+  background:
+      linear-gradient(180deg, rgb(227, 245, 255), rgb(200, 223, 255));
+  padding: 28px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  justify-content:center;
+  align-items:center;
+}
+.brand {
+  display:flex;
+  gap:12px;
+  align-items:center;
+  margin-bottom:6px;
+}
+/*.dot {*/
+/*  width:44px; height:44px;*/
+/*  border-radius:8px;*/
+/*  background: linear-gradient(135deg,var(--accent), #002349);*/
+/*  box-shadow: 0 6px 18px rgba(99,102,241,0.18);*/
+/*}*/
+.logo {
+  width: 240px;
+  height: 50px;
+  margin-bottom: 20px;
+}
+
+h1 { margin:0; font-size:20px; }
+p.lead { margin:6px 0 18px; color:var(--muted); font-size:13px; }
+
+form .grid {
+  display:grid;
+  gap:14px;
+  grid-template-columns: 1fr 1fr;
+}
+form .col-1 { grid-column: 1 / -1; }
+
+label {
+  display:block;
+  font-size:13px;
+  margin-bottom:6px;
+  color:#111827;
+  font-weight:600;
+}
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+input[type="file"],
+textarea {
+  width:100%;
+  padding:12px 14px;
+  border-radius:10px;
+  border:1px solid #e6e7ee;
+  background:white;
+  font-size:14px;
+  box-sizing:border-box;
+  outline:none;
+  transition:box-shadow .15s, border-color .12s;
+}
+input:focus, textarea:focus {
+  border-color: rgba(54,105,207,0.8);
+  box-shadow: 0 6px 18px rgba(108,92,231,0.08);
+}
+
+.hint { font-size:12px; color:var(--muted); margin-top:6px; }
+
+.row {
+  display:flex;
+  gap:10px;
+}
+
+.actions {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:18px;
+  grid-column: 1 / -1;
+}
+.btn {
+  padding:10px 16px;
+  border-radius:10px;
+  border:0;
+  font-weight:700;
+  cursor:pointer;
+  background: linear-gradient(90deg,var(--accent), #002349);
+  color:white;
+  box-shadow: 0 8px 24px rgba(108,92,231,0.18);
+}
+.btn.secondary {
+  background:transparent;
+  color:var(--muted);
+  font-weight:600;
+  border-radius:10px;
+  padding:8px 12px;
+}
+
+/* small captions in aside */
+.aside .small {
+  font-size:13px;
+  color:var(--muted);
+  text-align:center;
+  max-width:220px;
+}
+
+/* responsive */
+@media (max-width:880px){
+  .card { grid-template-columns: 1fr; }
+  .aside { order:2; padding:18px; }
+  .signup-form { order:1; padding:22px; }
+  .row { flex-direction:column; }
+}

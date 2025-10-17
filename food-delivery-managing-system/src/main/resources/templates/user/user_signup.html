@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>회원가입</title>
+  <link rel="stylesheet" href="/user/css/sign_up.css"/>
+</head>
+<body>
+<main class="card" role="main" aria-labelledby="signupTitle">
+  <section class="signup-form" aria-labelledby="signupTitle">
+    <div class="brand" aria-hidden="true">
+      <img class="logo" alt="coupang-eats" src="/images/coupang-eats-logo.png">
+    </div>
+
+    <h1 id="signupTitle">회원가입</h1>
+    <p class="lead">아래 정보를 입력해 계정을 생성하세요.</p>
+
+    <form action="/signup" method="POST" enctype="multipart/form-data" onkeydown="return event.key !== 'Enter';" novalidate>
+      <input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" />
+      <div class="grid">
+        <!-- 이름 -->
+        <div class="col-1">
+          <label for="name">이름 <span style="color:#ef4444">*</span></label>
+          <input id="name" name="name" type="text" placeholder="홍길동" required maxlength="40"/>
+          <div id="name_error" style="color:red; font-size:12px; display:none;">
+            이름을 입력하세요.
+          </div>
+        </div>
+
+        <!-- 이메일 -->
+        <div class="col-1">
+          <label for="email">이메일 <span style="color:#ef4444">*</span></label>
+          <input id="email" name="email" type="email" placeholder="you@example.com" required />
+          <div id="email_error" style="color:red; font-size:12px; display:none;">
+            이미 가입된 이메일입니다.
+          </div>
+        </div>
+
+        <!-- 닉네임 -->
+        <div class="col-1">
+          <label for="nick_name">닉네임 <span style="color:#ef4444">*</span></label>
+          <input id="nick_name" name="nickName" type="text" placeholder="사용자별명" maxlength="50"/>
+          <div id="nickname_error" style="color:red; font-size:12px; display:none;">
+            닉네임을 입력하세요.
+          </div>
+        </div>
+
+        <!-- 비밀번호 -->
+        <div>
+          <label for="password">비밀번호 <span style="color:#ef4444">*</span></label>
+          <input id="password" name="password" type="password" placeholder="비밀번호를 입력하세요" minlength="8" required />
+          <div id="password_error" style="color:red; font-size:12px; display:none;">
+            비밀번호를 입력하세요.
+          </div>
+          <div class="hint">8자 이상 권장</div>
+        </div>
+
+        <!-- 비밀번호 확인 -->
+        <div>
+          <label for="password_confirm">비밀번호 확인 *</label>
+          <input id="password_confirm" name="passwordConfirm" type="password" required minlength="8"/>
+          <div id="password_confirm_error" style="color:red; font-size:12px; display:none;">
+            비밀번호가 일치하지 않습니다.
+          </div>
+        </div>
+
+        <!-- 도로명 주소 -->
+        <div class="col-1">
+          <label for="road_address">도로명 주소 <span style="color:#ef4444">*</span></label>
+          <input id="road_address" name="roadAddress" type="text" placeholder="서울특별시 강남구 테헤란로 ..." />
+          <div id="road_address_error" style="color:red; font-size:12px; display:none;">
+            도로명을 입력하세요.
+          </div>
+        </div>
+
+        <!-- 상세 주소 -->
+        <div class="col-1">
+          <label for="detail_address">상세 주소 <span style="color:#ef4444">*</span></label>
+          <input id="detail_address" name="detailAddress" type="text" placeholder="건물명, 층수, 호수 등" />
+          <div id="detail_address_error" style="color:red; font-size:12px; display:none;">
+            상세 주소를 입력하세요.
+          </div>
+        </div>
+
+        <!-- 좌표 (위도/경도) -->
+        <!-- 위도/경도는 테스트할 때만 보이게 해놓고 실제 구현할 때는 hidden 으로 타을 바꿀 예정 -->
+        <input id="latitude" name="latitude" type="hidden" step="0.000001" placeholder="37.123456" />
+        <input id="longitude" name="longitude" type="hidden" step="0.000001" placeholder="127.123456" />
+
+        <!-- 프로필 이미지 -->
+        <div class="col-1">
+          <label for="profile">프로필 이미지</label>
+          <input id="profile" name="profileImage" type="file" accept="image/*" />
+          <div class="hint">선택 사항 — JPG/PNG 권장</div>
+        </div>
+
+        <!-- 버튼 -->
+        <div class="actions">
+          <button type="submit" class="btn">계정 만들기</button>
+          <a class="btn secondary" href="/login" role="button">이미 계정이 있으신가요?</a>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <aside class="aside" aria-hidden="true">
+    <div style="text-align:center">
+      <div style="font-size:28px;font-weight:700">환영합니다 👋</div>
+      <div class="small">간단한 회원가입으로 시작해 보세요.</div>
+    </div>
+
+    <div style="margin-top:18px;font-size:13px;color:var(--muted);text-align:center">
+      Tip: 소셜 로그인으로 빠른 회원가입이 가능합니다.
+    </div>
+  </aside>
+</main>
+<script>
+  function initAutocomplete() {
+    const input = document.getElementById("road_address");
+    const options = {
+      componentRestrictions: { country: "KR" },
+      fields: ["formatted_address", "geometry", "name", "place_id"],
+      strictBounds: false,
+    };
+    const autocomplete = new google.maps.places.Autocomplete(input, options);
+
+    autocomplete.addListener('place_changed', () => {
+      const place = autocomplete.getPlace();
+
+      if (!place.place_id) {
+        console.log("No details available for input: '" + place.name + "'");
+        return;
+      }
+
+      const lat = place.geometry.location.lat();
+      const lng = place.geometry.location.lng();
+
+      document.getElementById("road_address").value = place.formatted_address;
+
+      document.getElementById("latitude").value = Number(lat.toFixed(6));
+      document.getElementById("longitude").value = Number(lng.toFixed(6));
+
+      document.getElementById("detail_address").focus();
+
+    });
+  }
+</script>
+<script async th:src="@{'https://maps.googleapis.com/maps/api/js?key=' + ${@environment.getProperty('google.maps.api.key')} + '&libraries=places&callback=initAutocomplete'}"></script>
+<script src="/user/js/user_signup.js"></script>
+
+</body>
+</html>

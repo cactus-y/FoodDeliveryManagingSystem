@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>개인정보 수정</title>
+    <link rel="stylesheet" href="/user/css/profile_edit.css"/>
+    <meta name="_csrf_parameter" th:content="${_csrf?.parameterName}">
+    <meta name="_csrf" th:content="${_csrf?.token}">
+</head>
+<body>
+<main class="card" role="main" aria-labelledby="profileEditTitle">
+    <!-- 좌측: 폼/요약 -->
+    <section>
+
+
+        <h1 id="profileEditTitle">개인정보 수정</h1>
+        <p class="lead">프로필 정보를 업데이트하세요.</p>
+
+        <!-- 알림(aria-live) -->
+        <div id="alertRegion" class="sr-only" aria-live="polite"></div>
+
+        <!-- CSRF -->
+        <input type="hidden" id="csrfField" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}"/>
+
+        <!-- 요약 -->
+        <div class="profile-summary" aria-label="내 정보 요약">
+            <div class="avatar">
+                <!-- 기본 이미지 경로는 환경에 맞게 변경하세요 -->
+                <img id="profilePreview" alt="프로필 이미지" src="/assets/img/default-avatar.png" width="88" height="88"
+                     style="width:88px;height:88px;object-fit:cover;border-radius:50%;background:#f3f4f6;">
+            </div>
+            <div class="meta">
+                <div><strong id="summaryName">-</strong> (<span id="summaryNick">-</span>)</div>
+                <div id="summaryEmail" class="muted">-</div>
+                <div id="summaryAddr" class="muted">-</div>
+            </div>
+        </div>
+
+        <!-- 프로필 수정 폼 -->
+        <form id="profileForm" enctype="multipart/form-data" onkeydown="return event.key !== 'Enter';" novalidate>
+            <fieldset>
+                <legend class="section-title">기본 정보</legend>
+
+                <!-- (요청) 이름/이메일 입력란 제거 -->
+
+                <div class="field">
+                    <label for="nickName">닉네임</label>
+                    <input id="nickName" name="nickName" type="text" placeholder="별명" maxlength="30" autocomplete="nickname">
+                    <!-- (요청) “30자 이내” 안내 문구 제거 -->
+                </div>
+
+                <div class="field">
+                    <label for="roadAddress">도로명 주소</label>
+                    <input id="roadAddress" name="roadAddress" type="text" placeholder="도로명 주소" autocomplete="street-address">
+                    <p class="err" id="road_address_error" role="alert" style="display:none;">도로명 주소를 입력하세요.</p>
+                </div>
+
+                <div class="field">
+                    <label for="detailAddress">상세주소</label>
+                    <input id="detailAddress" name="detailAddress" type="text" placeholder="동/호 등" autocomplete="address-line2">
+                    <p class="err" id="detail_address_error" role="alert" style="display:none;">상세주소를 입력하세요.</p>
+                </div>
+
+                <div class="grid">
+                    <div class="field">
+                        <label for="latitude">위도</label>
+                        <input id="latitude" name="latitude" type="text" inputmode="decimal" placeholder="37.123456"
+                               pattern="^-?\d{1,2}(\.\d{1,10})?$" aria-describedby="latHint">
+                        <small id="latHint" class="muted">범위: -90 ~ 90</small>
+                        <p class="err" id="latErr" role="alert">유효한 위도(-90~90)를 입력해주세요.</p>
+                    </div>
+                    <div class="field">
+                        <label for="longitude">경도</label>
+                        <input id="longitude" name="longitude" type="text" inputmode="decimal" placeholder="127.123456"
+                               pattern="^-?\d{1,3}(\.\d{1,10})?$" aria-describedby="lngHint">
+                        <small id="lngHint" class="muted">범위: -180 ~ 180</small>
+                        <p class="err" id="lngErr" role="alert">유효한 경도(-180~180)를 입력해주세요.</p>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="profileImage">프로필 이미지</label>
+
+                    <div class="avatar-row">
+                        <img
+                                id="profileThumb"
+                                alt="프로필 미리보기"
+                                src="/images/default-user-profile.png"
+                                width="72" height="72"
+                                class="avatar-thumb"
+                        />
+
+                        <div class="avatar-actions">
+                            <input id="profileImage" name="profileImage" type="file" accept="image/*">
+                            <div class="avatar-buttons">
+                                <button type="button" id="removeImageBtn" class="btn secondary">이미지 삭제</button>
+                            </div>
+                            <input type="hidden" id="removeImage" name="removeProfileImage" value="false">
+                            <small class="muted">최대 5MB · 이미지 파일(JPG/PNG 등)</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button type="submit" id="saveBtn" class="btn primary" aria-live="polite">저장</button>
+                    <a href="/users/me" class="btn secondary">취소</a>
+                </div>
+            </fieldset>
+        </form>
+
+        <hr class="divider" />
+
+        <!-- 비밀번호 변경 폼 (회원가입과 동일 규칙) -->
+        <form id="passwordForm" onkeydown="return event.key !== 'Enter';" novalidate>
+            <fieldset>
+                <legend class="section-title">비밀번호 변경</legend>
+
+                <div class="field">
+                    <label for="currentPassword">현재 비밀번호</label>
+                    <input id="currentPassword" name="currentPassword" type="password" required minlength="8" autocomplete="current-password">
+                    <p class="err" id="current_password_error" role="alert" style="display:none;">현재 비밀번호를 입력하세요.</p>
+                </div>
+
+                <div class="field">
+                    <label for="newPassword">새 비밀번호</label>
+                    <input id="newPassword" name="newPassword" type="password" required minlength="8" autocomplete="new-password">
+                    <p class="err" id="password_error" role="alert" style="display:none;">
+                        비밀번호는 8자 이상이며 대소문자, 숫자, 특수문자를 포함해야 합니다.
+                    </p>
+                </div>
+
+                <div class="field">
+                    <label for="newPasswordConfirm">새 비밀번호 확인</label>
+                    <input id="newPasswordConfirm" name="newPasswordConfirm" type="password" required minlength="8" autocomplete="new-password">
+                    <p class="err" id="password_confirm_error" role="alert" style="display:none;">비밀번호가 일치하지 않습니다.</p>
+                </div>
+
+                <div class="actions">
+                    <button type="submit" id="pwBtn" class="btn">비밀번호 변경</button>
+                </div>
+            </fieldset>
+        </form>
+    </section>
+
+    <!-- 우측: 안내(반응형에서 하단) -->
+    <aside class="aside">
+        <div class="welcome">내 정보 관리 팁</div>
+        <p class="small">주소를 변경하면 지도/배달 반경 관련 기능이 더 정확해집니다.</p>
+        <p class="tip">이미지를 바꾸면 상단 아바타로 즉시 확인됩니다.</p>
+    </aside>
+</main>
+
+<script src="/user/js/profile_edit.js" defer></script>
+</body>
+</html>

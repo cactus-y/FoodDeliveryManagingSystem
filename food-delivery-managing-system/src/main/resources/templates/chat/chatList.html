@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Chat List</title>
+    <meta charset="UTF-8">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <style>
+        body { font-family: sans-serif; }
+        .chat-list { list-style-type: none; margin: 0; padding: 0; max-width: 600px; }
+        .chat-item a { display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #eee; text-decoration: none; color: #333; }
+        .chat-item:hover { background-color: #f9f9f9; }
+        .profile-img { width: 50px; height: 50px; border-radius: 50%; margin-right: 15px; object-fit: cover; background-color: #ddd; }
+        .chat-info { flex-grow: 1; }
+        .opponent-name { font-weight: bold; margin-bottom: 5px; }
+        .last-message { color: #666; font-size: 0.9em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 400px;}
+        .float-button {
+            position: fixed;
+            bottom: 40px; right: 40px;
+            width: 60px; height: 60px;
+            background-color: #007bff; color: white;
+            border-radius: 50%;
+            text-align: center; line-height: 60px;
+            font-size: 30px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+            z-index: 1000;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none; justify-content: center; align-items: center;
+            z-index: 2000;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 30px; border-radius: 8px; width: 350px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .modal-content h2 { margin-top: 0; }
+        .modal-content input, .modal-content textarea {
+            width: 95%; padding: 10px; margin-bottom: 15px;
+            border: 1px solid #ccc; border-radius: 4px;
+        }
+        .modal-buttons { text-align: right; }
+        .modal-buttons button {
+            padding: 10px 15px;
+            border: none; border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .btn-cancel { background-color: #6c757d; color: white; }
+        .btn-create { background-color: #007bff; color: white; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>내 채팅 목록</h1>
+
+    <ul class="chat-list" id="chatList">
+<!--        <li th:each="chat : ${chats}" class="chat-item">-->
+<!--            <a th:href="@{/chats/{chatId}(chatId=${chat.chatId})}">-->
+<!--                <img src="https://mblogthumb-phinf.pstatic.net/MjAyMDAyMTBfODAg/MDAxNTgxMzA0MTE3ODMy.ACRLtB9v5NH-I2qjWrwiXLb7TeUiG442cJmcdzVum7cg.eTLpNg_n0rAS5sWOsofRrvBy0qZk_QcWSfUiIagTfd8g.JPEG.lattepain/1581304118739.jpg?type=w800" alt="profile" class="profile-img">-->
+
+<!--                <div class="chat-info">-->
+<!--                    <div th:if="${chat.participantUsernames.size() > 1}">-->
+<!--                        <div class="opponent-name">단체 채팅방</div>-->
+<!--                    </div>-->
+<!--                    <div class="opponent-name" th:text="${chat.participantUsernames.get(0)}">상대방 이름</div>-->
+<!--                    <div class="last-message" th:text="${chat.lastMessage}"></div>-->
+<!--                </div>-->
+<!--            </a>-->
+<!--        </li>-->
+
+<!--        <li th:if="${#lists.isEmpty(chats)}">-->
+<!--            <p>진행 중인 대화가 없습니다.</p>-->
+<!--        </li>-->
+    </ul>
+</div>
+
+<div class="float-button" id="createChatBtn">+</div>
+<!-- 모달 쪽은 나중에 바꾸거나 안 쓸 예정 -->
+<div class="modal-overlay" id="chatModal">
+    <div class="modal-content">
+        <h2>New Chat</h2>
+        <form id="createChatForm">
+            <div>
+                <label for="participantId">ID</label>
+                <input type="text" id="participantId" name="participantId" placeholder="초대할 사용자의 ID를 입력하세요" required>
+            </div>
+            <div>
+                <label for="initialMessage">메시지</label>
+                <textarea id="initialMessage" name="initialMessage" rows="3" placeholder="첫 메시지를 남겨보세요"></textarea>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" class="btn-cancel" id="cancelBtn">취소</button>
+                <button type="submit" class="btn-create" id="createBtn">생성</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[[*/
+    // java data
+    const currentUser = /*[[${currentUser}]]*/ null;
+
+    // html elements
+    const chatList = document.getElementById('chatList');
+    const modal = document.getElementById('chatModal');
+    const createChatBtn = document.getElementById('createChatBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const createChatForm = document.getElementById('createChatForm');
+
+    // CSRF Token
+    const token = document.querySelector("meta[name='_csrf']").getAttribute('content');
+    const header = document.querySelector("meta[name='_csrf_header']").getAttribute('content');
+
+    // 웹 사이트가 로드될 때 채팅방 데이터 불러오기
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch('/api/me/chats', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                [header]: token
+            }
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('채팅방 조회 실패');
+                }
+                return res.json();
+            })
+            .then(data => {
+                // 채팅 리스트 html 비우기
+                chatList.innerHTML = '';
+
+                // html 채우기
+                if (data.length === 0) {
+                    chatList.innerHTML = '<li><p>진행 중인 대화가 없습니다.</p></li>';
+                    return;
+                }
+
+                data.forEach((chatResponse) => {
+                    const chatElement = document.createElement('li');
+                    chatElement.className = 'chat-item';
+
+                    // 단체 채팅방과 1:1 채팅방의 썸네일과 채팅방 이름이 다름
+                    let profileImageUrl; let chatName;
+
+                    if (chatResponse.chatUsers.length > 2) {
+                        // 단체 채팅방은 아직 미구현
+                        profileImageUrl = 'https://mblogthumb-phinf.pstatic.net/MjAyMDAyMTBfODAg/MDAxNTgxMzA0MTE3ODMy.ACRLtB9v5NH-I2qjWrwiXLb7TeUiG442cJmcdzVum7cg.eTLpNg_n0rAS5sWOsofRrvBy0qZk_QcWSfUiIagTfd8g.JPEG.lattepain/1581304118739.jpg?type=w800';
+                        chatName = '단체 채팅방'
+                    } else {
+                        // 본인과 상대방 구분 (2명만 있으니 0 아니면 1번 index)
+                        let me; let participant;
+                        if (chatResponse.chatUsers[0].userId === currentUser.userId) {
+                            profileImageUrl = chatResponse.chatUsers[1].profileImageUrl;
+                            chatName = chatResponse.chatUsers[1].nickname;
+                        } else {
+                            profileImageUrl = chatResponse.chatUsers[0].profileImageUrl;
+                            chatName = chatResponse.chatUsers[0].nickname;
+                        }
+                    }
+
+                    chatElement.innerHTML = `
+                        <a href="/chats/${chatResponse.chatId}">
+                            <img src="${profileImageUrl}" alt="profile" class="profile-img">
+
+                            <div class="chat-info">
+                                <div class="opponent-name">${chatName}</div>
+                                <div class="last-message">${chatResponse.lastMessage}</div>
+                            </div>
+                        </a>
+                    `;
+
+                    chatList.appendChild(chatElement);
+                });
+            })
+            .catch((error) => {
+                console.log(error);
+                alert(error.message);
+            });
+    });
+
+    /*
+     * 임시 채팅방 생성 버튼 기능
+     * 입력은 유저 id로 숫자 하나, 그리고 초기 메시지만 받는다.
+     */
+    createChatBtn.addEventListener('click', () => { modal.style.display = 'flex'; });
+    cancelBtn.addEventListener('click', () => { modal.style.display = 'none'; });
+
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+
+    createChatForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+
+        const participantId = document.getElementById('participantId').value;
+        const initialMessage = document.getElementById('initialMessage').value;
+
+        const chatData = {
+            participantIds: [participantId],
+            initialMessage: escapeHtml(initialMessage),
+        };
+
+        fetch('/api/chats', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [header]: token
+            },
+            body: JSON.stringify(chatData)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('채팅방 생성 실패');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('채팅방 생성 성공', data);
+                // 해당 채팅방으로 리다이렉트
+                window.location.href = `/chats/${data.chatId}`;
+            })
+            .catch(error => {
+                console.log('Error: ', error);
+                alert(error.message);
+            });
+    });
+
+    // XSS 공격 방지
+    function escapeHtml(text) {
+        if (!text) return '';
+        return text
+            .replace(/&/g, "&amp")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+    /*]]>*/
+</script>
+</body>
+</html>
