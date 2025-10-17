@@ -31,4 +31,23 @@ public interface MenuRepository extends JpaRepository<Menu,Long> {
     //메뉴 단건 상세 조회시 LazyInitializationException 방지
     @Query("select m from Menu m join fetch m.restaurant where m.menuIdx = :id")
     Optional<Menu> findByIdWithRestaurant(@Param("id") Long id);
+
+    //메뉴 전역 검색 시 LazyInitializationException 방지
+    @Query(
+            value = """
+        select m
+        from Menu m
+        join fetch m.restaurant
+        where m.name like %:keyword%
+           or m.description like %:keyword%
+        """,
+            countQuery = """
+        select count(m)
+        from Menu m
+        where m.name like %:keyword%
+           or m.description like %:keyword%
+        """
+    )
+    Page<Menu> findByKeywordWithRestaurant(@Param("keyword") String keyword, Pageable pageable);
+
 }

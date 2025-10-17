@@ -3,177 +3,154 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>개인정보 수정 </title>
+    <title>개인정보 수정</title>
     <link rel="stylesheet" href="/user/css/profile_edit.css"/>
+    <meta name="_csrf_parameter" th:content="${_csrf?.parameterName}">
+    <meta name="_csrf" th:content="${_csrf?.token}">
 </head>
 <body>
 <main class="card" role="main" aria-labelledby="profileEditTitle">
+    <!-- 좌측: 폼/요약 -->
     <section>
-        <div class="brand" aria-hidden="true">
-            <div class="dot"></div>
-            <div>
-                <div style="font-weight:800;font-size:15px">CouPang Eats</div>
-                <div style="font-size:12px;color:var(--muted)">개인정보 수정</div>
-            </div>
-        </div>
+
 
         <h1 id="profileEditTitle">개인정보 수정</h1>
         <p class="lead">프로필 정보를 업데이트하세요.</p>
 
-        <!-- 1) 프로필 기본정보 수정 (미리보기용: submit 가로막음) -->
-        <form id="profileForm" onkeydown="return event.key !== 'Enter';" novalidate>
-            <div class="grid">
-                <!-- 이름 -->
-                <div class="col-1">
-                    <label for="name">이름 <span class="req">*</span></label>
-                    <input id="name" name="name" type="text" placeholder="홍길동" required maxlength="40"/>
-                    <div id="name_error" class="err">이름을 입력하세요.</div>
+        <!-- 알림(aria-live) -->
+        <div id="alertRegion" class="sr-only" aria-live="polite"></div>
+
+        <!-- CSRF -->
+        <input type="hidden" id="csrfField" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}"/>
+
+        <!-- 요약 -->
+        <div class="profile-summary" aria-label="내 정보 요약">
+            <div class="avatar">
+                <!-- 기본 이미지 경로는 환경에 맞게 변경하세요 -->
+                <img id="profilePreview" alt="프로필 이미지" src="/assets/img/default-avatar.png" width="88" height="88"
+                     style="width:88px;height:88px;object-fit:cover;border-radius:50%;background:#f3f4f6;">
+            </div>
+            <div class="meta">
+                <div><strong id="summaryName">-</strong> (<span id="summaryNick">-</span>)</div>
+                <div id="summaryEmail" class="muted">-</div>
+                <div id="summaryAddr" class="muted">-</div>
+            </div>
+        </div>
+
+        <!-- 프로필 수정 폼 -->
+        <form id="profileForm" enctype="multipart/form-data" onkeydown="return event.key !== 'Enter';" novalidate>
+            <fieldset>
+                <legend class="section-title">기본 정보</legend>
+
+                <!-- (요청) 이름/이메일 입력란 제거 -->
+
+                <div class="field">
+                    <label for="nickName">닉네임</label>
+                    <input id="nickName" name="nickName" type="text" placeholder="별명" maxlength="30" autocomplete="nickname">
+                    <!-- (요청) “30자 이내” 안내 문구 제거 -->
                 </div>
 
-                <!-- 이메일 (읽기전용) -->
-                <div class="col-1">
-                    <label for="email">이메일</label>
-                    <input id="email" type="email" readonly aria-describedby="emailHelp"/>
-                    <div id="emailHelp" class="hint">로그인 이메일은 변경할 수 없습니다.</div>
+                <div class="field">
+                    <label for="roadAddress">도로명 주소</label>
+                    <input id="roadAddress" name="roadAddress" type="text" placeholder="도로명 주소" autocomplete="street-address">
+                    <p class="err" id="road_address_error" role="alert" style="display:none;">도로명 주소를 입력하세요.</p>
                 </div>
 
-                <!-- 닉네임 -->
-                <div class="col-1">
-                    <label for="nick_name">닉네임 <span class="req">*</span></label>
-                    <input id="nick_name" name="nickName" type="text" placeholder="사용자별명" maxlength="50"/>
-                    <div id="nickname_error" class="err">닉네임을 입력하세요.</div>
+                <div class="field">
+                    <label for="detailAddress">상세주소</label>
+                    <input id="detailAddress" name="detailAddress" type="text" placeholder="동/호 등" autocomplete="address-line2">
+                    <p class="err" id="detail_address_error" role="alert" style="display:none;">상세주소를 입력하세요.</p>
                 </div>
 
-                <!-- 도로명 주소 (구글 자동완성) -->
-                <div class="col-1">
-                    <label for="road_address">도로명 주소 <span class="req">*</span></label>
-                    <input id="road_address" name="roadAddress" type="text" placeholder="서울특별시 강남구 테헤란로 ..." autocomplete="off"/>
-                    <div id="road_address_error" class="err">도로명을 입력하세요.</div>
-                    <!-- 선택: placeId 저장하고 싶으면 hidden 추가 -->
-                    <input type="hidden" id="place_id" name="placeId"/>
-                </div>
-
-                <!-- 상세 주소 -->
-                <div class="col-1">
-                    <label for="detail_address">상세 주소 <span class="req">*</span></label>
-                    <input id="detail_address" name="detailAddress" type="text" placeholder="건물명, 층수, 호수 등" />
-                    <div id="detail_address_error" class="err">상세 주소를 입력하세요.</div>
-                </div>
-
-                <!-- 좌표 -->
-                <div class="col-1 coord">
-                    <label for="latitude">위도</label>
-                    <input id="latitude" name="latitude" type="number" step="0.000001" placeholder="37.123456" />
-                </div>
-                <div class="col-1 coord">
-                    <label for="longitude">경도</label>
-                    <input id="longitude" name="longitude" type="number" step="0.000001" placeholder="127.123456" />
-                </div>
-
-                <!-- 프로필 이미지 -->
-                <div class="col-1">
-                    <label for="profile">프로필 이미지</label>
-                    <input id="profile" name="profileImage" type="file" accept="image/*" />
-                    <div class="hint">선택 사항 — JPG/PNG 권장 (서버에서 리사이즈/검증)</div>
-
-                    <div class="preview-row">
-                        <img id="profilePreview" alt="프로필 미리보기" src="https://dummyimage.com/128x128/ffffff/6b7280.png&text=Profile"/>
+                <div class="grid">
+                    <div class="field">
+                        <label for="latitude">위도</label>
+                        <input id="latitude" name="latitude" type="text" inputmode="decimal" placeholder="37.123456"
+                               pattern="^-?\d{1,2}(\.\d{1,10})?$" aria-describedby="latHint">
+                        <small id="latHint" class="muted">범위: -90 ~ 90</small>
+                        <p class="err" id="latErr" role="alert">유효한 위도(-90~90)를 입력해주세요.</p>
+                    </div>
+                    <div class="field">
+                        <label for="longitude">경도</label>
+                        <input id="longitude" name="longitude" type="text" inputmode="decimal" placeholder="127.123456"
+                               pattern="^-?\d{1,3}(\.\d{1,10})?$" aria-describedby="lngHint">
+                        <small id="lngHint" class="muted">범위: -180 ~ 180</small>
+                        <p class="err" id="lngErr" role="alert">유효한 경도(-180~180)를 입력해주세요.</p>
                     </div>
                 </div>
 
-                <!-- 버튼 -->
-                <div class="actions">
-                    <button type="submit" class="btn">프로필 저장</button>
-                    <button type="button" class="btn secondary" id="resetBtn">초기화</button>
+                <div class="field">
+                    <label for="profileImage">프로필 이미지</label>
+
+                    <div class="avatar-row">
+                        <img
+                                id="profileThumb"
+                                alt="프로필 미리보기"
+                                src="/images/default-user-profile.png"
+                                width="72" height="72"
+                                class="avatar-thumb"
+                        />
+
+                        <div class="avatar-actions">
+                            <input id="profileImage" name="profileImage" type="file" accept="image/*">
+                            <div class="avatar-buttons">
+                                <button type="button" id="removeImageBtn" class="btn secondary">이미지 삭제</button>
+                            </div>
+                            <input type="hidden" id="removeImage" name="removeProfileImage" value="false">
+                            <small class="muted">최대 5MB · 이미지 파일(JPG/PNG 등)</small>
+                        </div>
+                    </div>
                 </div>
-            </div>
+
+                <div class="actions">
+                    <button type="submit" id="saveBtn" class="btn primary" aria-live="polite">저장</button>
+                    <a href="/users/me" class="btn secondary">취소</a>
+                </div>
+            </fieldset>
         </form>
 
-        <hr class="divider" aria-hidden="true"/>
+        <hr class="divider" />
 
-        <!-- 2) 비밀번호 변경 (미리보기용: submit 가로막음) -->
-        <h2 class="section-title">비밀번호 변경</h2>
-        <p class="small">현재 비밀번호 확인 후 새 비밀번호로 변경합니다.</p>
-
+        <!-- 비밀번호 변경 폼 (회원가입과 동일 규칙) -->
         <form id="passwordForm" onkeydown="return event.key !== 'Enter';" novalidate>
-            <div class="grid">
-                <div>
-                    <label for="current_password">현재 비밀번호 <span class="req">*</span></label>
-                    <input id="current_password" name="currentPassword" type="password" required minlength="8" />
-                    <div id="current_password_error" class="err">현재 비밀번호를 입력하세요.</div>
+            <fieldset>
+                <legend class="section-title">비밀번호 변경</legend>
+
+                <div class="field">
+                    <label for="currentPassword">현재 비밀번호</label>
+                    <input id="currentPassword" name="currentPassword" type="password" required minlength="8" autocomplete="current-password">
+                    <p class="err" id="current_password_error" role="alert" style="display:none;">현재 비밀번호를 입력하세요.</p>
                 </div>
 
-                <div>
-                    <label for="new_password">새 비밀번호 <span class="req">*</span></label>
-                    <input id="new_password" name="newPassword" type="password" required minlength="8" />
-                    <div class="hint">8자 이상 권장</div>
-                    <div id="new_password_error" class="err">새 비밀번호를 입력하세요.</div>
+                <div class="field">
+                    <label for="newPassword">새 비밀번호</label>
+                    <input id="newPassword" name="newPassword" type="password" required minlength="8" autocomplete="new-password">
+                    <p class="err" id="password_error" role="alert" style="display:none;">
+                        비밀번호는 8자 이상이며 대소문자, 숫자, 특수문자를 포함해야 합니다.
+                    </p>
                 </div>
 
-                <div>
-                    <label for="new_password_confirm">새 비밀번호 확인 <span class="req">*</span></label>
-                    <input id="new_password_confirm" name="passwordConfirm" type="password" required minlength="8" />
-                    <div id="new_password_confirm_error" class="err">비밀번호가 일치하지 않습니다.</div>
+                <div class="field">
+                    <label for="newPasswordConfirm">새 비밀번호 확인</label>
+                    <input id="newPasswordConfirm" name="newPasswordConfirm" type="password" required minlength="8" autocomplete="new-password">
+                    <p class="err" id="password_confirm_error" role="alert" style="display:none;">비밀번호가 일치하지 않습니다.</p>
                 </div>
 
                 <div class="actions">
-                    <button type="submit" class="btn">비밀번호 변경</button>
+                    <button type="submit" id="pwBtn" class="btn">비밀번호 변경</button>
                 </div>
-            </div>
+            </fieldset>
         </form>
     </section>
 
-    <aside class="aside" aria-hidden="true">
-        <div style="text-align:center">
-            <div style="font-size:28px;font-weight:700">환영합니다 👋</div>
-            <div class="small">간단한 회원가입으로 시작해 보세요. 개인정보는 서버에서 안전하게 처리하시기 바랍니다.</div>
-        </div>
-
-        <div style="margin-top:18px;font-size:13px;color:var(--muted);text-align:center">
-            Tip: 소셜 로그인으로 빠른 회원가입이 가능합니다.
-        </div>
+    <!-- 우측: 안내(반응형에서 하단) -->
+    <aside class="aside">
+        <div class="welcome">내 정보 관리 팁</div>
+        <p class="small">주소를 변경하면 지도/배달 반경 관련 기능이 더 정확해집니다.</p>
+        <p class="tip">이미지를 바꾸면 상단 아바타로 즉시 확인됩니다.</p>
     </aside>
 </main>
 
-<script>
-    // 회원가입 폼과 동일 로직: 주소 자동완성 → 좌표/주소 채우기
-    function initAutocomplete() {
-        const input = document.getElementById("road_address");
-        if (!input) return;
-
-        const options = {
-            componentRestrictions: { country: "KR" },
-            fields: ["formatted_address", "geometry", "name", "place_id"],
-            strictBounds: false,
-        };
-        const autocomplete = new google.maps.places.Autocomplete(input, options);
-
-        autocomplete.addListener('place_changed', () => {
-            const place = autocomplete.getPlace();
-            if (!place || !place.place_id || !place.geometry) {
-                console.log("no place details");
-                return;
-            }
-
-            // 주소/좌표 세팅
-            const lat = place.geometry.location.lat();
-            const lng = place.geometry.location.lng();
-            document.getElementById("road_address").value = place.formatted_address || place.name || "";
-            document.getElementById("latitude").value = Number(lat.toFixed(6));
-            document.getElementById("longitude").value = Number(lng.toFixed(6));
-            const pidEl = document.getElementById("place_id");
-            if (pidEl) pidEl.value = place.place_id;
-
-            // 상세주소로 포커스 이동
-            const detail = document.getElementById("detail_address");
-            if (detail) detail.focus();
-        });
-    }
-</script>
-
-<!-- 서버 환경변수/설정에 있는 키를 Thymeleaf로 주입 -->
-<script async th:src="@{'https://maps.googleapis.com/maps/api/js?key=' + ${@environment.getProperty('google.maps.api.key')} + '&libraries=places&callback=initAutocomplete'}"></script>
-
-<script src="/user/js/profile_edit.js"></script>
+<script src="/user/js/profile_edit.js" defer></script>
 </body>
 </html>

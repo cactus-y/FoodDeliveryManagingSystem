@@ -97,12 +97,12 @@
 </head>
 <body>
     <div th:replace="fragments/navbar :: navbar"></div>
-    <form class="form-card">
-        <div class="form-title" th:text="${restaurant.restaurantIdx == null} ? '식당 등록' : '식당 수정'"></div>
+    <div class="form-card">
+        <div class="form-title" th:text="${mode == 'create'} ? '식당 등록' : '식당 수정'"></div>
 
         <!-- 이미지 업로드 -->
         <div class="upload-box"
-             onclick="document.getElementById('imageInput').click()"
+             onclick="document.getElementById('image-url').click()"
              th:classappend="${restaurant != null and restaurant.imageUrl != null} ? ' uploaded'">
             <img th:if="${restaurant != null and restaurant.imageUrl != null}"
                  th:src="${restaurant.imageUrl}"
@@ -110,7 +110,7 @@
                  alt="menu image">
             <img th:if="${restaurant == null or restaurant.imageUrl == null}"
                  id="preview"
-                 src="https://cdn-icons-png.flaticon.com/512/685/685655.png"
+                 th:src="@{/images/icon-image-upload.png}"
                  alt="upload icon" class="upload-icon">
             <p class="upload-text">이미지를 업로드하세요</p>
             <input type="file" id="image-url" accept="image/*" style="display:none" onchange="uploadAndPreviewImage(event)">
@@ -120,26 +120,26 @@
 
         <label class="form-label">식당 이름  <span style="color:#ef4444">*</span></label>
         <input type="text" class="form-control" id="name" placeholder="이름"
-               th:value="${restaurant.name}"  required>
+               th:value="${restaurant.name}">
 
         <label class="form-label">도로명 주소  <span style="color:#ef4444">*</span></label>
         <input type="text" class="form-control" id="road-address" placeholder="도로명 주소"
-               th:value="${restaurant.roadAddress}" required>
+               th:value="${restaurant.roadAddress}">
 
         <label class="form-label">상세 주소  <span style="color:#ef4444">*</span></label>
         <input type="text" class="form-control" id="detail-address" placeholder="상세 주소"
-               th:value="${restaurant.detailAddress}" required>
+               th:value="${restaurant.detailAddress}">
 
-        <input type="hidden" class="form-control" id="longitude" th:value="${restaurant.longitude}" required>
-        <input type="hidden" class="form-control" id="latitude" th:value="${restaurant.latitude}" required>
+        <input type="hidden" class="form-control" id="longitude" th:value="${restaurant.longitude}">
+        <input type="hidden" class="form-control" id="latitude" th:value="${restaurant.latitude}">
 
         <label class="form-label">오픈 시간  <span style="color:#ef4444">*</span></label>
         <input type="time" class="form-control" id="open-at"
-               th:value="${restaurant.openAt}" required>
+               th:value="${restaurant.openAt}">
 
         <label class="form-label">폐점 시간  <span style="color:#ef4444">*</span></label>
         <input type="time" class="form-control" id="close-at"
-               th:value="${restaurant.closeAt}" required>
+               th:value="${restaurant.closeAt}">
 
         <label class="form-label">추가 설명</label>
         <textarea id="additional-info" class="form-control" placeholder="식당에 대한 추가 설명을 입력해주세요."
@@ -147,9 +147,9 @@
 
         <input type="hidden" id="my-username" th:value="${restaurant.username}">
 
-        <input class="btn btn-primary mt-4" th:if="${restaurant.restaurantIdx != null}" type="submit" id="modify-btn" value="수정">
-        <input class="btn btn-primary mt-4" th:if="${restaurant.restaurantIdx == null}" type="submit" id="create-btn" value="등록">
-    </form>
+        <button class="btn btn-primary mt-4" onclick="submitMenu()"
+                th:text="${mode == 'edit'} ? '수정 완료' : '등록 완료'">등록 완료</button>
+    </div>
 
     <script>
         function initAutocomplete() {
@@ -182,86 +182,72 @@
             });
         }
 
-        const modifyButton = document.getElementById("modify-btn");
-
-        if(modifyButton){
-            modifyButton.addEventListener('click', function(e) {
-                e.preventDefault();
-                const requiredFields = ["name", "road-address", "detail-address", "longitude", "latitude", "open-at", "close-at"];
-                for (let id of requiredFields) {
-                    const input = document.getElementById(id);
-                    if (!input.value.trim()) {
-                        alert("빈 값이 있습니다.");
-                        input.focus();
-                        return;
-                    }
+        async function submitMenu() {
+            const requiredFields = ["name", "road-address", "detail-address", "longitude", "latitude", "open-at", "close-at"];
+            for (let id of requiredFields) {
+                const input = document.getElementById(id);
+                if (!input.value.trim()) {
+                    alert("빈 값이 있습니다.");
+                    input.focus();
+                    return;
                 }
-                let restaurantId = Number(document.getElementById("restaurant-id-aom").value);
-                fetch(`/api/restaurants/${restaurantId}`, {
-                    method: 'PUT',
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        name: document.getElementById("name").value,
-                        roadAddress: document.getElementById("road-address").value,
-                        detailAddress: document.getElementById("detail-address").value,
-                        longitude: Number(document.getElementById("longitude").value),
-                        latitude: Number(document.getElementById("latitude").value),
-                        openAt: document.getElementById("open-at").value,
-                        closeAt: document.getElementById("close-at").value,
-                        imageUrl: document.getElementById("image-url").value,
-                        additionalInfo: document.getElementById("additional-info").value
-                    })
-                }).then((response) => {
-                    if(response.ok){
-                        alert("수정 완료");
-                        location.replace(`restaurants/${restaurantId}`);
-                    }
-                    else alert(response.status+": 다시 시도해주세요.");
-                })
-            })
-        }
+            }
 
-        const createButton = document.getElementById("create-btn");
+            const restaurantId = document.getElementById('restaurant-id-aom').value;
+            const mode = (restaurantId != null) ? 'edit' : 'create';
 
-        if(createButton){
-            createButton.addEventListener('click', function(e) {
-                e.preventDefault();
-                const requiredFields = ["name", "road-address", "detail-address", "longitude", "latitude", "open-at", "close-at"];
-                for (let id of requiredFields) {
-                    const input = document.getElementById(id);
-                    if (!input.value.trim()) {
-                        alert("빈 값이 있습니다.");
-                        input.focus();
-                        return;
-                    }
+            // 기존 URL (수정 전)
+            const oldImageUrl = /*[[${menuResponse != null ? menuResponse.imageUrl : ''}]]*/ '';
+
+            // 현재 이미지 src
+            const newImageUrl = document.querySelector('.preview-image')
+                ? document.querySelector('.preview-image').src
+                : '';
+
+            const body = {
+                name: document.getElementById("name").value,
+                roadAddress: document.getElementById("road-address").value,
+                detailAddress: document.getElementById("detail-address").value,
+                longitude: Number(document.getElementById("longitude").value),
+                latitude: Number(document.getElementById("latitude").value),
+                openAt: document.getElementById("open-at").value,
+                closeAt: document.getElementById("close-at").value,
+                imageUrl: newImageUrl,
+                additionalInfo: document.getElementById("additional-info").value
+            };
+
+            let url, method;
+            if (mode === 'edit') {
+                url = `/api/restaurants/${restaurantId}`;
+                method = "PUT";
+            } else {
+                url = `/api/restaurants`;
+                method = "POST";
+                body["username"] = document.getElementById("my-username").value;
+            }
+
+            const res = await fetch(url, {
+                method: method,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            });
+
+            if (res.ok) {
+                // 기존 이미지와 새 이미지가 다를 경우 이전 이미지 삭제 요청
+                if (mode === 'edit' && oldImageUrl && oldImageUrl !== newImageUrl) {
+                    await fetch(`/api/files/delete`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ imageUrl: oldImageUrl })
+                    });
                 }
-                fetch(`/api/restaurants`, {
-                    method: 'POST',
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        name: document.getElementById("name").value,
-                        roadAddress: document.getElementById("road-address").value,
-                        detailAddress: document.getElementById("detail-address").value,
-                        longitude: Number(document.getElementById("longitude").value),
-                        latitude: Number(document.getElementById("latitude").value),
-                        openAt: document.getElementById("open-at").value,
-                        closeAt: document.getElementById("close-at").value,
-                        imageUrl: document.getElementById("image-url").value,
-                        additionalInfo: document.getElementById("additional-info").value,
-                        username: document.getElementById("my-username").value
-                    })
-                }).then((response) => {
-                    if(response.ok){
-                        alert("등록 완료");
-                        location.replace("/restaurants");
-                    }
-                    else alert(response.status+": 다시 시도해주세요.");
-                })
-            })
+
+                alert(mode === 'edit' ? "메뉴 수정 완료!" : "메뉴 등록 완료!");
+                window.location.href = (mode === 'edit') ? `/restaurants/${restaurantId}` : `/restaurants`;
+            } else {
+                const errorText = await res.text();
+                alert("오류 발생: " + errorText);
+            }
         }
 
         async function uploadAndPreviewImage(event) {

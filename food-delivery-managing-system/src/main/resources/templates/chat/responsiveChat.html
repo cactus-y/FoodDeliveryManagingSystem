@@ -291,11 +291,6 @@
 <script th:inline="javascript">
     /*<![CDATA[*/
     const currentUser = /*[[${currentUser}]]*/ null;
-    // {
-    //     userId: 1,
-    //     nickname: '나',
-    //     profileImageUrl: ''
-    // };
 
     // CSRF Token
     const token = document.querySelector("meta[name='_csrf']").getAttribute('content');
@@ -305,7 +300,6 @@
 </script>
 <!-- socket 관련 함수 불러오기 -->
 <script th:src="@{/chat/socket-connector.js}"></script>
-<!--<script src="../../static/chat/socket-connector.js"></script>-->
 <script>
     // --- 상태 관리를 위한 변수 ---
     let currentChatId = null; // 현재 선택된 채팅방 ID
@@ -319,7 +313,7 @@
     const READ_MARKER_THROTTLE_MS = 3000;
 
     // 기본 프사 <- static에서 가져오기
-    const basicProfileImage = 'https://mblogthumb-phinf.pstatic.net/MjAyMDAyMTBfODAg/MDAxNTgxMzA0MTE3ODMy.ACRLtB9v5NH-I2qjWrwiXLb7TeUiG442cJmcdzVum7cg.eTLpNg_n0rAS5sWOsofRrvBy0qZk_QcWSfUiIagTfd8g.JPEG.lattepain/1581304118739.jpg?type=w800';
+    const basicProfileImage = '/images/default-user-profile.png';
 
     // --- 요소 가져오기 ---
     const chatLayout = document.getElementById('chat-layout');
@@ -447,7 +441,7 @@
 
     /** 메시지 렌더링 함수 */
     function showMessage(message) {
-        console.log("show message: ", message);
+        // console.log("show message: ", message);
 
         // 날짜 관련 포메팅
         const messageDate = new Date(message.sentAt);
@@ -595,7 +589,7 @@
                 if (!res.ok) {
                     throw new Error("읽음 처리 실패");
                 }
-                console.log(`Chat ${chatId} is marked as read`);
+                // console.log(`Chat ${chatId} is marked as read`);
                 const chatItem = document.querySelector(`.chat-item[data-chat-id="${chatId}"]`);
                 if (chatItem) {
                     const unreadBadge = chatItem.querySelector('.unread-badge');
@@ -827,7 +821,7 @@
     // 페이지 로드 시
     document.addEventListener('DOMContentLoaded', () => {
         if (currentUser) {
-            console.log(currentUser);
+            // console.log(currentUser);
             SocketManager.init(currentUser);
         }
 

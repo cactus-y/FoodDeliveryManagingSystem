@@ -169,9 +169,9 @@
                     <img th:if="${r.imageUrl != null and !#strings.isEmpty(r.imageUrl)}"
                          th:src="${r.imageUrl}"
                          alt="menu image"
-                         onerror="this.src='https://docs.aiinbox.io/images/defaultVecor.svg'">
+                         onerror="this.src='image/default-placeholder.png'">
                     <img th:if="${r.imageUrl == null or #strings.isEmpty(r.imageUrl)}"
-                         src="https://docs.aiinbox.io/images/defaultVecor.svg"
+                         th:src="@{/images/default-placeholder.png}"
                          alt="no image">
 
                     <div class="card-body d-flex flex-column">

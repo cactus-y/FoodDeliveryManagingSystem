@@ -1,5 +1,6 @@
 package com.example.food_delivery_managing_system.restaurant;
 
+import com.example.food_delivery_managing_system.menu.Menu;
 import com.example.food_delivery_managing_system.restaurantLike.Like;
 import com.example.food_delivery_managing_system.user.entity.User;
 import com.example.food_delivery_managing_system.restaurant.dto.RestaurantStatus;
@@ -73,6 +74,9 @@ public class Restaurant {
 
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Like> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<Menu> menu = new ArrayList<>();
 
     @Builder
     public Restaurant(
