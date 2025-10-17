@@ -121,9 +121,9 @@
              th:src="${menuResponse.imageUrl}"
              class="menu-image"
              alt="menu image"
-             onerror="this.src='image/default-placeholder.png'">
+             onerror="this.src='/images/default-placeholder.png'">
         <img th:if="${menuResponse.imageUrl == null or #strings.isEmpty(menuResponse.imageUrl)}"
-             th:src="@{/images/default-placeholder.png}"
+             src="/images/default-placeholder.png"
              class="menu-image"
              alt="no image">
     </div>
