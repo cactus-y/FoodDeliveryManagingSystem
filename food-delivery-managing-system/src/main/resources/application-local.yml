@@ -1,10 +1,9 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${LOCAL_PSQL_URL}
-    username: ${LOCAL_PSQL_USERNAME}
-    password: ${LOCAL_PSQL_PASSWORD}
-
+    url: ${RDS_URL}
+    username: ${RDS_USERNAME}
+    password: ${RDS_PASSWORD}
   jpa:
     open-in-view: false
     hibernate:
