@@ -42,7 +42,7 @@ public class UserViewController {
             userRequest.setProfileUrl(fileUrl);
             userService.addOwner(userRequest);
         }
-        return "redirect:/login";
+        return "redirect:/user/login";
 
     }
 
