@@ -106,7 +106,7 @@ public class SecurityConfig {
                         .loginPage("/login")           // 커스텀 로그인 페이지 경로
                         .usernameParameter("email")         // "email" 필드 사용
                         .passwordParameter("password")      // "password" 필드 사용
-                        .defaultSuccessUrl("/restaurants", true)   // 성공 후 이동할 경로
+                        .defaultSuccessUrl("/", true)   // 성공 후 이동할 경로
                         .permitAll()
                 )
                 .sessionManagement(sm -> sm.sessionFixation(sess -> sess.migrateSession()));
