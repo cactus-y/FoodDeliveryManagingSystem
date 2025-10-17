@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface AdminRepository extends JpaRepository<User, Long> {
-    @Query("SELECT new com.example.food_delivery_managing_system.admin.dto.UserListResponse("
+/*    @Query("SELECT new com.example.food_delivery_managing_system.admin.dto.UserListResponse("
             + "    u.userId, "
             + "    u.email, "
             + "    r.name, "
@@ -19,5 +19,8 @@ public interface AdminRepository extends JpaRepository<User, Long> {
             + "LEFT JOIN Restaurant r ON r.user = u "
             + "WHERE u.userRole = 'OWNER' "
             + "ORDER BY u.createdAt DESC")
-    List<UserListResponse> findAllUserListWithRestaurantName();
+    List<UserListResponse> findAllUserListWithRestaurantName();*/
+
+    @Query("SELECT u FROM User u WHERE u.userRole = 'OWNER' ORDER BY u.createdAt DESC")
+    List<User> findAllOwners();
 }

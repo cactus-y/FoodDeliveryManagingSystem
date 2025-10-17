@@ -110,7 +110,14 @@ function renderUsersTable(users) {
     tbody.innerHTML = users.map((user, idx) => `
             <tr>
                 <td>${user.email}</td>
-                <td>${user.name}</td>
+                <td style="position: relative; cursor: pointer;" class="restaurant-cell">
+                    ${user.restaurantNames && user.restaurantNames.length > 0
+        ? `<span class="restaurant-count">${user.restaurantNames.length}개 식당</span>
+                           <div class="restaurant-tooltip">
+                               ${user.restaurantNames.map(name => `<div>• ${name}</div>`).join('')}
+                           </div>`
+        : '-'}
+                </td>
                 <td>${formatDate(user.createdAt)}</td>
                 <td>User Agent</td>
                 <td>${user.userStatus}</td>
@@ -122,6 +129,7 @@ function renderUsersTable(users) {
             </tr>
         `).join('');
 }
+
 
 function renderUsersPaginationButtons(totalPages) {
     const container = document.getElementById('users-pagination');

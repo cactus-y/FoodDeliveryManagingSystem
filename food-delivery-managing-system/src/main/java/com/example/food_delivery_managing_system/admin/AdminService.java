@@ -32,8 +32,30 @@ public class AdminService {
     private final UserRepository userRepository;
     private final RestaurantRepository restaurantRepository;
     // Users 조회
-    public List<UserListResponse> getUsers() {
+/*    public List<UserListResponse> getUsers() {
         return adminRepository.findAllUserListWithRestaurantName();
+    }*/
+
+    public List<UserListResponse> getUsers() {
+        List<User> owners = adminRepository.findAllOwners();
+
+        return owners.stream()
+                .map(user -> {
+                    // 해당 User의 모든 Restaurant 이름 조회
+                    List<String> restaurantNames = adminRestaurantRepository.findByUser(user)
+                            .stream()
+                            .map(Restaurant::getName)
+                            .toList();
+
+                    return new UserListResponse(
+                            user.getUserId(),
+                            user.getEmail(),
+                            restaurantNames,  // List<String>으로 전달
+                            user.getCreatedAt(),
+                            user.getUserStatus()
+                    );
+                })
+                .toList();
     }
 
     // Posts 조회
