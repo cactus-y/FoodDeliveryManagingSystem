@@ -150,9 +150,9 @@
                 <img th:if="${m.imageUrl != null and !#strings.isEmpty(m.imageUrl)}"
                      th:src="${m.imageUrl}"
                      alt="menu image"
-                     onerror="this.src='https://via.placeholder.com/600x400?text=No+Image'">
+                     onerror="this.src='image/default-placeholder.png'">
                 <img th:if="${m.imageUrl == null or #strings.isEmpty(m.imageUrl)}"
-                     src="https://via.placeholder.com/600x400?text=No+Image"
+                     th:src="@{/images/default-placeholder.png}"
                      alt="no image">
 
                 <div class="card-body d-flex flex-column">

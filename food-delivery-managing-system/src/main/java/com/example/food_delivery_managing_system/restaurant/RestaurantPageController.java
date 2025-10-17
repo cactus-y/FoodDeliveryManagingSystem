@@ -29,10 +29,12 @@ public class RestaurantPageController {
         String myUsername = principal.getName();
         if(restaurantId == null){
             model.addAttribute("restaurant", new RestaurantAoMResponse(myUsername));
+            model.addAttribute("mode", "create");
         }
         else{
             Restaurant restaurant = restaurantService.getRestaurantById(restaurantId);
             model.addAttribute("restaurant", new RestaurantAoMResponse(restaurant, myUsername));
+            model.addAttribute("mode", "edit");
         }
         return "restaurant/restaurantAddOrModify";
     }
