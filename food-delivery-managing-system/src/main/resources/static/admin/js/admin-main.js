@@ -391,9 +391,25 @@ function formatDate(dateStr) {
 
 function extractRegion(roadAddress) {
     if (!roadAddress) return '-';
-    const parts = roadAddress.split(' ');
-    // 첫 두 공백까지만 (시도 + 시군구)
-    return (parts[0] || '') + ' ' + (parts[1] || '');
+
+    // 맨 앞 "대한민국" 제거
+    let cleanedAddress = roadAddress.replace(/대한민국\s*/i, '');
+    const parts = cleanedAddress.split(/\s+/).filter(Boolean);
+
+    // 주소 요소가 없으면 '-' 반환
+    if (parts.length === 0) {
+        return '-';
+    }
+    const firstPart = parts[0];
+    let endIndex = 2;
+
+    // 첫 번째 문자열이 '도'로 끝나는지 확인
+    if (firstPart.endsWith('도')) {
+        endIndex = 3;
+    }
+    const resultParts = parts.slice(0, endIndex);
+
+    return resultParts.join(' ');
 }
 
 
