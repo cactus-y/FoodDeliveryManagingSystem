@@ -1,202 +1,284 @@
 (() => {
-    const $ = (id) => document.getElementById(id);
+    const $ = (sel) => document.querySelector(sel);
 
-    // ------------ 내 정보 로드 ------------
-    let initialMe = null;
+    // ====== 설정 ======
+    // 기본 아바타(플레이스홀더) 경로: 백엔드 플래그 없이 삭제를 구현하기 위해 실제로 업로드할 파일 소스
+    const DEFAULT_PLACEHOLDER_SRC =
+        $('#profileThumb')?.getAttribute('src') ||
+        '/images/default-user-profile.png';
 
-    async function loadMe() {
+    // ====== DOM ======
+    const profileForm = $('#profileForm');
+    const passwordForm = $('#passwordForm');
+    const saveBtn = $('#saveBtn');
+    const pwBtn = $('#pwBtn');
+
+    const csrfEl = $('#csrfField');
+
+    // summary(상단)
+    const summaryName = $('#summaryName');
+    const summaryNick = $('#summaryNick');
+    const summaryEmail = $('#summaryEmail');
+    const summaryAddr = $('#summaryAddr');
+    const profilePreview = $('#profilePreview');     // 상단 요약 아바타 (저장 성공 후에만 갱신)
+
+    // profile fields
+    const nickEl = $('#nickName');
+    const roadEl = $('#roadAddress');
+    const detailEl = $('#detailAddress');
+    const latEl = $('#latitude');
+    const lngEl = $('#longitude');
+
+    // image controls
+    const fileEl = $('#profileImage');
+    const profileThumb = $('#profileThumb');         // 폼 내부 썸네일
+    const removeImageBtn = $('#removeImageBtn');
+
+    // password fields
+    const curPwEl = $('#currentPassword');
+    const newPwEl = $('#newPassword');
+    const newPw2El = $('#newPasswordConfirm');
+
+    // error labels
+    const roadAddressError = $('#road_address_error');
+    const detailAddressError = $('#detail_address_error');
+    const latErr = $('#latErr');
+    const lngErr = $('#lngErr');
+    const curPwError = $('#current_password_error');
+    const pwError = $('#password_error');
+    const pwConfirmError = $('#password_confirm_error');
+
+    // ====== 상태 ======
+    // 삭제 모드: true면 저장 시 기본 이미지 파일을 실제로 업로드 (백엔드 플래그 불필요)
+    let deleteMode = false;
+    let lastObjectUrl = null; // 미리보기 URL 정리용
+
+    // ====== 유틸 ======
+    const withTimeout = (ms, p) =>
+        Promise.race([new Promise((_, r) => setTimeout(() => r(new Error('요청 시간이 초과되었습니다.')), ms)), p]);
+
+    function appendCsrf(fd) {
+        if (csrfEl && csrfEl.name && csrfEl.value && !fd.has(csrfEl.name)) {
+            fd.append(csrfEl.name, csrfEl.value);
+        }
+        const metaParam = document.querySelector('meta[name="_csrf_parameter"]')?.content;
+        const metaToken = document.querySelector('meta[name="_csrf"]')?.content;
+        if (metaParam && metaToken && !fd.has(metaParam)) fd.append(metaParam, metaToken);
+    }
+
+    async function parseError(res, fallback) {
+        let msg = `${fallback} (${res.status})`;
         try {
-            const res = await fetch('/api/me', { credentials: 'include' });
-            if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-            const me = await res.json();
-
-            initialMe = {
-                name: me.name ?? '',
-                email: me.email ?? '',
-                nickName: me.nickName ?? '',
-                roadAddress: me.roadAddress ?? '',
-                detailAddress: me.detailAddress ?? '',
-                latitude: typeof me.latitude === 'number' ? me.latitude : '',
-                longitude: typeof me.longitude === 'number' ? me.longitude : '',
-                profileImageUrl: me.profileImageUrl ?? ''
-            };
-        } catch (e) {
-            console.warn('GET /api/me 실패:', e);
-            initialMe = {
-                name: '', email: '', nickName: '',
-                roadAddress: '', detailAddress: '',
-                latitude: '', longitude: '', profileImageUrl: ''
-            };
-        } finally {
-            fillForm(initialMe);
-        }
-    }
-
-    function fillForm(me) {
-        if ($('name')) $('name').value = me.name;
-        if ($('email')) $('email').value = me.email;
-        if ($('nick_name')) $('nick_name').value = me.nickName;
-        if ($('road_address')) $('road_address').value = me.roadAddress;
-        if ($('detail_address')) $('detail_address').value = me.detailAddress;
-        if ($('latitude') != null) $('latitude').value = me.latitude ?? '';
-        if ($('longitude') != null) $('longitude').value = me.longitude ?? '';
-
-        const preview = $('profilePreview');
-        if (preview) {
-            preview.src = me.profileImageUrl || 'https://dummyimage.com/128x128/ffffff/6b7280.png&text=Profile';
-            preview.onerror = () => {
-                preview.src = 'https://dummyimage.com/128x128/ffffff/6b7280.png&text=Profile';
-            };
-        }
-    }
-
-    // ------------ 이미지 미리보기 ------------
-    function initProfilePreview() {
-        const fileInput = $('profile');
-        const preview = $('profilePreview');
-        if (!fileInput || !preview) return;
-
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files?.[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (evt) => { preview.src = evt.target.result; };
-            reader.readAsDataURL(file);
-        });
-    }
-
-    // ------------ 프로필 제출 (실제 PATCH) ------------
-    function enhanceProfileForm() {
-        const form = $('profileForm');
-        if (!form) return;
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            // 간단 검증
-            const name = $('name'), nick = $('nick_name'), road = $('road_address'), detail = $('detail_address');
-            const nameErr = $('name_error'), nickErr = $('nickname_error'), roadErr = $('road_address_error'), detailErr = $('detail_address_error');
-
-            let valid = true;
-            if (!name.value.trim()) { nameErr.style.display = 'block'; valid = false; } else nameErr.style.display = 'none';
-            if (!nick.value.trim()) { nickErr.style.display = 'block'; valid = false; } else nickErr.style.display = 'none';
-            if (!road.value.trim()) { roadErr.style.display = 'block'; valid = false; } else roadErr.style.display = 'none';
-            if (!detail.value.trim()) { detailErr.style.display = 'block'; valid = false; } else detailErr.style.display = 'none';
-            if (!valid) return;
-
-            const fd = new FormData(form);
-            // 파일 필드는 FormData에 자동 포함되지만, name을 맞춰두는 차원에서 한 번 더 세팅해도 무방
-            if ($('profile')?.files?.[0]) fd.set('profileImage', $('profile').files[0]);
-
-            try {
-                const res = await fetch('/api/me', {
-                    method: 'PATCH',
-                    body: fd,
-                    credentials: 'include'
-                    // Content-Type 자동 설정(FormData) — 직접 지정하지 말 것
-                });
-
-                if (!res.ok) {
-                    const text = await res.text().catch(() => '');
-                    throw new Error(`프로필 수정 실패 (${res.status}): ${text || res.statusText}`);
-                }
-
-                alert('프로필이 저장되었습니다.');
-                // 저장 후 내 정보 페이지로 이동 (캐시 무효화 쿼리 추가 권장)
-                window.location.href = '/users/me?ts=' + Date.now();
-            } catch (err) {
-                console.error(err);
-                alert(err.message || '프로필 저장 중 오류가 발생했습니다.');
+            const ct = res.headers.get('content-type') || '';
+            if (ct.includes('application/json')) {
+                const j = await res.json();
+                if (j?.message) msg += ` - ${j.message}`;
+            } else {
+                const t = await res.text();
+                if (t) msg += ` - ${t}`;
             }
-        });
-
-        // 초기화 버튼 → 처음 로드 상태로 복원
-        $('resetBtn')?.addEventListener('click', () => { if (initialMe) fillForm(initialMe); });
+        } catch {}
+        throw new Error(msg);
     }
 
-    // ------------ 비밀번호 변경 (실제 PATCH) ------------
-    function enhancePasswordForm() {
-        const form = $('passwordForm');
-        if (!form) return;
+    const isValidLat = (v) => { const n = Number(v); return !Number.isNaN(n) && n >= -90 && n <= 90; };
+    const isValidLng = (v) => { const n = Number(v); return !Number.isNaN(n) && n >= -180 && n <= 180; };
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
 
-        const npw = $('new_password'), npc = $('new_password_confirm'), npcErr = $('new_password_confirm_error');
-        const match = () => {
-            if (!npw.value || !npc.value) { npcErr.style.display = 'none'; return; }
-            npcErr.style.display = (npw.value === npc.value) ? 'none' : 'block';
-        };
-        npw?.addEventListener('input', match);
-        npc?.addEventListener('input', match);
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const cur = $('current_password'), curErr = $('current_password_error'), npwErr = $('new_password_error');
-            let valid = true;
-            if (!cur.value.trim()) { curErr.style.display = 'block'; valid = false; } else curErr.style.display = 'none';
-            if (!npw.value.trim()) { npwErr.style.display = 'block'; valid = false; } else npwErr.style.display = 'none';
-            if (!npc.value.trim() || npw.value !== npc.value) { npcErr.style.display = 'block'; valid = false; }
-            if (!valid) return;
-
-            // URL-encoded 로 전송 (@ModelAttribute 바인딩용)
-            const body = new URLSearchParams();
-            body.set('currentPassword', cur.value);
-            body.set('newPassword', npw.value);
-            body.set('passwordConfirm', npc.value);
-
-            try {
-                const res = await fetch('/api/me/password', {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
-                    body,
-                    credentials: 'include'
-                });
-
-                if (!res.ok) {
-                    const text = await res.text().catch(() => '');
-                    throw new Error(`비밀번호 변경 실패 (${res.status}): ${text || res.statusText}`);
-                }
-
-                alert('비밀번호가 변경되었습니다. 다시 로그인해야 할 수 있습니다.');
-                form.reset();
-            } catch (err) {
-                console.error(err);
-                alert(err.message || '비밀번호 변경 중 오류가 발생했습니다.');
-            }
-        });
+    // 플레이스홀더 이미지를 File 객체로 변환 (삭제모드에서 사용)
+    async function makeDefaultImageFile() {
+        const res = await fetch(DEFAULT_PLACEHOLDER_SRC, { cache: 'no-store' });
+        if (!res.ok) throw new Error('기본 이미지 로드 실패');
+        const blob = await res.blob();
+        const type = blob.type || 'image/png';
+        const ext = (type.split('/')[1] || 'png').toLowerCase();
+        return new File([blob], `default-profile.${ext}`, { type });
     }
 
-    // HTML의 구글 스크립트가 로드되면 이 함수가 호출됨
-    window.initAutocomplete = function initAutocomplete() {
-        const input = document.getElementById('road_address');
-        if (!input || !window.google?.maps?.places) return;
+    // ====== 초기 로드 /api/me ======
+    async function loadMe() {
+        const res = await withTimeout(15000, fetch('/api/me', {
+            credentials: 'include',
+            headers: { 'Accept': 'application/json' }
+        }));
+        if (!res.ok) await parseError(res, '내 정보 불러오기 실패');
+        const me = await res.json();
 
-        const options = {
-            componentRestrictions: { country: 'KR' },
-            fields: ['formatted_address', 'geometry', 'name', 'place_id'],
-            strictBounds: false
-        };
-        const autocomplete = new google.maps.places.Autocomplete(input, options);
+        // summary
+        summaryName.textContent = me.name || '-';
+        summaryNick.textContent = me.nickName || '-';
+        summaryEmail.textContent = me.email || '-';
+        summaryAddr.textContent = me.roadAddress
+            ? (me.detailAddress ? `${me.roadAddress} ${me.detailAddress}` : me.roadAddress)
+            : '-';
 
-        autocomplete.addListener('place_changed', () => {
-            const place = autocomplete.getPlace();
-            if (!place || !place.geometry) return;
+        // form
+        nickEl.value = me.nickName ?? '';
+        roadEl.value = me.roadAddress ?? '';
+        detailEl.value = me.detailAddress ?? '';
 
-            const lat = place.geometry.location.lat();
-            const lng = place.geometry.location.lng();
-            $('road_address').value = place.formatted_address || place.name || '';
-            if ($('latitude')) $('latitude').value = Number(lat.toFixed(6));
-            if ($('longitude')) $('longitude').value = Number(lng.toFixed(6));
-            $('detail_address')?.focus();
-            const pid = document.getElementById('place_id');
-            if (pid) pid.value = place.place_id || '';
-        });
-    };
+        if (me.latitude != null) latEl.value = String(me.latitude);
+        if (me.longitude != null) lngEl.value = String(me.longitude);
+        if ((!latEl.value || !lngEl.value) && me.coordinates) {
+            const { x, y } = me.coordinates; // x=lng, y=lat
+            if (typeof y === 'number') latEl.value = y.toFixed(6);
+            if (typeof x === 'number') lngEl.value = x.toFixed(6);
+        }
 
-    // ------------ 초기화 ------------
-    document.addEventListener('DOMContentLoaded', () => {
-        loadMe();
-        initProfilePreview();
-        enhanceProfileForm();
-        enhancePasswordForm();
+        // avatar: 저장된 값 기준으로 두 곳을 셋업 (썸네일은 시작점 동일)
+        const avatar = me.profileUrl || DEFAULT_PLACEHOLDER_SRC;
+        if (profilePreview) profilePreview.src = avatar;
+        if (profileThumb) profileThumb.src = avatar;
+
+        // 초기 상태에서 삭제모드는 꺼짐
+        deleteMode = false;
+    }
+
+    // ====== 검증 ======
+    function guardAddressOnBlur() {
+        const roadOk = !!roadEl.value.trim();
+        const detailOk = !!detailEl.value.trim();
+        roadAddressError.style.display = roadOk ? 'none' : 'block';
+        detailAddressError.style.display = detailOk ? 'none' : 'block';
+        return roadOk && detailOk;
+    }
+    function guardCoords() {
+        let ok = true;
+        const lat = latEl.value.trim();
+        const lng = lngEl.value.trim();
+        if (lat && !isValidLat(lat)) { latErr.style.display = 'block'; ok = false; } else latErr.style.display = 'none';
+        if (lng && !isValidLng(lng)) { lngErr.style.display = 'block'; ok = false; } else lngErr.style.display = 'none';
+        return ok;
+    }
+    function validatePasswordFields() {
+        let ok = true;
+        if (!curPwEl.value.trim()) { curPwError.style.display='block'; ok = false; } else curPwError.style.display='none';
+        const pw = newPwEl.value.trim();
+        if (!pw || !passwordRegex.test(pw)) { pwError.style.display='block'; ok = false; } else pwError.style.display='none';
+        if (pw !== newPw2El.value.trim()) { pwConfirmError.style.display='block'; ok = false; } else pwConfirmError.style.display='none';
+        return ok;
+    }
+
+    // ====== PATCH /api/me ======
+    async function patchProfile() {
+        if (!guardAddressOnBlur() || !guardCoords()) return;
+
+        const fd = new FormData(profileForm);
+
+        // 좌표 빈값 제거
+        const lat = latEl.value.trim();
+        const lng = lngEl.value.trim();
+        if (!lat) fd.delete('latitude');
+        if (!lng) fd.delete('longitude');
+
+        // 이미지 처리 (백엔드 플래그 없이)
+        const pickedFile = fileEl?.files?.[0];
+        if (deleteMode) {
+            // 삭제 의도 → 기본 이미지 파일을 업로드로 대체
+            const defaultFile = await makeDefaultImageFile();
+            fd.set('profileImage', defaultFile);
+        } else if (pickedFile) {
+            // 새 파일 업로드
+            const max = 5 * 1024 * 1024;
+            if (pickedFile.size > max) { alert('이미지 용량이 5MB를 초과합니다.'); return; }
+            if (!pickedFile.type.startsWith('image/')) { alert('이미지 파일만 업로드할 수 있습니다.'); return; }
+            fd.set('profileImage', pickedFile);
+        } else {
+            // 이미지 변경 없음 → 서버는 기존 유지
+            fd.delete('profileImage');
+        }
+
+        appendCsrf(fd);
+
+        const res = await withTimeout(20000, fetch('/api/me', {
+            method: 'PATCH',
+            body: fd,
+            credentials: 'include',
+            headers: { 'Accept': 'application/json' }
+        }));
+        if (!res.ok) await parseError(res, '프로필 수정 실패');
+
+        alert('프로필이 저장되었습니다.');
+        // 성공 후 내정보로 이동 (캐시 무효화 파라미터 추가)
+        location.href = '/users/me?ts=' + Date.now();
+    }
+
+    // ====== PATCH /api/me/password ======
+    async function patchPassword() {
+        if (!validatePasswordFields()) return;
+
+        const fd = new FormData();
+        fd.append('currentPassword', curPwEl.value.trim());
+        fd.append('newPassword', newPwEl.value.trim());
+        fd.append('newPasswordConfirm', newPw2El.value.trim());
+        appendCsrf(fd);
+
+        const res = await withTimeout(15000, fetch('/api/me/password', {
+            method: 'PATCH',
+            body: fd,
+            credentials: 'include',
+            headers: { 'Accept': 'application/json' }
+        }));
+        if (!res.ok) await parseError(res, '비밀번호 변경 실패');
+
+        alert('비밀번호가 변경되었습니다.');
+        location.href = '/users/me?ts=' + Date.now();
+    }
+
+    // ====== 이벤트 ======
+    // 프로필 저장
+    profileForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        saveBtn.disabled = true;
+        try { await patchProfile(); }
+        catch (err) { console.error(err); alert(err?.message || '프로필 저장 중 오류가 발생했습니다.'); }
+        finally { saveBtn.disabled = false; }
     });
+
+    // 비밀번호 저장
+    passwordForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        pwBtn.disabled = true;
+        try { await patchPassword(); }
+        catch (err) { console.error(err); alert(err?.message || '비밀번호 변경 중 오류가 발생했습니다.'); }
+        finally { pwBtn.disabled = false; }
+    });
+
+    // 주소/좌표 blur 검증
+    roadEl?.addEventListener('blur', guardAddressOnBlur);
+    detailEl?.addEventListener('blur', guardAddressOnBlur);
+    latEl?.addEventListener('blur', guardCoords);
+    lngEl?.addEventListener('blur', guardCoords);
+
+    // 파일 선택 → 아래 썸네일만 변경 (상단 요약은 저장 성공 후 갱신)
+    fileEl?.addEventListener('change', () => {
+        const f = fileEl.files?.[0];
+        if (!f) return;
+
+        const max = 5 * 1024 * 1024;
+        if (f.size > max) { alert('이미지 용량이 5MB를 초과합니다.'); fileEl.value = ''; return; }
+        if (!f.type.startsWith('image/')) { alert('이미지 파일만 업로드할 수 있습니다.'); fileEl.value = ''; return; }
+
+        deleteMode = false; // 새 파일 고르면 삭제모드 해제
+
+        if (lastObjectUrl) URL.revokeObjectURL(lastObjectUrl);
+        const url = URL.createObjectURL(f);
+        lastObjectUrl = url;
+
+        if (profileThumb) profileThumb.src = url; // 미리보기만
+    });
+
+    // 이미지 삭제 → 썸네일만 기본으로, 저장 시 기본 이미지 업로드
+    removeImageBtn?.addEventListener('click', () => {
+        if (fileEl) fileEl.value = '';
+        if (lastObjectUrl) { URL.revokeObjectURL(lastObjectUrl); lastObjectUrl = null; }
+        deleteMode = true;
+        if (profileThumb) profileThumb.src = DEFAULT_PLACEHOLDER_SRC;
+    });
+
+    // ====== 시작 ======
+    (async function init() {
+        try { await loadMe(); }
+        catch (e) { console.error(e); alert('내 정보를 불러오지 못했습니다. 다시 시도해주세요.'); }
+    })();
 })();
