@@ -293,7 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 통계
 function loadStatistics() {
-    fetch('/api/statistics')
+    fetch('/api/admin/statistics')
         .then(res => res.json())
         .then(data => {
             // console.log('통계 데이터:', data);
@@ -332,7 +332,7 @@ function renderChart(data) {
 
 // 상태 변경
 function toggleUser(email) {
-    fetch(`/api/users/${email}/status`, {
+    fetch(`/api/admin/users/${email}/status`, {
         method: 'PUT',
         headers: {
             [csrfHeader]: csrfToken
@@ -363,7 +363,7 @@ function toggleUser(email) {
 }
 
 function toggleRestaurant(email, name) {
-    fetch(`/api/restaurants/${email}/${name}/status`, {
+    fetch(`/api/admin/restaurants/${email}/${name}/status`, {
         method: 'PUT',
         headers: {
             [csrfHeader]: csrfToken

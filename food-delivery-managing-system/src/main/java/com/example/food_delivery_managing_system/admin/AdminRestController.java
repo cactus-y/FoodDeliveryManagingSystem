@@ -32,21 +32,21 @@ public class AdminRestController {
     }
 
     // 사용자 상태 update
-    @PutMapping("/api/users/{email}/status")  // 식별을 위한 eamil 은 js 에서 추출해 url 경로에 포함하는 방식으로
+    @PutMapping("/api/admin/users/{email}/status")  // 식별을 위한 eamil 은 js 에서 추출해 url 경로에 포함하는 방식으로
     public ResponseEntity<UserStatusResponse> toggleUserStatus(@PathVariable String email) {
         UserStatusResponse response = adminService.updateUserStatus(email);
         return ResponseEntity.ok(response);
     }
 
     // 레스토랑 상태 update
-    @PutMapping("/api/restaurants/{email}/{name}/status")
+    @PutMapping("/api/admin/restaurants/{email}/{name}/status")
     public ResponseEntity<RestaurantStatusResponse> toggleRestaurantStatus(@PathVariable String email, @PathVariable String name) {
         RestaurantStatusResponse response = adminService.updateRestaurantStatus(email, name);
         return ResponseEntity.ok(response);
     }
 
     // 통계
-    @GetMapping("/api/statistics")
+    @GetMapping("/api/admin/statistics")
     public ResponseEntity<Map<String, Integer>> getRestaurantsByRegion() {
         Map<String, Integer> response = adminService.getRestaurantsByRegion();
         return ResponseEntity.ok(response);
