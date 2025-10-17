@@ -41,11 +41,10 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     List<ChatMessageResponse> findAllMessagesByChatId(@Param("chatId") Long chatId);
 
     // 여러 채팅방의 마지막 메시지 한 번에 조회
-    @Query(value = "SELECT m.* FROM (" +
-                   "    SELECT m.*, ROW_NUMBER() OVER(PARTITION BY m.chat_id ORDER BY m.created_at DESC) as rn " +
-                   "    FROM messages m " +
-                   "    WHERE m.chat_id IN :chatIds" +
-                   ") m WHERE m.rn = 1", nativeQuery = true)
+    @Query("SELECT m FROM Message m JOIN FETCH m.chat c " +
+            "WHERE m.messageId IN (" +
+            "    SELECT MAX(sub_m.messageId) FROM Message sub_m WHERE sub_m.chat.chatId IN :chatIds GROUP BY sub_m.chat.chatId" +
+            ")")
     List<Message> findLastMessagesByChatIds(@Param("chatIds") List<Long> chatIds);
 
 

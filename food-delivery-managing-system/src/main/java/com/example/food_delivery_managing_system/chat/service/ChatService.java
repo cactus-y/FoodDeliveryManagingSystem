@@ -9,6 +9,7 @@ import com.example.food_delivery_managing_system.user.entity.User;
 import com.example.food_delivery_managing_system.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,7 +61,9 @@ public class ChatService {
                 .stream()
                 .map(chatId -> {
                     // 내 relationship을 찾아서 안읽은 메시지 수를 확인
-                    UserChatRelationship myRelationship = relationshipRepository.findByUserIdAndChatId(userId, chatId)
+                    UserChatRelationship myRelationship = allRelationships.stream()
+                            .filter(r -> r.getUser().getUserId().equals(userId) && r.getChat().getChatId().equals(chatId))
+                            .findFirst()
                             .orElseThrow(() -> new IllegalArgumentException("UserChatRelationship not found"));
 
                     List<ChatUserDto> chatUsers = usersByChatId.getOrDefault(chatId, Collections.emptyList());
@@ -272,7 +275,10 @@ public class ChatService {
 
     // 채팅 저장
     @Transactional
-    public void sendMessage(ChatMessageRequest request) {
+    public void sendMessage(ChatMessageRequest request, Long userId) {
+        // 요청 유효성 검사 (요청을 보낸 사람이 채팅방에 속했는지 검사, 만약 문제가 있다면 에러를 throw)
+        validate(request.getChatId(), userId);
+
         // 유저 유효성 검사
         User sender = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다"));
@@ -307,7 +313,9 @@ public class ChatService {
     }
 
     // 해당 채팅방 모든 메시지 조회
-    public List<ChatMessageResponse> findMessagesByChatId(Long chatId) {
+    public List<ChatMessageResponse> findMessagesByChatId(Long chatId, Long userId) {
+        // 요청 유효성 검사 (요청을 보낸 사람이 채팅방에 속했는지 검사, 만약 문제가 있다면 에러를 throw)
+        validate(chatId, userId);
         return messageRepository.findAllMessagesByChatId(chatId);
     }
 
@@ -320,7 +328,9 @@ public class ChatService {
     }
 
     // 채팅방 유저 체크
-    public List<ChatUserDto> getParticipants(Long chatId) {
+    public List<ChatUserDto> getParticipants(Long chatId, Long userId) {
+        // 요청 유효성 검사 (요청을 보낸 사람이 채팅방에 속했는지 검사, 만약 문제가 있다면 에러를 throw)
+        validate(chatId, userId);
         // 1대1 채팅방이면 다른 한명이 나갔어도 보여주는게 로직상 맞는 것 같음
         // 그룹 채팅방이면 어차피 존재하는 유저만 나옴
         List<UserChatRelationship> relationships = relationshipRepository.findAllByChatId(chatId);
@@ -331,6 +341,12 @@ public class ChatService {
                         .profileImageUrl(r.getUser().getProfileUrl())
                         .build())
                 .toList();
+    }
+
+    // 유효한 접근인지 체크
+    private void validate(Long chatId, Long userId) {
+        relationshipRepository.findByUserIdAndChatId(userId, chatId)
+                .orElseThrow(() -> new AccessDeniedException("해당 채팅방에 접근할 권한이 없습니다."));
     }
 }
 

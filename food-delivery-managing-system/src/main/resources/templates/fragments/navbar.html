@@ -7,20 +7,29 @@
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4" th:fragment="navbar">
-    <a class="navbar-brand" href="/">[메인 링크]</a>
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+        <!-- 왼쪽 그룹: 로고 + 검색창 -->
+        <div class="d-flex align-items-center">
+            <a class="navbar-brand me-3" href="/">[메인 링크]</a>
 
-    <!-- 전체 메뉴 검색 -->
-    <form class="form-inline ml-3" th:action="@{/menus/search}" method="get">
-        <input type="text" name="keyword" class="form-control mr-2" placeholder="메뉴 검색"
-               th:value="${param.keyword}">
-        <button type="submit" class="btn btn-outline-success">검색</button>
-    </form>
+            <form class="d-flex align-items-center" th:action="@{/menus/search}" method="get" style="max-width: 350px;">
+                <input type="text" name="keyword" class="form-control form-control-sm me-2"
+                       placeholder="메뉴 검색" th:value="${param.keyword}" style="height: 36px;">
+                <button type="submit"
+                        class="btn btn-outline-success btn-sm"
+                        style="height: 36px; line-height: 22px; white-space: nowrap;">
+                    검색
+                </button>
+            </form>
+        </div>
 
-    <div class="ml-auto">
-        <a href="/restaurants" class="btn btn-outline-primary mr-2">식당 목록</a>
-        <a href="/map" class="btn btn-outline-secondary">내 식당 위치</a>
-        <a href="/chats" class="btn btn-outline-secondary">채팅</a>
-        <a href="/users/me" class="btn btn-outline-secondary">내 정보</a>
+        <!-- 오른쪽 그룹: 버튼들 -->
+        <div class="d-flex align-items-center">
+            <a href="/restaurants" class="btn btn-outline-primary btn-sm me-2">식당 목록</a>
+            <a href="/map" class="btn btn-outline-secondary btn-sm me-2">내 식당 위치</a>
+            <a href="/chats" class="btn btn-outline-secondary btn-sm me-2">채팅</a>
+            <a href="/users/me" class="btn btn-outline-secondary btn-sm">내 정보</a>
+        </div>
     </div>
 </nav>
 

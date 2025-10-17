@@ -101,12 +101,19 @@
         <div class="form-title" th:text="${restaurant.restaurantIdx == null} ? '식당 등록' : '식당 수정'"></div>
 
         <!-- 이미지 업로드 -->
-        <div class="upload-box" onclick="document.getElementById('image-url').click()">
-            <img id="preview" src="https://cdn-icons-png.flaticon.com/512/685/685655.png"
+        <div class="upload-box"
+             onclick="document.getElementById('imageInput').click()"
+             th:classappend="${restaurant != null and restaurant.imageUrl != null} ? ' uploaded'">
+            <img th:if="${restaurant != null and restaurant.imageUrl != null}"
+                 th:src="${restaurant.imageUrl}"
+                 class="preview-image"
+                 alt="menu image">
+            <img th:if="${restaurant == null or restaurant.imageUrl == null}"
+                 id="preview"
+                 src="https://cdn-icons-png.flaticon.com/512/685/685655.png"
                  alt="upload icon" class="upload-icon">
             <p class="upload-text">이미지를 업로드하세요</p>
-            <!-- <input type="file" id="imageInput" accept="image/*" style="display:none" onchange="previewImage(event)"> -->
-            <input type="file" id="image-url" accept="image/*" style="display:none" th:value="${restaurant.imageUrl}">
+            <input type="file" id="image-url" accept="image/*" style="display:none" onchange="uploadAndPreviewImage(event)">
         </div>
 
         <input type="hidden" id="restaurant-id-aom" th:value="${restaurant.restaurantIdx}">
@@ -123,11 +130,8 @@
         <input type="text" class="form-control" id="detail-address" placeholder="상세 주소"
                th:value="${restaurant.detailAddress}" required>
 
-        <label class="form-label">좌표  <span style="color:#ef4444">*</span></label>
-        <input type="number" class="form-control" id="longitude" placeholder="경도(-180~180)"
-               th:value="${restaurant.longitude}" required>
-        <input type="number" class="form-control" id="latitude" placeholder="위도(-90~90)"
-               th:value="${restaurant.latitude}" required>
+        <input type="hidden" class="form-control" id="longitude" th:value="${restaurant.longitude}" required>
+        <input type="hidden" class="form-control" id="latitude" th:value="${restaurant.latitude}" required>
 
         <label class="form-label">오픈 시간  <span style="color:#ef4444">*</span></label>
         <input type="time" class="form-control" id="open-at"
@@ -148,6 +152,36 @@
     </form>
 
     <script>
+        function initAutocomplete() {
+            const input = document.getElementById("road-address");
+            const options = {
+                componentRestrictions: { country: "KR" },
+                fields: ["formatted_address", "geometry", "name", "place_id"],
+                strictBounds: false,
+            };
+            const autocomplete = new google.maps.places.Autocomplete(input, options);
+
+            autocomplete.addListener('place_changed', () => {
+                const place = autocomplete.getPlace();
+
+                if (!place.place_id) {
+                    console.log("No details available for input: '" + place.name + "'");
+                    return;
+                }
+
+                const lat = place.geometry.location.lat();
+                const lng = place.geometry.location.lng();
+
+                document.getElementById("road-address").value = place.formatted_address;
+
+                document.getElementById("latitude").value = Number(lat.toFixed(6));
+                document.getElementById("longitude").value = Number(lng.toFixed(6));
+
+                document.getElementById("detail-address").focus();
+
+            });
+        }
+
         const modifyButton = document.getElementById("modify-btn");
 
         if(modifyButton){
@@ -229,6 +263,42 @@
                 })
             })
         }
+
+        async function uploadAndPreviewImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            // S3 업로드 요청
+            const res = await fetch("/api/files/upload", {
+                method: "POST",
+                body: formData
+            });
+
+            if (!res.ok) {
+                alert("이미지 업로드 실패!");
+                return;
+            }
+
+            const imageUrl = await res.text();
+
+            // 업로드 후 미리보기 표시
+            const box = document.querySelector('.upload-box');
+            const oldPreview = box.querySelector('.preview-image');
+            if (oldPreview) oldPreview.remove();
+
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.classList.add('preview-image');
+            box.appendChild(img);
+            box.classList.add('uploaded');
+
+            // hidden 이미지 경로 저장 (submitMenu에서 쓰임)
+            document.getElementById("preview").setAttribute("src", imageUrl);
+        }
     </script>
+    <script async th:src="@{'https://maps.googleapis.com/maps/api/js?key=' + ${@environment.getProperty('google.maps.api.key')} + '&libraries=places&callback=initAutocomplete'}"></script>
 </body>
 </html>

@@ -44,8 +44,9 @@ public class ChatController {
 
     // 채팅방 접속했을 때 이전 메시지 불러오기
     @GetMapping("/chats/{chatId}/messages")
-    public ResponseEntity<List<ChatMessageResponse>> getMessages(@PathVariable Long chatId) {
-        return ResponseEntity.ok(chatService.findMessagesByChatId(chatId));
+    public ResponseEntity<List<ChatMessageResponse>> getMessages(@PathVariable Long chatId, @AuthenticationPrincipal CustomUserDetails authUser) {
+        User user = authUser.getUser();
+        return ResponseEntity.ok(chatService.findMessagesByChatId(chatId, user.getUserId()));
     }
 
     // 채팅 읽음
@@ -58,7 +59,8 @@ public class ChatController {
 
     // 채팅방 참가자 확인
     @GetMapping("/chats/{chatId}/participants")
-    public ResponseEntity<List<ChatUserDto>> getParticipants(@PathVariable Long chatId) {
-        return ResponseEntity.ok(chatService.getParticipants(chatId));
+    public ResponseEntity<List<ChatUserDto>> getParticipants(@PathVariable Long chatId, @AuthenticationPrincipal CustomUserDetails authUser) {
+        User user = authUser.getUser();
+        return ResponseEntity.ok(chatService.getParticipants(chatId, user.getUserId()));
     }
 }
