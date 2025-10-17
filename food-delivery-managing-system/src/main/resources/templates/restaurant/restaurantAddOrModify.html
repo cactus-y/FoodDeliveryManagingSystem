@@ -194,7 +194,7 @@
             }
 
             const restaurantId = document.getElementById('restaurant-id-aom').value;
-            const mode = (restaurantId != null) ? 'edit' : 'create';
+            const mode = restaurantId === '' ? 'create' : 'edit';
 
             // 기존 URL (수정 전)
             const oldImageUrl = /*[[${menuResponse != null ? menuResponse.imageUrl : ''}]]*/ '';
@@ -243,10 +243,10 @@
                 }
 
                 alert(mode === 'edit' ? "메뉴 수정 완료!" : "메뉴 등록 완료!");
-                window.location.href = (mode === 'edit') ? `/restaurants/${restaurantId}` : `/restaurants`;
+                window.location.href = mode === 'edit' ? `/restaurants/${restaurantId}` : `/restaurants`;
             } else {
                 const errorText = await res.text();
-                alert("오류 발생: " + errorText);
+                alert(mode+" 오류 발생: " + errorText);
             }
         }
 
