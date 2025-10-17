@@ -5,12 +5,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 public class UserListResponse {
     private Long userId;
     private String email;
-    private String name;
+    private List<String> restaurantNames;  // String → List<String>
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime createdAt;
     private UserStatus userStatus;
@@ -18,15 +19,14 @@ public class UserListResponse {
     public UserListResponse(
             Long userId,
             String email,
-            String name,
+            List<String> restaurantNames,
             LocalDateTime createdAt,
             UserStatus userStatus
     ) {
         this.userId = userId;
         this.email = email;
-        this.name = name;
+        this.restaurantNames = restaurantNames;
         this.createdAt = createdAt;
         this.userStatus = userStatus;
     }
-
 }
