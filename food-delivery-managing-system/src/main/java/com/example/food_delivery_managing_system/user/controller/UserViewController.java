@@ -21,43 +21,39 @@ public class UserViewController {
 
     @GetMapping("/login")
     public String login() {
-        return "/user/login";
+        return "user/login";              // 앞의 / 제거
     }
 
     @GetMapping("/signup")
     public String signup() {
-        return "/user/user_signup";
+        return "user/user_signup";        // 앞의 / 제거
     }
 
     @PostMapping("/signup")
-    public String addOwner(@ModelAttribute UserRequest userRequest, @RequestParam("profileImage") MultipartFile profileImage)
-        throws IOException {
-
+    public String addOwner(@ModelAttribute UserRequest userRequest,
+                           @RequestParam("profileImage") MultipartFile profileImage) throws IOException {
         if (profileImage.isEmpty()) {
             userRequest.setProfileUrl("/images/default-user-profile.png");
-            userService.addOwner(userRequest);
         } else {
             String fileUrl = s3Service.uploadFile(profileImage);
-            System.out.println("저장된 이미지 URL : " + fileUrl);
             userRequest.setProfileUrl(fileUrl);
-            userService.addOwner(userRequest);
         }
-        return "redirect:/user/login";
-
+        userService.addOwner(userRequest);
+        return "redirect:/login";         // 매핑과 동일하게 변경
     }
 
     @GetMapping("/map")
     public String mapView() {
-        return "/user/map";
+        return "user/map";                // 앞의 / 제거
     }
 
     @GetMapping("/users/profile/edit")
     public String editProfile() {
-        return "/user/profile_edit";
+        return "user/profile_edit";       // 앞의 / 제거
     }
 
     @GetMapping("/users/me")
     public String myInfo() {
-        return "user/my_info";
+        return "user/my_info";            // 통일
     }
 }
