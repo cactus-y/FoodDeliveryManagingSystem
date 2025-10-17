@@ -1,41 +1,62 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Navbar</title>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4" th:fragment="navbar">
+<nav class="navbar navbar-expand bg-light mb-4" th:fragment="navbar">
     <div class="container-fluid d-flex align-items-center justify-content-between">
-        <!-- 왼쪽 그룹: 로고 + 검색창 -->
-        <div class="d-flex align-items-center">
-            <a class="navbar-brand me-3" href="/">
-                <img src="/images/coupang-eats-logo.png" alt="메인 로고" style="height: 40px;">
-            </a>
 
+        <!-- 브랜드 -->
+        <a class="navbar-brand me-3" href="/">
+            <img src="/images/coupang-eats-logo.png" alt="메인 로고" style="height: 40px;">
+        </a>
 
-            <form class="d-flex align-items-center" th:action="@{/menus/search}" method="get" style="max-width: 350px;">
-                <input type="text" name="keyword" class="form-control form-control-sm me-2"
-                       placeholder="메뉴 검색" th:value="${param.keyword}" style="height: 36px;">
-                <button type="submit"
-                        class="btn btn-outline-success btn-sm"
-                        style="height: 36px; line-height: 22px; white-space: nowrap;">
-                    검색
-                </button>
-            </form>
-        </div>
+        <!-- 왼쪽: 검색폼 -->
+        <form class="d-flex align-items-center me-auto"
+              th:action="@{/menus/search}" method="get" style="max-width: 350px;">
+            <input type="text" name="keyword" class="form-control form-control-sm me-2"
+                   placeholder="메뉴 검색" th:value="${param.keyword}" style="height: 36px;">
+            <button type="submit" class="btn btn-outline-success btn-sm"
+                    style="height: 36px; line-height: 22px; white-space: nowrap;">
+                검색
+            </button>
+        </form>
 
-        <!-- 오른쪽 그룹: 버튼들 -->
-        <div class="d-flex align-items-center">
-            <a href="/restaurants" class="btn btn-outline-primary btn-sm me-2">식당 목록</a>
-            <a href="/map" class="btn btn-outline-secondary btn-sm me-2">내 식당 위치</a>
-            <a href="/chats" class="btn btn-outline-secondary btn-sm me-2">채팅</a>
-            <a href="/users/me" class="btn btn-outline-secondary btn-sm">내 정보</a>
-        </div>
+        <!-- 오른쪽: 메뉴 -->
+        <ul class="navbar-nav d-flex flex-row align-items-center mb-0">
+
+            <li class="nav-item"><a href="/restaurants" class="btn btn-outline-primary btn-sm me-2">식당 목록</a></li>
+            <li class="nav-item"><a href="/map" class="btn btn-outline-secondary btn-sm me-2">내 식당 위치</a></li>
+            <li class="nav-item"><a href="/chats" class="btn btn-outline-secondary btn-sm me-2">채팅</a></li>
+            <li class="nav-item"><a href="/users/me" class="btn btn-outline-secondary btn-sm me-3">내 정보</a></li>
+
+            <!-- 비로그인 시 -->
+            <li class="nav-item" sec:authorize="isAnonymous()">
+                <a href="/users/login" class="btn btn-outline-dark btn-sm me-2">로그인</a>
+            </li>
+            <li class="nav-item" sec:authorize="isAnonymous()">
+                <a href="/users/signup" class="btn btn-dark btn-sm">회원가입</a>
+            </li>
+
+            <!-- 로그인 시 -->
+            <li class="nav-item d-flex align-items-center gap-2" sec:authorize="isAuthenticated()">
+                <span class="text-muted small me-2">
+                    <i class="bi bi-person-circle"></i>
+<span th:text="${#authentication.principal.user.nickName}">nickname</span>
+                </span>
+                <form th:action="@{/logout}" method="post" class="m-0">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit" class="btn btn-dark btn-sm">로그아웃</button>
+                </form>
+            </li>
+        </ul>
     </div>
 </nav>
-
 
 </body>
 </html>
