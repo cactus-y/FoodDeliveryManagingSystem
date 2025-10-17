@@ -34,7 +34,7 @@ public class UserViewController {
         throws IOException {
 
         if (profileImage.isEmpty()) {
-            userRequest.setProfileUrl("/image/default-user-profile.png");
+            userRequest.setProfileUrl("/images/default-user-profile.png");
             userService.addOwner(userRequest);
         } else {
             String fileUrl = s3Service.uploadFile(profileImage);
