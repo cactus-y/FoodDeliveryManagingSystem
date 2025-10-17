@@ -168,11 +168,13 @@
             <div class="card menu-card">
                 <img th:if="${r.imageUrl != null and !#strings.isEmpty(r.imageUrl)}"
                      th:src="${r.imageUrl}"
+                     class="card-img-top"
                      alt="menu image"
-                     onerror="this.src='image/default-placeholder.png'">
+                     onerror="this.src='/images/default-placeholder.png'">
                 <img th:if="${r.imageUrl == null or #strings.isEmpty(r.imageUrl)}"
-                     th:src="@{/images/default-placeholder.png}"
-                     alt="no image">
+                     src="/images/default-placeholder.png"
+                     class="card-img-top"
+                     alt="default menu image">
 
                 <div class="card-body d-flex flex-column">
                     <div class="d-flex align-items-start mb-2">
