@@ -178,7 +178,6 @@ Temporary Items
 .env
 .idea/
 *.iml
-*.yml
 *.sql
 *.http
 *.gradle
