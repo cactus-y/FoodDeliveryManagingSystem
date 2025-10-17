@@ -5,7 +5,7 @@ const SocketManager = {
 
     init: function(user) {
         if (!user || !user.userId) {
-            console.log('사용자가 없어 socket 연결을 하지 않습니다')
+            console.log('사용자가 없어 socket 연결을 하지 않습니다');
             return;
         }
         this.currentUser = user;
@@ -16,6 +16,9 @@ const SocketManager = {
         const socket = new SockJS('/ws-stomp');
         this.stompClient = Stomp.over(socket);
 
+        // 개발자 모드 해제
+        this.stompClient.debug = null;
+
         this.stompClient.connect({},
             () => this.onConnected(),
             (error) => this.onError(error)
@@ -23,7 +26,7 @@ const SocketManager = {
     },
 
     onConnected: function() {
-        console.log("Connected!");
+        // console.log("Connected!");
 
         // 유저별 메시지 구독 채널
         const userSubUrl = `/sub/users/${this.currentUser.userId}`;
@@ -35,12 +38,12 @@ const SocketManager = {
             // 이미 연결이 되어있으면 바로 구독
             const subscription = this.stompClient.subscribe(url, callback);
             this.subscriptions.set(url, subscription);
-            console.log(`${url} subscribing`);
+            // console.log(`${url} subscribing`);
         } else {
             // 아직 연결이 되지 않았으면 연결하고 구독
             // 잠시 대기를 걸고 구독 시도
             setTimeout(() => this.subscribeTo(url, callback), 500);
-            console.log(`${url} subscribing`);
+            // console.log(`${url} subscribing`);
         }
     },
 
@@ -49,20 +52,20 @@ const SocketManager = {
         if (subscription) {
             subscription.unsubscribe();
             this.subscriptions.delete(url);
-            console.log(`${url} unsubscribed`);
+            // console.log(`${url} unsubscribed`);
         }
     },
 
     onError: function(error) {
         console.error('Error: ', error);
         setTimeout(() => {
-            console.log('Reconnecting...');
+            // console.log('Reconnecting...');
             this.connect();
         }, 5000);
     },
 
     onNotificationReceived: function(payload) {
-        console.log('New notification received: ', payload.body);
+        // console.log('New notification received: ', payload.body);
         const updateInfo = JSON.parse(payload.body);
 
         const event = new CustomEvent('chatNotification', {
@@ -83,7 +86,7 @@ const SocketManager = {
                     content: content
                 })
             );
-            console.log(`메시지 전송 to ${chatId}: ${content}`);
+            // console.log(`메시지 전송 to ${chatId}: ${content}`);
         } else {
             console.error('소켓이 연결되지 않았거나 메시지 내용이 없습니다');
         }
@@ -92,7 +95,7 @@ const SocketManager = {
     disconnect: function() {
         if (this.stompClient !== null) {
             this.stompClient.disconnect();
-            console.log('Disconnected!');
+            // console.log('Disconnected!');
         }
     }
 };

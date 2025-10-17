@@ -123,118 +123,118 @@
     </style>
 </head>
 <body>
-    <div th:replace="fragments/navbar :: navbar"></div>
-    <div class="container my-5">
-        <h2>식당 상세</h2>
-        <div hidden id="restaurant-id-det" th:text="${restaurant.restaurantIdx}"></div>
-        <!-- 이미지 -->
-        <div class="text-center mb-4">
-            <img th:if="${restaurant.imageUrl != null and !#strings.isEmpty(restaurant.imageUrl)}"
-                 th:src="${restaurant.imageUrl}"
-                 class="menu-image"
-                 alt="menu image"
-                 onerror="this.src='https://docs.aiinbox.io/images/defaultVecor.svg'">
-            <img th:if="${restaurant.imageUrl == null or #strings.isEmpty(restaurant.imageUrl)}"
-                 src="https://docs.aiinbox.io/images/defaultVecor.svg"
-                 class="menu-image"
-                 alt="no image">
-        </div>
+<div th:replace="fragments/navbar :: navbar"></div>
+<div class="container my-5">
+    <h2>식당 상세</h2>
+    <div hidden id="restaurant-id-det" th:text="${restaurant.restaurantIdx}"></div>
+    <!-- 이미지 -->
+    <div class="text-center mb-4">
+        <img th:if="${restaurant.imageUrl != null and !#strings.isEmpty(restaurant.imageUrl)}"
+             th:src="${restaurant.imageUrl}"
+             class="menu-image"
+             alt="menu image"
+             onerror="this.src='image/default-placeholder.png'">
+        <img th:if="${restaurant.imageUrl == null or #strings.isEmpty(restaurant.imageUrl)}"
+             th:src="@{/images/default-placeholder.png}"
+             class="menu-image"
+             alt="no image">
+    </div>
 
-        <!-- 기본 정보 카드 -->
-        <div class="detail-card">
-            <div class="row">
-                <h3 class="card-title d-flex align-items-center col">
-                    <span th:text="${restaurant.name}">메뉴 이름</span>
-                </h3>
-                <button class="col" id="like-btn" th:value="${restaurant.liked ? 'true' : 'false'}"
-                        style="
+    <!-- 기본 정보 카드 -->
+    <div class="detail-card">
+        <div class="row">
+            <h3 class="card-title d-flex align-items-center col">
+                <span th:text="${restaurant.name}">메뉴 이름</span>
+            </h3>
+            <button class="col" id="like-btn" th:value="${restaurant.liked ? 'true' : 'false'}"
+                    style="
                     max-width: 80px;
                     height: 40px;
                     border: none;
                     border-radius: 20px;
                 "
-                        th:styleappend="${restaurant.liked ? 'background-color: lightpink' : 'background-color: lightgray'}">
-                    <svg width="20px" height="20px" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path id="heart" th:style="${restaurant.liked ? 'fill: red' : 'fill: black'}"
-                              d="M7.5 13.5L7.14645 13.8536C7.34171 14.0488 7.65829 14.0488 7.85355 13.8536L7.5 13.5ZM1.53553 7.53553L1.18198 7.88909H1.18198L1.53553 7.53553ZM6.53553 2.53553L6.18198 2.88909L6.53553 2.53553ZM7.5 3.5L7.14645 3.85355C7.34171 4.04882 7.65829 4.04882 7.85355 3.85355L7.5 3.5ZM8.46447 2.53553L8.11091 2.18198V2.18198L8.46447 2.53553ZM7.85355 13.1464L1.88909 7.18198L1.18198 7.88909L7.14645 13.8536L7.85355 13.1464ZM13.1109 7.18198L7.14645 13.1464L7.85355 13.8536L13.818 7.88909L13.1109 7.18198ZM6.18198 2.88909L7.14645 3.85355L7.85355 3.14645L6.88909 2.18198L6.18198 2.88909ZM7.85355 3.85355L8.81802 2.88909L8.11091 2.18198L7.14645 3.14645L7.85355 3.85355ZM10.9645 1C9.89418 1 8.86772 1.42517 8.11091 2.18198L8.81802 2.88909C9.38729 2.31981 10.1594 2 10.9645 2V1ZM14 5.03553C14 5.84061 13.6802 6.61271 13.1109 7.18198L13.818 7.88909C14.5748 7.13228 15 6.10582 15 5.03553H14ZM15 5.03553C15 2.80677 13.1932 1 10.9645 1V2C12.6409 2 14 3.35905 14 5.03553H15ZM4.03553 2C4.84061 2 5.61271 2.31981 6.18198 2.88909L6.88909 2.18198C6.13228 1.42517 5.10582 1 4.03553 1V2ZM1 5.03553C1 3.35905 2.35905 2 4.03553 2V1C1.80677 1 0 2.80677 0 5.03553H1ZM1.88909 7.18198C1.31981 6.61271 1 5.84061 1 5.03553H0C0 6.10582 0.42517 7.13228 1.18198 7.88909L1.88909 7.18198Z"/>
-                    </svg>
-                    <label id="likes" th:text="${restaurant.likesCount}"
-                           th:style="${restaurant.liked ? 'color: red' : 'color: black'}" ></label>
-                </button>
-            </div>
-
-            <p class="card-text mb-4" th:text="${restaurant.additionalInfo}"></p>
-
-            <ul class="list-unstyled small text-muted mb-0">
-                <li><span class="info-label">주소:</span> <span th:text="|${restaurant.roadAddress}, ${restaurant.detailAddress}|"></span></li>
-                <li><span class="info-label">영업 시간:</span> <span th:text="|${restaurant.openAt} ~ ${restaurant.closeAt}|"></span></li>
-                <li><span class="info-label">평점:</span> <span th:text="${restaurant.restaurantRating}"></span></li>
-                <li><span class="info-label">점주 이메일:</span> <span th:text="${restaurant.ownerUsername}"></span></li>
-            </ul>
-
-            <a style="color: black; text-decoration: none; margin: 10px;" th:href='@{/restaurants/{id}/menus(id=${restaurant.restaurantIdx})}'>
-                <h6 class="card-title d-flex align-items-center">
-                    <span>이 식당의 메뉴 보러 가기</span>
-                    <svg fill="#000000" width="36px" height="36px" viewBox="0 0 256 256" id="Flat" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M218.82812,130.82812l-72,72a3.99957,3.99957,0,0,1-5.65625-5.65625L206.34326,132H40a4,4,0,0,1,0-8H206.34326L141.17187,58.82812a3.99957,3.99957,0,0,1,5.65625-5.65625l72,72A3.99854,3.99854,0,0,1,218.82812,130.82812Z"></path> </g></svg>
-                </h6>
-            </a>
+                    th:styleappend="${restaurant.liked ? 'background-color: lightpink' : 'background-color: lightgray'}">
+                <svg width="20px" height="20px" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path id="heart" th:style="${restaurant.liked ? 'fill: red' : 'fill: black'}"
+                          d="M7.5 13.5L7.14645 13.8536C7.34171 14.0488 7.65829 14.0488 7.85355 13.8536L7.5 13.5ZM1.53553 7.53553L1.18198 7.88909H1.18198L1.53553 7.53553ZM6.53553 2.53553L6.18198 2.88909L6.53553 2.53553ZM7.5 3.5L7.14645 3.85355C7.34171 4.04882 7.65829 4.04882 7.85355 3.85355L7.5 3.5ZM8.46447 2.53553L8.11091 2.18198V2.18198L8.46447 2.53553ZM7.85355 13.1464L1.88909 7.18198L1.18198 7.88909L7.14645 13.8536L7.85355 13.1464ZM13.1109 7.18198L7.14645 13.1464L7.85355 13.8536L13.818 7.88909L13.1109 7.18198ZM6.18198 2.88909L7.14645 3.85355L7.85355 3.14645L6.88909 2.18198L6.18198 2.88909ZM7.85355 3.85355L8.81802 2.88909L8.11091 2.18198L7.14645 3.14645L7.85355 3.85355ZM10.9645 1C9.89418 1 8.86772 1.42517 8.11091 2.18198L8.81802 2.88909C9.38729 2.31981 10.1594 2 10.9645 2V1ZM14 5.03553C14 5.84061 13.6802 6.61271 13.1109 7.18198L13.818 7.88909C14.5748 7.13228 15 6.10582 15 5.03553H14ZM15 5.03553C15 2.80677 13.1932 1 10.9645 1V2C12.6409 2 14 3.35905 14 5.03553H15ZM4.03553 2C4.84061 2 5.61271 2.31981 6.18198 2.88909L6.88909 2.18198C6.13228 1.42517 5.10582 1 4.03553 1V2ZM1 5.03553C1 3.35905 2.35905 2 4.03553 2V1C1.80677 1 0 2.80677 0 5.03553H1ZM1.88909 7.18198C1.31981 6.61271 1 5.84061 1 5.03553H0C0 6.10582 0.42517 7.13228 1.18198 7.88909L1.88909 7.18198Z"/>
+                </svg>
+                <label id="likes" th:text="${restaurant.likesCount}"
+                       th:style="${restaurant.liked ? 'color: red' : 'color: black'}" ></label>
+            </button>
         </div>
 
-        <!-- 버튼 영역 (내 식당일 때만 표시) -->
-        <div class="action-buttons" th:if="${restaurant.isMyRestaurant}">
-            <a class="btn btn-sm mt-auto add-button" th:href='@{/restaurant/{id}/menus/new(id=${restaurant.restaurantIdx})}'>
-                메뉴 추가
-            </a>
+        <p class="card-text mb-4" th:text="${restaurant.additionalInfo}"></p>
 
-            <button class="btn btn-outline-primary mr-2" th:onclick="|location.href='@{/restaurantsAddOrModify?restaurantId={id}(id=${restaurant.restaurantIdx})}'|">수정</button>
-            <button class="btn btn-outline-danger" id="delete-btn">삭제</button>
-        </div>
+        <ul class="list-unstyled small text-muted mb-0">
+            <li><span class="info-label">주소:</span> <span th:text="|${restaurant.roadAddress}, ${restaurant.detailAddress}|"></span></li>
+            <li><span class="info-label">영업 시간:</span> <span th:text="|${restaurant.openAt} ~ ${restaurant.closeAt}|"></span></li>
+            <li><span class="info-label">평점:</span> <span th:text="${restaurant.restaurantRating}"></span></li>
+            <li><span class="info-label">점주 이메일:</span> <span th:text="${restaurant.ownerUsername}"></span></li>
+        </ul>
+
+        <a style="color: black; text-decoration: none; margin: 10px;" th:href='@{/restaurants/{id}/menus(id=${restaurant.restaurantIdx})}'>
+            <h6 class="card-title d-flex align-items-center">
+                <span>이 식당의 메뉴 보러 가기</span>
+                <svg fill="#000000" width="36px" height="36px" viewBox="0 0 256 256" id="Flat" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M218.82812,130.82812l-72,72a3.99957,3.99957,0,0,1-5.65625-5.65625L206.34326,132H40a4,4,0,0,1,0-8H206.34326L141.17187,58.82812a3.99957,3.99957,0,0,1,5.65625-5.65625l72,72A3.99854,3.99854,0,0,1,218.82812,130.82812Z"></path> </g></svg>
+            </h6>
+        </a>
     </div>
 
-    <script>
-        const likeButton = document.getElementById("like-btn");
-        const likes = document.getElementById("likes");
-        const heart = document.getElementById("heart");
+    <!-- 버튼 영역 (내 식당일 때만 표시) -->
+    <div class="action-buttons" th:if="${restaurant.isMyRestaurant}">
+        <a class="btn btn-sm mt-auto add-button" th:href='@{/restaurant/{id}/menus/new(id=${restaurant.restaurantIdx})}'>
+            메뉴 추가
+        </a>
 
-        likeButton.addEventListener('click', function() {
+        <button class="btn btn-outline-primary mr-2" th:onclick="|location.href='@{/restaurantsAddOrModify?restaurantId={id}(id=${restaurant.restaurantIdx})}'|">수정</button>
+        <button class="btn btn-outline-danger" id="delete-btn">삭제</button>
+    </div>
+</div>
+
+<script>
+    const likeButton = document.getElementById("like-btn");
+    const likes = document.getElementById("likes");
+    const heart = document.getElementById("heart");
+
+    likeButton.addEventListener('click', function() {
+        let restaurantId = Number(document.getElementById("restaurant-id-det").textContent);
+        if(likeButton.value === 'true'){
+            fetch(`/api/restaurants/${restaurantId}/likes`, {
+                method: 'DELETE'
+            }).then(() => {
+                likes.textContent = String(Number(likeButton.textContent)-1);
+                likes.style.color = "black";
+                likeButton.value = 'false';
+                likeButton.style.backgroundColor = 'lightgray';
+                heart.style.fill = 'black';
+            })
+        }
+        else{
+            fetch(`/api/restaurants/${restaurantId}/likes`, {
+                method: 'POST'
+            }).then(() => {
+                likes.textContent = String(Number(likeButton.textContent)+1);
+                likes.style.color = "red";
+                likeButton.value = 'true';
+                likeButton.style.backgroundColor = 'lightpink';
+                heart.style.fill = 'red';
+            })
+        }
+    })
+
+    const deleteButton = document.getElementById("delete-btn");
+
+    deleteButton.addEventListener('click', function() {
+        if(confirm("삭제하시겠습니까?")){
             let restaurantId = Number(document.getElementById("restaurant-id-det").textContent);
-            if(likeButton.value === 'true'){
-                fetch(`/api/restaurants/${restaurantId}/likes`, {
-                    method: 'DELETE'
-                }).then(() => {
-                    likes.textContent = String(Number(likeButton.textContent)-1);
-                    likes.style.color = "black";
-                    likeButton.value = 'false';
-                    likeButton.style.backgroundColor = 'lightgray';
-                    heart.style.fill = 'black';
-                })
-            }
-            else{
-                fetch(`/api/restaurants/${restaurantId}/likes`, {
-                    method: 'POST'
-                }).then(() => {
-                    likes.textContent = String(Number(likeButton.textContent)+1);
-                    likes.style.color = "red";
-                    likeButton.value = 'true';
-                    likeButton.style.backgroundColor = 'lightpink';
-                    heart.style.fill = 'red';
-                })
-            }
-        })
-
-        const deleteButton = document.getElementById("delete-btn");
-
-        deleteButton.addEventListener('click', function() {
-            if(confirm("삭제하시겠습니까?")){
-                let restaurantId = Number(document.getElementById("restaurant-id-det").textContent);
-                fetch(`/api/restaurants/${restaurantId}`, {
-                    method: 'DELETE'
-                }).then(() => {
-                    alert("삭제 완료");
-                    location.replace("/restaurants");
-                })
-            }
-        })
-    </script>
+            fetch(`/api/restaurants/${restaurantId}`, {
+                method: 'DELETE'
+            }).then(() => {
+                alert("삭제 완료");
+                location.replace("/restaurants");
+            })
+        }
+    })
+</script>
 </body>
 </html>

@@ -149,105 +149,105 @@
     </style>
 </head>
 <body>
-    <div th:replace="fragments/navbar :: navbar"></div>
+<div th:replace="fragments/navbar :: navbar"></div>
 
-    <div class="container my-5">
-        <a class="btn btn-sm mt-auto add-button" href="/restaurantsAddOrModify">
-            식당 추가
-        </a>
-        <h4 class="mb-4 font-weight-bold text-center">동네 식당 목록</h4>
+<div class="container my-5">
+    <a class="btn btn-sm mt-auto add-button" href="/restaurantsAddOrModify">
+        식당 추가
+    </a>
+    <h4 class="mb-4 font-weight-bold text-center">동네 식당 목록</h4>
 
-        <!-- 비어있을 때 -->
-        <div th:if="${page.empty}" class="alert alert-light text-center py-5">
-            등록된 동네 식당이 없습니다 😢
-        </div>
+    <!-- 비어있을 때 -->
+    <div th:if="${page.empty}" class="alert alert-light text-center py-5">
+        등록된 동네 식당이 없습니다 😢
+    </div>
 
-        <!-- 카드 그리드 -->
-        <div class="row" th:if="${!page.empty}">
-            <div class="col-sm-6 col-md-4 col-lg-3 mb-4" th:each="r:${page.content}">
-                <div class="card menu-card">
-                    <img th:if="${r.imageUrl != null and !#strings.isEmpty(r.imageUrl)}"
-                         th:src="${r.imageUrl}"
-                         alt="menu image"
-                         onerror="this.src='https://docs.aiinbox.io/images/defaultVecor.svg'">
-                    <img th:if="${r.imageUrl == null or #strings.isEmpty(r.imageUrl)}"
-                         src="https://docs.aiinbox.io/images/defaultVecor.svg"
-                         alt="no image">
+    <!-- 카드 그리드 -->
+    <div class="row" th:if="${!page.empty}">
+        <div class="col-sm-6 col-md-4 col-lg-3 mb-4" th:each="r:${page.content}">
+            <div class="card menu-card">
+                <img th:if="${r.imageUrl != null and !#strings.isEmpty(r.imageUrl)}"
+                     th:src="${r.imageUrl}"
+                     alt="menu image"
+                     onerror="this.src='image/default-placeholder.png'">
+                <img th:if="${r.imageUrl == null or #strings.isEmpty(r.imageUrl)}"
+                     th:src="@{/images/default-placeholder.png}"
+                     alt="no image">
 
-                    <div class="card-body d-flex flex-column">
-                        <div class="d-flex align-items-start mb-2">
-                            <h5 class="card-title mb-0" th:text="${r.name}"></h5>
-                        </div>
-
-                        <div class="text-muted small mb-2"
-                             th:text="|내 위치와의 거리: ${r.distance}km|">
-                        </div>
-
-                        <div class="text-muted small mb-2"
-                             th:text="|영업 시간: ${r.openAt} ~ ${r.closeAt}|">
-                             <!-- th:text="|${#temporals.format(r.openAt, 'HH:mm')} ~ ${#temporals.format(r.closeAt, 'HH:mm')}|" -->
-                        </div>
-
-                        <div class="price mb-3"
-                             th:text="|평점 ${r.restaurantRating}|">
-                        </div>
-
-                        <a class="btn btn-sm btn-outline-primary mt-auto"
-                           th:href='@{/restaurants/{id}(id=${r.restaurantIdx})}'>자세히 보기</a>
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex align-items-start mb-2">
+                        <h5 class="card-title mb-0" th:text="${r.name}"></h5>
                     </div>
+
+                    <div class="text-muted small mb-2"
+                         th:text="|내 위치와의 거리: ${r.distance}km|">
+                    </div>
+
+                    <div class="text-muted small mb-2"
+                         th:text="|영업 시간: ${r.openAt} ~ ${r.closeAt}|">
+                        <!-- th:text="|${#temporals.format(r.openAt, 'HH:mm')} ~ ${#temporals.format(r.closeAt, 'HH:mm')}|" -->
+                    </div>
+
+                    <div class="price mb-3"
+                         th:text="|평점 ${r.restaurantRating}|">
+                    </div>
+
+                    <a class="btn btn-sm btn-outline-primary mt-auto"
+                       th:href='@{/restaurants/{id}(id=${r.restaurantIdx})}'>자세히 보기</a>
                 </div>
             </div>
         </div>
-
-        <!-- 페이지네이션 -->
-        <nav aria-label="pagination">
-            <ul class="pagination justify-content-center">
-
-                <!-- 이전 -->
-                <li class="page-item" th:classappend="${page.first} ? 'disabled'">
-                    <a class="page-link"
-                       th:href="@{|/restaurants?page=${page.number - 1}&size=${page.size}|}">
-                        이전
-                    </a>
-                </li>
-
-                <!-- 번호 (blockSize 기준) -->
-                <li class="page-item"
-                    th:each="i : ${#numbers.sequence(start, end)}"
-                    th:classappend="${i} == ${page.number} ? 'active'">
-                    <a class="page-link"
-                       th:text="${i + 1}"
-                       th:href="@{|/restaurants?page=${i}&size=${page.size}|}">
-                        1
-                    </a>
-                </li>
-
-                <!-- 다음 -->
-                <li class="page-item" th:classappend="${page.last} ? 'disabled'">
-                    <a class="page-link"
-                       th:href="@{|/restaurants?page=${page.number + 1}&size=${page.size}|}">
-                        다음
-                    </a>
-                </li>
-
-            </ul>
-        </nav>
     </div>
 
-    <script>
-        const allRest = document.getElementById("all");
-        const myRest =  document.getElementById("my");
+    <!-- 페이지네이션 -->
+    <nav aria-label="pagination">
+        <ul class="pagination justify-content-center">
 
-        document.getElementById('view-only-my').addEventListener('change', function(){
-            if(this.checked){
-                allRest.style.display = "none";
-                myRest.style.display = "flex";
-            }
-            else{
-                allRest.style.display = "flex";
-                myRest.style.display = "none";
-            }
-        })
-    </script>
+            <!-- 이전 -->
+            <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{|/restaurants?page=${page.number - 1}&size=${page.size}|}">
+                    이전
+                </a>
+            </li>
+
+            <!-- 번호 (blockSize 기준) -->
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(start, end)}"
+                th:classappend="${i} == ${page.number} ? 'active'">
+                <a class="page-link"
+                   th:text="${i + 1}"
+                   th:href="@{|/restaurants?page=${i}&size=${page.size}|}">
+                    1
+                </a>
+            </li>
+
+            <!-- 다음 -->
+            <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{|/restaurants?page=${page.number + 1}&size=${page.size}|}">
+                    다음
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+</div>
+
+<script>
+    const allRest = document.getElementById("all");
+    const myRest =  document.getElementById("my");
+
+    document.getElementById('view-only-my').addEventListener('change', function(){
+        if(this.checked){
+            allRest.style.display = "none";
+            myRest.style.display = "flex";
+        }
+        else{
+            allRest.style.display = "flex";
+            myRest.style.display = "none";
+        }
+    })
+</script>
 </body>
 </html>

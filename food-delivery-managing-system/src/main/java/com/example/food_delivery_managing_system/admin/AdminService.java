@@ -115,28 +115,53 @@ public class AdminService {
 
     // 통계
     public Map<String, Integer> getRestaurantsByRegion() {
+
         List<Restaurant> restaurants = restaurantRepository.findAll();
         Map<String, Integer> regionCount = new LinkedHashMap<>();
 
-        // 도로명 주소에서 시/구 추출 후 그룹화
         for (Restaurant r : restaurants) {
-            if (r.getRoadAddress() != null && !r.getRoadAddress().isEmpty()) {
-                String region = extractRegion(r.getRoadAddress());
-                regionCount.put(region, regionCount.getOrDefault(region, 0) + 1);
+            String roadAddress = r.getRoadAddress();
+            if (roadAddress != null && !roadAddress.isEmpty()) {
+                String region = extractRegion(roadAddress);
+
+                if (!"-".equals(region)) {
+                    regionCount.put(region, regionCount.getOrDefault(region, 0) + 1);
+                }
             }
         }
 
         return regionCount;
     }
 
-    // 도로명 주소에서 "시/도 구/군" 추출
     private String extractRegion(String roadAddress) {
-        String[] parts = roadAddress.split(" ");
-
-        if (parts.length >= 2) {
-            return parts[0] + " " + parts[1];
+        if (roadAddress == null || roadAddress.isEmpty()) {
+            return "-";
         }
 
-        return parts[0];
+        String cleanedAddress = roadAddress.replaceAll("(?i)대한민국\\s*", "");
+        String[] parts = cleanedAddress.trim().split("\\s+");
+
+
+        if (parts.length == 0 || parts[0].isEmpty()) {
+            return "-";
+        }
+
+        String firstPart = parts[0];
+        int limit = 2;
+
+        if (firstPart.endsWith("도")) {
+            limit = 3;
+        }
+
+        StringBuilder regionBuilder = new StringBuilder();
+        for (int i = 0; i < Math.min(parts.length, limit); i++) {
+            if (i > 0) {
+                regionBuilder.append(" ");
+            }
+            regionBuilder.append(parts[i]);
+        }
+
+        String result = regionBuilder.toString().trim();
+        return result.isEmpty() ? "-" : result;
     }
 }

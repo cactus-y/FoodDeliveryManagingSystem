@@ -166,9 +166,10 @@ public class MenuService {
                 .build();
     }
 
-    //메뉴 검색
+    //메뉴 전역 검색
     public Page<MenuSearchResponse> searchMenus(String keyword, Pageable pageable) {
-        Page<Menu> menus = menuRepository.findByNameContainingOrDescriptionContaining(keyword, keyword, pageable);
+        Page<Menu> menus = menuRepository.findByKeywordWithRestaurant(keyword, pageable);
+//        Page<Menu> menus = menuRepository.findByNameContainingOrDescriptionContaining(keyword, keyword, pageable);
 
         return menus.map(menu -> MenuSearchResponse.builder()
                 .menuIdx(menu.getMenuIdx())
@@ -182,8 +183,10 @@ public class MenuService {
 
     }
 
+    public String getRestaurantNameById(Long restaurantId) {
+        return restaurantRepository.findById(restaurantId)
+                .map(Restaurant::getName)
+                .orElse("알 수 없는 식당");
+    }
+
 }
-
-
-
-
