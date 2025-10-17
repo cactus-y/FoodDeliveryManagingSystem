@@ -10,7 +10,10 @@
     <div class="container-fluid d-flex align-items-center justify-content-between">
         <!-- 왼쪽 그룹: 로고 + 검색창 -->
         <div class="d-flex align-items-center">
-            <a class="navbar-brand me-3" href="/">[메인 링크]</a>
+            <a class="navbar-brand me-3" href="/">
+                <img src="/images/coupang-eats-logo.png" alt="메인 로고" style="height: 40px;">
+            </a>
+
 
             <form class="d-flex align-items-center" th:action="@{/menus/search}" method="get" style="max-width: 350px;">
                 <input type="text" name="keyword" class="form-control form-control-sm me-2"
