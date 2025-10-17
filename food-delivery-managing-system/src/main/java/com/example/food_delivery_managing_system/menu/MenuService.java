@@ -183,6 +183,12 @@ public class MenuService {
 
     }
 
+    public String getRestaurantNameById(Long restaurantId) {
+        return restaurantRepository.findById(restaurantId)
+                .map(Restaurant::getName)
+                .orElse("알 수 없는 식당");
+    }
+
 }
 
 

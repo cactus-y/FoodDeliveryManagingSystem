@@ -60,6 +60,8 @@ public class MenuPageController {
         model.addAttribute("page", page);
         model.addAttribute("restaurantKeyword", keyword);
         model.addAttribute("restaurantId", restaurantId);
+        String restaurantName = menuService.getRestaurantNameById(restaurantId);
+        model.addAttribute("restaurantName", restaurantName);
 
         return "menu/restaurant-menu-list";
     }
