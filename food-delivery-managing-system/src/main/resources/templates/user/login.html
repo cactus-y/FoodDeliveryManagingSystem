@@ -10,7 +10,7 @@
   <div class="brand">
     <img class="logo" alt="coupang-eats" src="/images/coupang-eats-logo.png">
   </div>
-  <form action="/login" method="POST">
+  <form action="/api/auth/login" method="POST">
     <input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" />
     <div class="login-input">
       <label for="email">이메일</label>

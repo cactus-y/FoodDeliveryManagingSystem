@@ -25,7 +25,7 @@ public class ChatViewController {
                 .build();
 
         model.addAttribute("currentUser", currentUser);
-        return "/chat/responsiveChat";
+        return "chat/responsiveChat";
     }
 
 //    @GetMapping("/{chatId}")
