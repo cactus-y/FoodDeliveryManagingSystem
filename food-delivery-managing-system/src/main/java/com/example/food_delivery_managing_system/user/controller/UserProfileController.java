@@ -1,7 +1,6 @@
-// src/main/java/com/example/food_delivery_managing_system/user/controller/UserProfileController.java
 package com.example.food_delivery_managing_system.user.controller;
 
-import com.example.food_delivery_managing_system.S3.S3Service; // ← 네가 준 경로로 import
+import com.example.food_delivery_managing_system.S3.S3Service;
 import com.example.food_delivery_managing_system.user.dto.PasswordChangeRequest;
 import com.example.food_delivery_managing_system.user.dto.UserPatchRequest;
 import com.example.food_delivery_managing_system.user.dto.UserResponse;
@@ -12,14 +11,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api")
@@ -27,46 +22,32 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserProfileController {
 
     private final UserAuthService userAuthService;
-    private final S3Service s3Service; // ← 네 S3Service 사용
+    private final S3Service s3Service; // 주입만, 직접 사용은 서비스에서
 
-    /** 내 정보 조회: DB에 저장된 profileUrl(공개 URL) 그대로 반환 */
+    /** 내 정보 조회 */
     @GetMapping("/me")
     public UserResponse getMe(@AuthenticationPrincipal CustomUserDetails principal) {
-        if (principal == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        }
-        Long userId = principal.getId();
-        return userAuthService.getProfile(userId);
+        if (principal == null) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        return userAuthService.getProfile(principal.getId());
     }
 
-    /** 내 정보 수정 (멀티파트): 이미지가 있으면 업로드 후 반환된 URL을 profileUrl로 저장 */
+    /**
+     * 내 정보 수정 (multipart/form-data)
+     * - 파일/텍스트를 한 DTO로 받음(@ModelAttribute)
+     * - 파일이 존재하면 업로드/교체, removeProfileImage=true면 기본이미지/삭제 정책 적용
+     */
     @PatchMapping(value = "/me", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void updateMe(@AuthenticationPrincipal CustomUserDetails principal,
-                         @ModelAttribute UserPatchRequest request,
-                         @RequestParam(value = "profileImage", required = false) MultipartFile profileImage) throws Exception {
-
-        if (principal == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        }
-        Long userId = principal.getId();
-
-        if (profileImage != null && !profileImage.isEmpty()) {
-            // 업로드 후 공개 URL(String) 반환
-            String uploadedUrl = s3Service.uploadFile(profileImage);
-            request.setProfileUrl(uploadedUrl); // DB에는 공개 URL을 그대로 저장
-        }
-
-        userAuthService.updateUser(userId, request);
+    public UserResponse updateMe(@AuthenticationPrincipal CustomUserDetails principal,
+                                 @ModelAttribute UserPatchRequest request) throws IOException {
+        if (principal == null) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        return UserResponse.from(userAuthService.updateUser(principal.getId(), request));
     }
 
     /** 비밀번호 변경 */
     @PatchMapping("/me/password")
     public void changePassword(@AuthenticationPrincipal CustomUserDetails principal,
                                @ModelAttribute @Valid PasswordChangeRequest request) {
-        if (principal == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        }
-        Long userId = principal.getId();
-        userAuthService.changePassword(userId, request);
+        if (principal == null) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        userAuthService.changePassword(principal.getId(), request);
     }
 }

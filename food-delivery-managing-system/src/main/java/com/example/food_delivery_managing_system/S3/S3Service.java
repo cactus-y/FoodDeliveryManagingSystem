@@ -124,4 +124,25 @@ public class S3Service {
         if (m.find()) return m.group(1);
         return "ap-northeast-2";
     }
+
+    public void deleteFileByUrl(String oldUrl) {
+        if (oldUrl == null || oldUrl.isBlank()) return;
+
+        try {
+            String key = extractKey(oldUrl);
+            if (key == null || key.isBlank()) return;
+
+            DeleteObjectRequest req = DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .build();
+
+            s3Client.deleteObject(req);
+            System.out.println("[S3] Deleted: " + key);
+        } catch (S3Exception e) {
+            System.err.println("[S3] Delete failed: " + e.awsErrorDetails().errorMessage());
+        } catch (Exception e) {
+            System.err.println("[S3] Delete failed: " + e.getMessage());
+        }
+    }
 }
