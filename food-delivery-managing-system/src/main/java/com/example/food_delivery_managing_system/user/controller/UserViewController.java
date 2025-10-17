@@ -5,7 +5,6 @@ import com.example.food_delivery_managing_system.user.dto.UserRequest;
 import com.example.food_delivery_managing_system.user.service.UserService;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -34,14 +33,15 @@ public class UserViewController {
     public String addOwner(@ModelAttribute UserRequest userRequest, @RequestParam("profileImage") MultipartFile profileImage)
         throws IOException {
 
-        // 아직 AWS s3 저장 경로를 모르기 때문에 대충 저장
-        // String profileImageUrl = profileImage.getOriginalFilename(); // 나중에 s3 저장 경로로 변경
-        // userRequest.setProfileUrl(profileImageUrl); // String 으로 변경
-
-        String fileUrl = s3Service.uploadFile(profileImage);
-        System.out.println("저장된 이미지 URL : " + fileUrl);
-        userRequest.setProfileUrl(fileUrl);
-        userService.addOwner(userRequest);
+        if (profileImage.isEmpty()) {
+            userRequest.setProfileUrl("/image/default-user-profile.png");
+            userService.addOwner(userRequest);
+        } else {
+            String fileUrl = s3Service.uploadFile(profileImage);
+            System.out.println("저장된 이미지 URL : " + fileUrl);
+            userRequest.setProfileUrl(fileUrl);
+            userService.addOwner(userRequest);
+        }
         return "redirect:/user/login";
 
     }
