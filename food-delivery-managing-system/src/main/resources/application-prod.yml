@@ -14,7 +14,15 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 15MB
+      max-request-size: 15MB
 
 server:
   port: 5000
   forward-headers-strategy: framework
+  tomcat:
+    max-swallow-size: 20MB       # 큰 업로드 처리 시 예외 방지
+    max-http-form-post-size: 20MB  # 폼/JSON 본문 허용 크기 확장
