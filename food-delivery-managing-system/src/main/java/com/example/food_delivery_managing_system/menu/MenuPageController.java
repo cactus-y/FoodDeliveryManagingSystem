@@ -3,10 +3,14 @@ package com.example.food_delivery_managing_system.menu;
 import com.example.food_delivery_managing_system.menu.dto.MenuResponse;
 import com.example.food_delivery_managing_system.menu.dto.MenuSearchResponse;
 import com.example.food_delivery_managing_system.menu.dto.MenuSummaryResponse;
+import com.example.food_delivery_managing_system.user.entity.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import com.example.food_delivery_managing_system.user.entity.CustomUserDetails;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,11 +22,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class MenuPageController {
     private final MenuService menuService;
 
-    //식당의 메뉴 추가/수정 페이지로 매핑
+    //식당의 메뉴 추가/수정 페이지로 매핑, 사용자 검증 로직 추가
     @GetMapping({"/restaurant/{restaurantId}/menus/new", "/restaurant/{restaurantId}/menus/{menuId}/edit"})
     public String menuTestPage(@PathVariable Long restaurantId,
                                @PathVariable(required = false) Long menuId,
+                               @AuthenticationPrincipal CustomUserDetails user,
                                Model model) {
+
+        // 로그인 안 되어 있으면 로그인 페이지로
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        // 본인 식당이 아니면 접근 차단
+        boolean isOwner = menuService.isRestaurantOwner(user.getUser().getUserId(), restaurantId);
+        if (!isOwner) {
+            throw new AccessDeniedException("접근 권한이 없습니다.");
+        }
 
         model.addAttribute("restaurantId", restaurantId);
 
