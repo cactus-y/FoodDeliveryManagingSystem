@@ -29,22 +29,18 @@ public class MenuService {
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new RestaurantNotFoundException(restaurantId));
 
-//                .orElseThrow(() -> new EntityNotFoundException("Restaurant not found"));
-
         Menu menu = Menu.builder()
                 .name(request.getName())
                 .price(request.getPrice())
                 .description(request.getDescription())
                 .isSignature(request.getIsSignature() != null ? request.getIsSignature() : "N")
                 .imageUrl(request.getImageUrl())
-//                .restaurantIdx(restaurantId)
                 .restaurant(restaurant)
                 .build();
 
         Menu saved = menuRepository.save(menu);
         return MenuResponse.builder()
                 .menuIdx(saved.getMenuIdx())
-//                .restaurantIdx(saved.getRestaurantIdx())//
                 .restaurantIdx(saved.getRestaurant().getRestaurantIdx())
                 .name(saved.getName())
                 .price(saved.getPrice())
@@ -116,13 +112,13 @@ public class MenuService {
                 .isSignature(menu.getIsSignature())
                 .imageUrl(menu.getImageUrl())
                 .createdAt(menu.getCreatedAt())
+                .restaurantOwnerId(menu.getRestaurant().getUser().getUserId())
                 .build();
     }
 
     public void deleteMenuById(Long id) {
         Menu menu = menuRepository.findById(id)
                 .orElseThrow(() -> new MenuNotFoundException(id));
-
         //이미지 URL이 존재하면 S3에서 삭제
         String imageUrl = menu.getImageUrl();
         if (imageUrl != null && !imageUrl.isBlank()) {
@@ -133,7 +129,6 @@ public class MenuService {
                 System.err.println("S3 이미지 삭제 실패: " + e.getMessage());
             }
         }
-
         //DB에서 메뉴 삭제
         menuRepository.delete(menu);
     }
@@ -143,7 +138,6 @@ public class MenuService {
     public MenuResponse updateMenu(Long menuId, AddMenuRequest request) {
         Menu menu = menuRepository.findById(menuId)
                 .orElseThrow(() -> new MenuNotFoundException(menuId));
-//                .orElseThrow(() -> new EntityNotFoundException("메뉴 없음"));
 
         if (request.getName() != null) menu.setName(request.getName());
         if (request.getPrice() != null) menu.setPrice(request.getPrice());
@@ -169,7 +163,6 @@ public class MenuService {
     //메뉴 전역 검색
     public Page<MenuSearchResponse> searchMenus(String keyword, Pageable pageable) {
         Page<Menu> menus = menuRepository.findByKeywordWithRestaurant(keyword, pageable);
-//        Page<Menu> menus = menuRepository.findByNameContainingOrDescriptionContaining(keyword, keyword, pageable);
 
         return menus.map(menu -> MenuSearchResponse.builder()
                 .menuIdx(menu.getMenuIdx())
@@ -187,6 +180,14 @@ public class MenuService {
         return restaurantRepository.findById(restaurantId)
                 .map(Restaurant::getName)
                 .orElse("알 수 없는 식당");
+    }
+
+
+    //유저가 식당 주인인지 검증
+    public boolean isRestaurantOwner(Long userId, Long restaurantId) {
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new RestaurantNotFoundException(restaurantId));
+        return restaurant.getUser().getUserId().equals(userId);
     }
 
 }
