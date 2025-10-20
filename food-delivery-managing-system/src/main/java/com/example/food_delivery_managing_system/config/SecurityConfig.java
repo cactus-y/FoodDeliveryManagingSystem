@@ -24,7 +24,6 @@ public class SecurityConfig {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
-
     // ===== 관리자 페이지 로그인 filterchain
     private final AdminAuthenticationSuccessHandler adminSuccessHandler;
     private final AdminAuthenticationFailureHandler adminFailureHandler;
