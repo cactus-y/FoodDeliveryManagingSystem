@@ -24,14 +24,6 @@ public class SecurityConfig {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
-    @Bean
-    public DaoAuthenticationProvider authenticationProvider(CustomUserDetailsService userDetailsService,
-                                                            PasswordEncoder passwordEncoder) {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder);
-        return provider;
-    }
 
     // ===== 관리자 페이지 로그인 filterchain
     private final AdminAuthenticationSuccessHandler adminSuccessHandler;
@@ -82,7 +74,10 @@ public class SecurityConfig {
                         .ignoringRequestMatchers("/api/auth/login", "/api/auth/logout", "/api/**")
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login"
+
+                        .requestMatchers("/",
+                                "/health",
+                                "/api/auth/login"
                                 , "/api/auth/logout"
                                 , "/login"
                                 ,"/login/**"
